@@ -625,8 +625,9 @@ pre code {
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
+  margin-right: -30px;
+  margin-left: -30px;
+
 }
 
 .no-gutters {
@@ -9011,6 +9012,11 @@ button.bg-dark:focus {
   .px-xl-5 {
     padding-left: 3rem !important;
   }
+  .pl-xl-6,
+  .px-xl-6 {
+    padding-left: 25rem !important;
+  }
+ 
   .m-xl-n1 {
     margin: -0.25rem !important;
   }
