@@ -145,13 +145,13 @@ sup {
 }
 
 a {
-  color: #ff7300;
+  color: #000000;
   text-decoration: none;
   background-color: transparent;
 }
 
 a:hover {
-  color: #ff7300;
+  color: #000000;
   text-decoration: underline;
 }
 
@@ -1700,16 +1700,16 @@ pre code {
 .table-danger td,
 .table-danger thead th,
 .table-danger tbody + tbody {
-  border-color: #ed969e;
+  border-color: #000000;
 }
 
 .table-hover .table-danger:hover {
-  background-color: #f1b0b7;
+  background-color: #000000;
 }
 
 .table-hover .table-danger:hover > td,
 .table-hover .table-danger:hover > th {
-  background-color: #f1b0b7;
+  background-color: #000000;
 }
 
 .table-light,
