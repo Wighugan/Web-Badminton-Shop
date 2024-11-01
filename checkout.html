@@ -67,7 +67,7 @@
             <div class="col-lg-6 col-6 text-left">
                 <form action="">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
+                        <input type="text" class="form-control" placeholder="Tìm Kiếm Sản Phẩm">
                         <div class="input-group-append">
                             <span class="input-group-text bg-transparent text-primary">
                                 <i class="fa fa-search"></i>
@@ -81,7 +81,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="" class="btn border">
+                <a href="cart.html" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -128,13 +128,21 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index.html" class="nav-item nav-link">Trang chủ</a>
+                            <a href="index.html" class="nav-item nav-link">Trang Chủ</a>
                             <a href="shop.html" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="detail.html" class="nav-item nav-link">Thông Tin Chi Tiết</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Trang</a>
+                                <div class="dropdown-menu rounded-0 m-0">
+                                    <a href="cart.html" class="dropdown-item">Giỏ Hàng</a>
+                                    <a href="checkout.html" class="dropdown-item">Kiểm Tra Giỏ Hàng</a>
+                                </div>
+                            </div>
                             <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.html" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.html" class="nav-item nav-link">Đăng Kí</a>
+                            <a href="" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="" class="nav-item nav-link">Đăng Kí</a>
                         </div>
                     </div>
                 </nav>
@@ -149,7 +157,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thanh Toán</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="">Trang Chủ</a></p>
+                <p class="m-0"><a href="index.html">Trang Chủ</a></p>
                 <!--<p class="m-0 px-2">-</p>
                 <p class="m-0">Kiểm Tra</p>-->
             </div>
@@ -167,35 +175,35 @@
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>Họ</label>
-                            <input class="form-control" type="text" placeholder="John">
+                            <input class="form-control" type="text" value="John">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Tên</label>
-                            <input class="form-control" type="text" placeholder="Doe">
+                            <input class="form-control" type="text" value="Doe">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="nguyenvana@gmail.com">
+                            <input class="form-control" type="text" value="nguyenvana@gmail.com">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Số Điện Thoại</label>
-                            <input class="form-control" type="text" placeholder="012345678">
+                            <input class="form-control" type="text" value="012345678">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Địa Chỉ Liên Hệ </label>
-                            <input class="form-control" type="text" placeholder="273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh">
+                            <input class="form-control" type="text" value="273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Address Line 2</label>
-                            <input class="form-control" type="text" placeholder="123 Street">
+                            <input class="form-control" type="text" value="123 Street">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Quốc Gia</label>
-                            <input class="form-control" type="text" placeholder="Việt Nam">
+                            <input class="form-control" type="text" value="Việt Nam">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Thành Phố</label>
-                            <input class="form-control" type="text" placeholder="Thành Phố Hồ Chí Minh">
+                            <input class="form-control" type="text" value="Thành Phố Hồ Chí Minh">
                         </div>
                     
                         <!--<div class="col-md-12 form-group">
@@ -350,9 +358,9 @@
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
                 <a href="" class="text-decoration-none">
-                    <h1 class="mb-4 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border border-white px-3 mr-1">MMB</span>Shopper</h1>
+                    <h1 class="mb-4 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border border-white px-3 mr-1">MMB</span>Shop</h1>
                 </a>
-                <p>Mọi thắc mắc xin liên hệ về</p>
+                <p>Mọi mắc mắt xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
@@ -364,13 +372,14 @@
                         <div class="d-flex flex-column justify-content-start">
                             <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
                             <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Chi Tiết Cửa Hàng</a>
                             <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
                             <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
-                    <!--<div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                    <div class="col-md-4 mb-5">
+                        <!--<h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
                         <div class="d-flex flex-column justify-content-start">
                             <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
                             <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
@@ -378,10 +387,10 @@
                             <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
                             <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
                             <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                        </div>
-                    </div>-->
+                        </div>-->
+                    </div>
                     <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Bảng Tin Email</h5>
+                        <h5 class="font-weight-bold text-dark mb-4">Nhận Thông Báo Mới Nhất</h5>
                         <form action="">
                             <div class="form-group">
                                 <input type="text" class="form-control border-0 py-4" placeholder="Tên Của Bạn" required="required" />
@@ -402,8 +411,7 @@
             <div class="col-md-6 px-xl-0">
                 <p class="mb-md-0 text-center text-md-left text-dark">
                     &copy; <a class="text-dark font-weight-semi-bold" href="#">Trường Đại Học Sài Gòn</a>
-                   
-                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com"></a>
+                    <a class="text-dark font-weight-semi-bold" href=""></a>
                 </p>
             </div>
             <div class="col-md-6 px-xl-0 text-center text-md-right">
