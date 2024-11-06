@@ -67,7 +67,7 @@
             <div class="col-lg-6 col-6 text-left">
                 <form action="">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm">
+                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
                             <span class="input-group-text bg-transparent text-primary">
                                 <i class="fa fa-search"></i>
@@ -81,7 +81,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -272,16 +272,25 @@
                
             </div>
             <!-- Shop Sidebar End -->
-
-
+            <style>
+                #output {
+                    font-weight: bold;
+                    font-size: 30px;
+                }
+            </style>
+            <script>
+                function showText() {
+                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
+                }
+            </script>
             <!-- Shop Product Start -->
             <div class="col-lg-9 col-md-12">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form action="detail.html">
+                            <form onsubmit="showText(); return false;">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên">
+                                    <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-primary" type="submit">
                                             <i class="fa fa-search"></i>
@@ -301,6 +310,7 @@
                                 </div>
                             </div>
                         </div>
+                        <p id="output"></p>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                         <div class="card product-item border-0 mb-4">
