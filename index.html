@@ -69,9 +69,9 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
+                            <button class="input-group-text bg-transparent text-primary" class="fa fa-search">
                                 <i class="fa fa-search"></i>
-                            </span>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -89,7 +89,35 @@
         </div>
     </div>
     <!-- Topbar End -->
-
+    <script>
+        function showVot(event) {
+            document.getElementById("output").innerText = "Vợt cầu lông";
+        }
+        function showGiay(event) {
+            document.getElementById("output").innerText = "Giày cầu lông";
+        }
+        function showTui(event) {
+            document.getElementById("output").innerText = "Túi cầu lông";
+        }
+        function showQuan(event) {
+            document.getElementById("output").innerText = "Quần cầu lông";
+        }
+        function showAo(event) {
+            document.getElementById("output").innerText = "Áo cầu lông";
+        }
+        function showVáy(event) {
+            document.getElementById("output").innerText = "Váy cầu lông";
+        }
+        function showVo(event) {
+            document.getElementById("output").innerText = "Vớ cầu lông";
+        }
+        function showQuanCan(event) {
+            document.getElementById("output").innerText = "Quấn cán vợt";
+        }
+        function showOngCau(event) {
+            document.getElementById("output").innerText = "Ống cầu";
+        }
+    </script>
 
     <!-- Navbar Start -->
     <div class="container-fluid mb-5">
@@ -101,19 +129,18 @@
                 </a>
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
-                        <a href="" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="" class="nav-item nav-link">Giày Cầu Lông</a>
-                        <a href="" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="" class="nav-item nav-link">Váy Cầu Lông</a>
+                        <a onclick="showVot(event)" href="shop.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a onclick="showGiay(event)" href="shop.html" class="nav-item nav-link">Giày Cầu Lông</a>
+                        <a onclick="showTui(event)" href="shop.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a onclick="showQuan(event)" href="shop.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a onclick="showAo(event)" href="shop.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a onclick="showVay(event)" href="shop.html" class="nav-item nav-link">Váy Cầu Lông</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link" data-toggle="dropdown">Phụ Kiện<i class="fa fa-angle-down float-right mt-1"></i></a>
                             <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0">
-                                <a href="" class="dropdown-item">Vớ Cầu Lông</a>
-                                <a href="" class="dropdown-item">Quấn Cán Vợt</a>
-                                <a href="" class="dropdown-item">Ống Cầu</a>
-            
+                                <a onclick="showVo(event)" href="shop.html" class="dropdown-item">Vớ Cầu Lông</a>
+                                <a onclick="showQuanCan(event)" href="shop.html" class="dropdown-item">Quấn Cán Vợt</a>
+                                <a onclick="showOngCau(event)" href="shop.html" class="dropdown-item">Ống Cầu</a>
                             </div>
                         </div>
                     </div>
@@ -129,7 +156,7 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="Signup.html" class="nav-item nav-link active">Trang Chủ</a>
+                            <a href="index.html" class="nav-item nav-link active">Trang Chủ</a>
                             <a href="shop.html" class="nav-item nav-link">Sản Phẩm
                             </a>
                             <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>
