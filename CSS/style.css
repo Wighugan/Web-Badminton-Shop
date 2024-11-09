@@ -35,6 +35,14 @@
   box-sizing: border-box;
 }
 
+.custom-font {
+  font-family: sans-serif;
+  font-size: 50px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #000;
+}
+
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -2183,7 +2191,26 @@ textarea.form-control {
   color: #fff;
   background-color: rgba(220, 53, 69, 0.9);
 }
+.no-border-button-rec-c{
+  border: 0px;      /* Loại bỏ viền */
+  border-radius: 0;
+  outline: none;     /* Loại bỏ viền đen khi nhấn vào */
+  background: #000000;  /* Loại bỏ nền, nếu muốn */
+  cursor: pointer;   /* Hiển thị con trỏ tay khi di chuột */
+  padding: 1rem !important;
+  width: 100%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.no-border-button-rec-c:hover{
+  background-color: #656565;
+}
+.no-border-button-rec-c:focus {
+  outline: none;     /* Đảm bảo không có viền khi lấy focus */
+}
 .was-validated :invalid ~ .invalid-feedback,
 .was-validated :invalid ~ .invalid-tooltip,
 .is-invalid ~ .invalid-feedback,
@@ -2334,6 +2361,8 @@ textarea.form-control {
   line-height: 1.5;
   border-radius: 0;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border: 0;
+  outline: 0;
 }
 
 .button {
@@ -2349,6 +2378,8 @@ textarea.form-control {
 .btn:hover {
   color: #6F6F6F;
   text-decoration: none;
+  border: 0;
+  outline: 0;
 }
 
 .btn:focus, .btn.focus {
@@ -2377,33 +2408,33 @@ fieldset:disabled a.btn {
 
 .btn-primary:hover {
   color: #fff;
-  background-color: #6F6F6F;
-  border-color: #6F6F6F;
+  background-color: #a6a6a6;;
+  border-color: #a6a6a6;;
 }
 
 .btn-primary:focus, .btn-primary.focus {
   color: #fff;
   background-color: #000000;
   border-color: #000000;
-  box-shadow: 0 0 0 0.2rem rgba(183, 138, 135, 0.5);
+  box-shadow: none;
 }
 
 .btn-primary.disabled, .btn-primary:disabled {
   color: #212529;
   background-color: #000000;
-  border-color: #000000;
+  border-color: #a6a6a6;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
 .show > .btn-primary.dropdown-toggle {
   color: #fff;
-  background-color: #000000;
+  background-color: #a6a6a6;;
   border-color: #000000;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.2rem rgba(183, 138, 135, 0.5);
+  box-shadow: none;
 }
 
 .btn-secondary {
@@ -2671,30 +2702,30 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-primary:hover {
-  color: #212529;
-  background-color: #000000;
-  border-color: #000000;
+  color: #a6a6a6;
+  background-color: #a6a6a6;
+  border-color: #a6a6a6;
 }
 
 .btn-outline-primary:focus, .btn-outline-primary.focus {
-  box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.5);
+  box-shadow: none;
 }
 
 .btn-outline-primary.disabled, .btn-outline-primary:disabled {
-  color: #000000;
+  color: #a6a6a6;
   background-color: transparent;
 }
 
 .btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active,
 .show > .btn-outline-primary.dropdown-toggle {
   color: #212529;
-  background-color: #000000;
-  border-color: #000000;
+  background-color: #a6a6a6;
+  border-color: #a6a6a6;
 }
 
 .btn-outline-primary:not(:disabled):not(.disabled):active:focus, .btn-outline-primary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.5);
+  box-shadow: none;
 }
 
 .btn-outline-secondary {
@@ -2944,7 +2975,7 @@ fieldset:disabled a.btn {
 .btn-lg, .btn-group-lg > .btn {
   padding: 0.5rem 1rem;
   font-size: 1.25rem;
-  line-height: 1.5;
+    line-height: 1.5;
   border-radius: 0;
 }
 
@@ -2956,7 +2987,6 @@ fieldset:disabled a.btn {
 }
 
 .btn-block {
-  display: block;
   width: 100%;
 }
 
@@ -9593,4 +9623,11 @@ a.text-dark:hover, a.text-dark:focus {
   100% {
     transform: translateY(-15px);
   }
+}
+
+.btn:hover {
+  color: #6F6F6F;
+  text-decoration: none;
+  border: 0;
+  outline: 0;
 }
