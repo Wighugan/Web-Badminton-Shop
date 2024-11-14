@@ -10,7 +10,7 @@
 }
 
 :root {
-  --blue: #100f0d;
+  --blue: #5654546b;
   --white: #fff;
   --gray: #f5f5f5;
   --black1: #222;
@@ -45,6 +45,8 @@ a{
   top: 20px;
   left: 20px;
   width: 100%;
+  list-style-type: none; /* Add this line to remove the black dots */
+
 }
 
 .navigation #active{ 
@@ -58,6 +60,13 @@ a{
   margin-bottom: 40px;
 }
 
+.custom-font {
+  font-family: sans-serif;
+  font-size: 50px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #000;
+}
 .navigation ul li a {
   position: relative;
   display: block;
@@ -80,6 +89,8 @@ a{
   display: block;
   padding: 0 10px;
   line-height: 60px;
+  
+
 }
 /* ===================== Main ===================== */
 .main {
