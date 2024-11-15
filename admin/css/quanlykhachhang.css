@@ -145,43 +145,28 @@
   #timnguoidung[type="text"] {
     width: 200px; 
   }
-  .user .user-table {
-    position: relative;
-    background: var(--white);
-    padding: 20px;
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
+
+  .details .recentOrders table tr td:last-child {
+    text-align: center;
   }
-  .user-table{
-    padding: 150px;
-    width: 100%;
-    overflow-x: scroll; /* Thanh kéo ngang nếu nội dung vượt quá chiều rộng */
-  }
-  .user table {
+.details table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
-    text-align: left;
-  }
-  .user table thead td {
-    font-weight: 600;
-    background-color: black;
-    color: #fff;
-  }
-  .user .user-table table tr {
-    color: var(--black1);
-    border-bottom: 1px solid rgba(146, 100, 100, 0.1);
-    font-weight: lighter;
-  }
-  .user .user-table table tbody tr:hover {
-    background-color: #9c9595;
-    color: var(--white);
-  }
-  .user .user-table table tr td {
-    white-space: nowrap;
-    padding: 10px;
+    white-space: nowrap; /* Ngăn văn bản xuống dòng */
     text-align: center;
-  }
+    padding: 20px;
+    margin-left: 5px;
+}
+.details .recentOrders {
+  position: relative;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  overflow-x: scroll; /* Hiển thị thanh kéo ngang */
+
+}
  
   .pagination {
     padding: 10px;
@@ -191,7 +176,7 @@
   }
   
   .pagination li {
-    padding: 20px;
+    padding: 30px;
     display: inline-block;
     margin: 20px 10px;
     cursor: pointer;

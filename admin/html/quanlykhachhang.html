@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="../css/quanlykhachhang.css">
     <link rel="stylesheet" href="../css/quanlysanpham.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+
+   
+      
+   
+    
 
 </head>
 
@@ -30,7 +36,17 @@
     
                         </a>
                 </li>
-
+                <div class="">
+                    <li>
+                        <a href="" style="color: black;" id="">
+                            <span class="icon">
+                                <ion-icon name="person-outline"></ion-icon>
+                            </span>
+                            <span class="title">ADMIN</span>
+                        </a>
+                    </li>
+                </div>
+        <li>
                 <li>
                     <a href="trangchuadmin.html"style="color: black;">
                         <span class="icon">
@@ -73,7 +89,7 @@
         <div class="main">
             <div class="topbar">
                 <div class="hello">
-                    <p>CHÀO MỪNG QUẢN TRỊ CỦA MMB !!!</p>
+                    <p>CHÀO MỪNG QUẢN TRỊ CỦA MMB</p>
                 </div>
                 <div class="search">
                     <label>
@@ -84,8 +100,8 @@
             </div>
 
             <!-- ================ LÀM QUẢN LÝ KHÁCH HÀNG Ở ĐÂY ================= -->
-            <div class="user">
-                <div class="banner">
+            <div class="user"  >         
+                      <div class="banner">
                     <button id="adduser">+ Thêm người dùng</button>
                     <div class="boxadduser" id="boxadduser">
                         <h2>Thêm người dùng mới</h2>
@@ -120,35 +136,7 @@
                         </form>
                     </div>
 
-                    <script>
-
-                        const adduserBtn = document.getElementById('adduser');
-                        const boxadduser = document.getElementById('boxadduser');
-                        const addUserForm = document.getElementById('addUserForm');
-
-                        
-                        adduserBtn.addEventListener('click', function () {
-
-                            if (boxadduser.style.display === 'none' || boxadduser.style.display === '') {
-                                boxadduser.style.display = 'block';
-                                document.querySelector('.overlay').classList.add('show-overlay');
-        document.body.classList.add('no-scroll');
-        adduserBtn.style.zIndex = '1000';
-                            } else {
-                                boxadduser.style.display = 'none';
-                                document.querySelector('.overlay').classList.remove('show-overlay');
-        document.body.classList.remove('no-scroll');
-                            }
-                        });
-
-                        addUserForm.addEventListener('submit', function (event) {
-                            event.preventDefault();
-
-
-                            alert('Đã thêm người dùng');
-                            window.location.href = 'qlkhadduser.html';
-                        });
-                    </script>
+                 
 
                     <select id="option">
                         <option>Tất cả</option>
@@ -171,7 +159,8 @@
                 <div class="chartsBx">
                     <h2>THỐNG KÊ LƯỢNG ĐĂNG KÝ NĂM 2023</h2>
                 </div>
-                <div class="user-table">
+                <div class="details">
+                    <div class="recentOrders">
                     <table>
                         <thead>
                             <tr>
@@ -179,7 +168,7 @@
                                 <td>Tên đăng nhập </td>
                                 <td>Họ và tên</td>
                                 <td>Email</td>
-                                <td>Gói</td>
+                                <td>Địa chỉ</td>
                                 <td>Ngày đăng ký</td>
                                 <td>Ghi chú</td>
                             </tr>
@@ -209,7 +198,7 @@
                                    
                                     <a href =""  onclick="myFunction()" id="xoanguoidung" >
 
-                                        <i class="fas fa-trash-alt"></i> Khóa
+                                        <i class="fa-solid fa-lock"></i> Khóa
 
                                     </a>  
                                     
@@ -243,7 +232,7 @@
                                    
                                     <a href =""  onclick="myFunction()" id="xoanguoidung" >
 
-                                        <i class="fas fa-trash-alt"></i> Khóa
+                                        <i class="fa-solid fa-lock"></i> Khóa
 
                                     </a>  
                                     
@@ -277,7 +266,7 @@
                                    
                                     <a href =""  onclick="myFunction()" id="xoanguoidung" >
 
-                                        <i class="fas fa-trash-alt"></i> Khóa
+                                        <i class="fa-solid fa-lock"></i> Khóa
 
                                     </a>  
                                     
@@ -311,7 +300,7 @@
                                    
                                     <a href =""  onclick="myFunction()" id="xoanguoidung" >
 
-                                        <i class="fas fa-trash-alt"></i> Khóa
+                                        <i class="fa-solid fa-lock"></i> Khóa
 
                                     </a>  
                                     
@@ -345,7 +334,7 @@
                                    
                                     <a href =""  onclick="myFunction()" id="xoanguoidung" >
 
-                                        <i class="fas fa-trash-alt"></i> Khóa
+                                        <i class="fa-solid fa-lock"></i> Khóa
 
                                     </a>  
                                     
@@ -366,55 +355,11 @@
 
                         </tbody>
                     </table>
-                    <div class="overlay"></div>
-                                <div class="boxsuauser" id="boxsuauser">
-                                    <button onclick="dongFormChinhSua()">X</button>
-                                    <script>
-                                        function dongFormChinhSua() {
-                                            var boxSuaUser = document.getElementById('boxsuauser');
-                                            boxSuaUser.style.display = 'none';
-                                            document.querySelector('.overlay').classList.remove('show-overlay');
-                                            document.body.classList.remove('no-scroll');
-                                        }
-                                    </script>
-                    <h2 style="margin-bottom: 10px;">Sửa thông tin thaihien99</h2>
-                                    <form id="suaUserForm">                                      
-                                        <div class="form-group">
-                                            <label for="username">Tên đăng nhập:</label>
-                                            <input type="text" id="username" value="thaihien99">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">Họ và tên:</label>
-                                            <input type="text" id="name" value="Trần Thái Hiễn">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Email:</label>
-                                            <input type="text" id="email" value="tranthaihien02@gmail.com">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="goi">Hạng thành viên:</label>
-                                            <select id="goi" name="goi">
-                                                <option>Bạc</option>
-                                                <option>Vàng</option>
-                                                <option>Kim cương</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="password">Mật khẩu:</label>
-                                            <input type="password" id="password" value="password">
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="update">
-                                                <a onclick="warning()"><i class="fa-solid fa-download"></i>Cập nhật</a>
-                                            </div>
+                    
 
-                                        </div>
-
-                                    </form>
-                                </div>
-
-                                <script src="../js/suasanpham.js"></script>
-                </div>
+                                    
+                               
+               
                 <div class="pagination">
                     <li class="hientai">1</li>
                     <li><a href="quanlykhachhang1.html" style="color: black;">2</a></li></a> 
@@ -424,6 +369,7 @@
            
             </div>
         </div>
+        </div>
     </div>
     <!-- ======= Charts JS ====== -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
@@ -431,6 +377,7 @@
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+   
 </body>
 
 </html>

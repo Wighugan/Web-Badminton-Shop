@@ -72,51 +72,27 @@
   }
   .order-table {
     position: relative;
-    background: var(--white);
+    background: white;
     padding: 20px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
     border-radius: 20px;
+    
   }
   .order-table{
     padding: 30px;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    text-align: left;
-  }
-  table thead td {
-    font-weight: 600;
-    background-color: black;
-    color: #fff;
-  }
-  .order-table table tr {
-    color: var(--black1);
-    border-bottom: 1px solid rgba(146, 100, 100, 0.1);
-    font-weight: lighter;
-  }
-  .order-table table tbody tr:hover {
-    background-color: #9c9595;
-    color: var(--white);
-  }
-  .order-table table tr td {
-    padding: 10px;
-    text-align: center;
-  }
+ 
   #xoanguoidung{
     padding: 4px;
-  background-color: rgb(209, 32, 32);
-  color: white;
-  border-radius: 4px;
-  border-color: rgb(209, 32, 32);
+  color: rgb(255, 0, 0);
+ 
   }
   #suanguoidung{
     padding: 4px;
-  background-color: #0eae51;
-  color: white;
-  border-radius: 4px;
-  border-color: #08a248;
+ 
+  color: rgb(10, 171, 58);
+ 
+  
   }
  
   .pagination {
@@ -138,6 +114,18 @@
   }
   
   .pagination li:not(.hientai):hover {
-    background-color: rgb(152, 50, 50);
+    background-color: rgb(196, 195, 195);
     border-radius: 10px;
   }
+
+  .details .recentOrders table tr td:last-child {
+    text-align: center;
+  }
+  .details table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    text-align: center;
+    padding: 20px;
+    margin-left: 5px;
+}

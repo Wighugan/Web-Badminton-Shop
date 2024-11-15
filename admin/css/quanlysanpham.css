@@ -29,7 +29,7 @@
 }
 
 .user-table img {
-  width: auto;
+  width: 5px;
   /* Thay đổi giá trị này */
   height: 100px;
 
@@ -182,37 +182,7 @@ textarea {
   border-radius: 20px;
 }
 
-.user-table {
-  padding: 30px;
-}
-
-.user table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  text-align: left;
-}
-
-.user table thead td {
-  font-weight: 600;
-  background-color: black;
-  color: #fff;
-
-}
-
-.user .user-table table tr {
-  color: var(--black1);
-  border-bottom: 1px solid rgba(146, 100, 100, 0.1);
-  font-weight: lighter;
-}
-
-.user .user-table table tbody tr:hover {
-  background-color: #9c9595;
-  color: var(--white);
-}
-
-.user .user-table table tr td {
-  padding: 10px;
+.details .recentOrders table tr td:last-child {
   text-align: center;
 }
 
@@ -239,18 +209,26 @@ textarea {
   border-radius: 10px;
 }
 
-.xoanguoidung {
-  padding: 4px;
-  background-color: red;
-  color: white;
-  border-radius: 4px;
-  border-color: red;
-}
 
-.suanguoidung {
-  padding:4px;
-  background-color: #007bff;
-  color: white;
+#xoanguoidung{
+  padding: 4px;
+  
+
+  color: rgb(255, 0, 0);
+  border-radius: 4px;
+
+
+  cursor: pointer;
+}
+#suanguoidung{
+  padding: 4px;
+  
+
+color: rgb(11, 190, 59);
+border-radius: 4px;
+
+
+cursor: pointer;
 }
 
 #basic {
