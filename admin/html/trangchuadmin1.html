@@ -16,16 +16,26 @@
         <div class="navigation">
             <ul>
                 <li>
-                    <a href="#">
-                        <span class="logo">
-                            <img src="../img/banner/logooadmin.png">
+                    
+                        <div style="display: flex; align-items: center; position: relative;">
+
+                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
+
+                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+</div>
+                </li>
+                <div class="">
+                <li>
+                    <a href="" style="color: black;" id="">
+                        <span class="icon">
+                            <ion-icon name="person-outline"></ion-icon>
                         </span>
-                        <span class="title">HAT BOOKSTORE</span>
+                        <span class="title">ADMIN</span>
                     </a>
                 </li>
-
+            </div>
                 <li>
-                    <a href="../trangchuadmin.html" id="active">
+                    <a href="trangchuadmin.html" style="color: black;" id="active">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -34,7 +44,7 @@
                 </li>
 
                 <li>
-                    <a href="../quanlydonhang.html">
+                    <a href="quanlydonhang.html"style="color: black;" >
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -43,7 +53,7 @@
                 </li>
 
                 <li>
-                    <a href="../quanlysanpham.html">
+                    <a href="quanlysanpham.html" style="color: black;">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -52,7 +62,7 @@
                 </li>
 
                 <li>
-                    <a href="../quanlykhachhang.html">
+                    <a href="quanlykhachhang.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -66,61 +76,17 @@
         <div class="main">
             <div class="topbar">
                 <div class="hello">
-                    <p>CHÀO MỪNG QUẢN TRỊ CỦA HAT !!!</p>
+                    <p>CHÀO MỪNG ADMIN CỦA MMB !!!</p>
                 </div>
-                <div class="search">
+                <div class="search" >
                     <label>
                         <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href="../adminnotfound.html"><ion-icon name="search-outline"></ion-icon></a>
+                       <a href="adminnotfound.html"><ion-icon name="search-outline"></ion-icon></a>
                     </label>
                 </div>
             </div>
             <!-- ======================= Cards ================== -->
-            <div class="cardBox">
-                <div class="card">
-                    <div>
-                        <div class="numbers">3000</div>
-                        <div class="cardName">Lượt truy cập hôm nay</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">694</div>
-                        <div class="cardName">Đơn hàng tháng 12</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cart-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">284</div>
-                        <div class="cardName">Đánh giá mới</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="chatbubbles-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">10.370.790đ</div>
-                        <div class="cardName">Lợi nhuận tháng 12</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cash-outline"></ion-icon>
-                    </div>
-                </div>
-            </div>
+            
             
             <h2 style="margin-left: 20px;">Thống kê tình hình kinh doanh</h2>
         
@@ -141,7 +107,7 @@
                     <label for="start">đến </label>
                     <input type="date" id="end" name="end" value="2023-11-30" min="2018-01-01" max="2023-12-31">
                 </div>
-                <button class="thongke"><a href="../thongke.html">Thống kê</a></button>
+                <button class="thongke"><a href="thongke.html">Thống kê</a></button>
             </div>
 
             <div id="reportResult">
@@ -150,74 +116,75 @@
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Mã ĐH</th>
+                            <th>Mã Đơn hàng</th>
                             <th>Người đặt</th>
                             <th>SĐT</th>
-                            <th>Tình trạng</th>
-                            <th>Thành tiền</th>
+                            <th>Trạng Thái</th>
+                            <th>Tổng tiền</th>
                             <th>Ngày</th>
+                            <th></th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>thaihien99</td>
-                            <td>0987654321</td>
-                            <td id="basic">Đã giao</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>thuhien</td>
-                            <td>0987654321</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
                             <td id="premium">Chờ xác nhận</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
                             <td><input type="checkbox"></td>
                         </tr>
                         <tr>
                             <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>thanhanh88</td>
-                            <td>0987654321</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
                             <td id="premium">Chờ xác nhận</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
                             <td><input type="checkbox"></td>
                         </tr>
                         <tr>
                             <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>thaihien99</td>
-                            <td>0987654321</td>
-                            <td id="basic">Đã giao</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
+                            <td id="premium">Chờ xác nhận</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
                             <td><input type="checkbox"></td>
                         </tr>
                         <tr>
                             <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>lananh92</td>
-                            <td>0987654321</td>
-                            <td id="basic">Đã giao</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
+                            <td id="premium">Chờ xác nhận</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
                             <td><input type="checkbox"></td>
                         </tr>
                         <tr>
                             <td>1</td>
-                            <td><a href="../chitietdonhang.html"> ĐH 5728319</a></td>
-                            <td>thaihien99</td>
-                            <td>0987654321</td>
-                            <td id="basic">Đã giao</td>
-                            <td>75.999đ</td>
-                            <td>14/10/2023</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
+                            <td id="basic">Thành công</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td><a href="chitietdonhang.html">HD1157292289338</a></td>
+                            <td>tranthanh2k5</td>
+                            <td>09091234567</td>
+                            <td id="basic">Thành công</td>
+                            <td>15.199.000 VND</td>
+                            <td>9/11/2000</td>
                             <td><input type="checkbox"></td>
                         </tr>
 
@@ -225,9 +192,9 @@
 
                 </table>
                 <div class="pagination">
-                    <li ><a href="trangchuadmin.html" style="color: black;">1</a></li>
+                    <li><a href="trangchuadmin.html" style="color: black;" >PREV</a></li>
+                    <li><a href="trangchuadmin.html" style="color: black;">1</a></li></a>
                     <li class="hientai">2</li>
-                    <li><a href="trangchuadmin.html" style="color: black;">BACK</a></li>
                 </div>
             </div>
 
@@ -236,7 +203,7 @@
                 <div class="recentOrders">
                     <div class="cardHeader">
                         <h2>Đơn hàng gần đây</h2>
-                        <a href="../quanlydonhang.html" class="btn">Xem chi tiết</a>
+                        <a href="quanlydonhang.html" class="btn">Xem chi tiết</a>
                     </div>
                     <table>
                         <thead>
@@ -250,48 +217,48 @@
 
                         <tbody>
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 6248937</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 6248937</a></td>
                                 <td>170.070đ</td>
                                 <td>COD</td>
                                 <td><span class="status inProgress">Chờ xác nhận</span></td>
                             </tr>
 
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 7632148</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 7632148</a></td>
                                 <td>80.360đ</td>
                                 <td>BTP</td>
                                 <td><span class="status inProgress">Chờ xác nhận</span></td>
                             </tr>
 
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 9753814</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 9753814</a></td>
                                 <td>50.000đ</td>
                                 <td>COD</td>
                                 <td><span class="status pending">Đã lấy hàng</span></td>
                             </tr>
 
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 8553756</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 8553756</a></td>
                                 <td>96.900đ</td>
                                 <td>COD</td>
                                 <td><span class="status pending">Đã lấy hàng</span></td>
                             </tr>
 
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 4187256</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 4187256</a></td>
                                 <td>120.300đ</td>
                                 <td>COD</td>
                                 <td><span class="status return">Đã trả hàng</span></td>
                             </tr>
 
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 8196437</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 8196437</a></td>
                                 <td>260.040đ</td>
                                 <td>BTP</td>
                                 <td><span class="status delivered">Đã giao</span></td>
                             </tr>
                             <tr>
-                                <td><a href="../chitietdonhang.html">ĐH 5379468</a></td>
+                                <td><a href="chitietdonhang.html">ĐH 5379468</a></td>
                                 <td>120.000đ</td>
                                 <td>BTP</td>
                                 <td><span class="status delivered">Đã giao</span></td>
@@ -301,72 +268,7 @@
                     </table>
                 </div>
                 
-                <!-- ================= New Customers ================ -->
-                <div class="recentCustomers">
-                    <div class="cardHeader">
-                        <h2>Người dùng mới đăng ký</h2>
-                    </div>
-
-                    <table>
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt1.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>aimeeceline00<br> <span>Bạc</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt2.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>thaihien99<br> <span>Bạc</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt3.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>vantuan00<br> <span>Bạc</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt4.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>myhuong7749<br> <span>Bạc</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt5.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>hoasenhong404<br> <span>Vàng</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="60px">
-                                <div class="imgBx"><img src="../img/banner/avt6.png" alt=""></div>
-                            </td>
-                            <td>
-                                <h4>umboumbo11<br> <span>Vàng</span></h4>
-                            </td>
-                        </tr>
-
-                    </table>
-                </div>
-            </div>
-        
-        
+               
 
             <script>
             
