@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../css/indexadmin.css">
     <link rel="stylesheet" href="../css/quanlykhachhang.css">
     <link rel="stylesheet" href="../css/quanlysanpham.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 
 <body>
@@ -19,15 +21,18 @@
             <ul>
                 <li>
                     <a href="#">
-                        <span class="logo">
-                            <img src="../img/banner/logooadmin.png">
-                        </span>
-                        <span class="title">HAT BOOKSTORE</span>
-                    </a>
+                        <div style="display: flex; align-items: center; position: relative;">
+
+                            <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
+    
+                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+    </div>
+    
+                        </a>
                 </li>
 
                 <li>
-                    <a href="trangchuadmin.html">
+                    <a href="trangchuadmin.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -36,7 +41,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html">
+                    <a href="quanlydonhang.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -45,7 +50,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlysanpham.html">
+                    <a href="quanlysanpham.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -54,7 +59,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlykhachhang.html" id="active">
+                    <a href="quanlykhachhang.html" style="color: black;" id="active">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -68,7 +73,7 @@
         <div class="main">
             <div class="topbar">
                 <div class="hello">
-                    <p>CHÀO MỪNG QUẢN TRỊ CỦA HAT !!!</p>
+                    <p>CHÀO MỪNG QUẢN TRỊ CỦA MMB</p>
                 </div>
                 <div class="search">
                     <label>
@@ -187,11 +192,27 @@
                                 <td>thaihien99</td>
                                 <td>Trần Thái Hiễn</td>
                                 <td>tranthaihien02@gmail.com</td>
-                                <td id="premium">Kim cương</td>
+                                <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>14/10/2023</td>
                                 <td>
-                                    <button id="suanguoidung" onclick="hienBoxSuaUser()">Sửa</button>
-                                    <button onclick="myFunction()" id="xoanguoidung">Khóa</button>
+
+
+
+                                    
+                                    <a href ="" id="suanguoidung" >
+
+                                        <i class="fas fa-edit"></i> Sửa
+
+                                    </a>  
+                                    
+                                   
+                                   
+                                    <a href =""  onclick="myFunction()" id="xoanguoidung" >
+
+                                        <i class="fas fa-trash-alt"></i> Khóa
+
+                                    </a>  
+                                    
                                     <script>
                                         function myFunction() {
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");
@@ -209,11 +230,23 @@
                                 <td>vantuan00</td>
                                 <td>Nguyễn Văn Tuấn</td>
                                 <td>vantuan123@gmail.com</td>
-                                <td id="standard">Vàng</td>
+                                <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>30/09/2023</td>
                                 <td>
-                                    <button id="suanguoidung" onclick="hienBoxSuaUser()">Sửa</button>
-                                    <button onclick="myFunction()" id="xoanguoidung">Khóa</button>
+                                    <a href ="" id="suanguoidung" >
+
+                                        <i class="fas fa-edit"></i> Sửa
+
+                                    </a>  
+                                    
+                                   
+                                   
+                                    <a href =""  onclick="myFunction()" id="xoanguoidung" >
+
+                                        <i class="fas fa-trash-alt"></i> Khóa
+
+                                    </a>  
+                                    
                                     <script>
                                         function myFunction() {
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");
@@ -231,11 +264,23 @@
                                 <td>myhuong7749</td>
                                 <td>Lê Thị Mỹ Hương</td>
                                 <td>heoconlonton@gmail.com</td>
-                                <td id="premium">Kim cương</td>
+                                <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>07/09/2023</td>
                                 <td>
-                                    <button id="suanguoidung" onclick="hienBoxSuaUser()">Sửa</button>
-                                    <button onclick="myFunction()" id="xoanguoidung">Khóa</button>
+                                    <a href ="" id="suanguoidung" >
+
+                                        <i class="fas fa-edit"></i> Sửa
+
+                                    </a>  
+                                    
+                                   
+                                   
+                                    <a href =""  onclick="myFunction()" id="xoanguoidung" >
+
+                                        <i class="fas fa-trash-alt"></i> Khóa
+
+                                    </a>  
+                                    
                                     <script>
                                         function myFunction() {
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");
@@ -253,11 +298,23 @@
                                 <td>hoasenhong404</td>
                                 <td>Hồ Kim Sen</td>
                                 <td>trongdamgidepbangsen@gmail.com</td>
-                                <td id="basic">Bạc</td>
+                                <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>09/08/2023</td>
                                 <td>
-                                    <button id="suanguoidung" onclick="hienBoxSuaUser()">Sửa</button>
-                                    <button onclick="myFunction()" id="xoanguoidung">Khóa</button>
+                                    <a href ="" id="suanguoidung" >
+
+                                        <i class="fas fa-edit"></i> Sửa
+
+                                    </a>  
+                                    
+                                   
+                                   
+                                    <a href =""  onclick="myFunction()" id="xoanguoidung" >
+
+                                        <i class="fas fa-trash-alt"></i> Khóa
+
+                                    </a>  
+                                    
                                     <script>
                                         function myFunction() {
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");
@@ -275,11 +332,23 @@
                                 <td>umboumbo11</td>
                                 <td>Lê Thị Bò</td>
                                 <td>lelananh02@gmail.com</td>
-                                <td id="basic">Bạc</td>
+                                <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>08/12/2023</td>
                                 <td>
-                                    <button id="suanguoidung" onclick="hienBoxSuaUser()">Sửa</button>
-                                    <button onclick="myFunction()" id="xoanguoidung">Khóa</button>
+                                    <a href ="" id="suanguoidung" >
+
+                                        <i class="fas fa-edit"></i> Sửa
+
+                                    </a>  
+                                    
+                                   
+                                   
+                                    <a href =""  onclick="myFunction()" id="xoanguoidung" >
+
+                                        <i class="fas fa-trash-alt"></i> Khóa
+
+                                    </a>  
+                                    
                                     <script>
                                         function myFunction() {
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");

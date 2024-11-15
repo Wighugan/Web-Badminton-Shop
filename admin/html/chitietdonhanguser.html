@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Lịch sử mua hàng</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/lichsumuahang.css">
+</head>
+
+<body>
+   <!--------------------------Bắt đầu Header--------------------------------------------------->
+   <div class="container">
+    <nav>
+      <div class="logo">
+        <a href="../html/indexlogin.html"><img src="../img/banner/logoo.png" alt="Logo" height="120px" width="120px"></a>
+      </div>
+      <ul>
+        <li><a href="#">TÁC GIẢ</a></li>
+        <li class="theloai"><a href="#">THỂ LOẠI</a>
+          <div class="menuu">
+            <ul>
+              <li><a href="../html/kynangsong1login.html">Kỹ năng sống - Phát triển cá nhân</a></li>
+              <li><a href="../html/mangalogin.html">Manga – Comic</a></li>
+              <li><a href="../html/Nghệ thuật - Văn hóalogin.html">Nghệ thuật – Văn hóa</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="#">SÁCH MỚI</a></li>
+        <li><a href="#">KHUYẾN MÃI</a></li>
+      </ul>
+      <div class="box">
+        <input type="checkbox" id="check">
+        <div class="search-box">
+          <input type="text" placeholder="Tìm kiếm">
+          <label for="check" class="icon">
+            <a href="../html/notfound.html"><i class="fas fa-search"></i></a>
+          </label>
+        </div>
+      </div>
+      <div class="buttons">
+        <div class="login"><img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAkpJREFUSEvl1knIjVEcx/HPS+aNcWVnYSND5lKmiNgQC2RFyZBMCymlWFjItEBSNkRKSUJIFBtTkSHWZCEkRZGp/9u59bzPe+99njvUu3B2955zft/zH87vPB16aHT0EFcz4N4Yhynp0A/xHL8bCaJR8DIcxcgc5C0243JZeCPgw9haIHwIO8rAy4Ln42YSfIRdeJJ+T8L+TOrn4k4RvCz4FualWk7Gz5xwXzzGWFzHonaAe+Eb+mMTjtcQ3Yhj+Ioh+FMPXibi6OBnSWQxrtUQjCivprkxeNUqODr4XRJZhfM1BFfiXJqLPe9bBcf+TxiKel17ENvxESPaUePQ2IfdySSW4kpOeAkuIsxlD/a2CxyN9RKjkuD91MV9UifPTP+/Sa6W7/pu5yjTXJVN0WRnE6haQGGbUec4YOFoBBxicbU2YAGm41eKPO7uyaIrlD1No+DCSMouKAsehhmYhnCufjnAjxT5A0T9PxcdoAg8GAewltJP6N+U9p3JxaqeoR54OU5geGbn9+Ri1bx6PAZm1n7AelyqRq4Fjkc+0laZP40jeIGIqJZWPBJbsCYtiLVTUxm67KkGjpcmrsZoRIQLca+oZrn5WcnTIwOvEdnokqVq4LDFbUloHU41CK0sjzRHqWJ0s9pq4IhyAG6kaJvkdm67jfgwCM1B9e5xXJsw+RgrcKEVKlbjTNKIN/pLRS8f8cTMJ03UNqJuZWTf6LDc6J3OkQfPznwvzcHdVqioqZcHh2FMSLCn2dQ0eYCaekXO1SSveNv/B/4HUH5pHwh1c9gAAAAASUVORK5CYII=" />
+            <span class="tooltip">
+              <p style="padding-top: 5px; text-align: center; font-weight: bold;">Thanh</p>
+              <a href="../html/lichsumuahang.html"><button>Lịch sử mua hàng</button></a>
+              <a href="../html/index.html"><button>Đăng xuất</button></a>
+            </span> </div></div>
+           
+            <a href="../html/giohanglogin.html" class="cart">
+              <img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAXRJREFUSEvt1r9LVlEcx/GX4Kbg6iRSkG4m4pZRQ2OCm4Tg/9AgKE6Co+i/ENLgEgRBS5CUm4I4BWKSe+DSmsSR88jj7V7v90TwODxnO+d8zud9vz+4fAf0aA30iOtfwIOYxkz+6CMc43dJECXgpF3FCkYqkEtsYCcKLwHvYqnFeBuvI/Ao+BXeZsOLbP4l759hC2N5/wKf2uBR8Hc8QErpI/ysGI/iDEM4wNz/AD/MpslrHZsNpul8DVe5B37dBY9E/ARfs8lLfGgwnMf7fDeL1O2NKwJONfycHZ5jv8Etqrt+XgUP4yTXs61MJffnmMJN+qvg1BSdbi0xjmifdpXsr4i70/UGPzCO5ezcOasD1em6z26VqRpxXZ2itSt6e6/Bkfo1aRqzFYm4Dy7JQD/VN7/bfnNF/1LRBrv/zTWJb9FwCnUTOO28qRsE3mGh0LRNvofFblEdOJ2lMeZxzaDQBqjep/nrEB+rF5HRpxQW0vcM/AcLDWsfXKwkoAAAAABJRU5ErkJggg==" />
+          <span>&nbsp;1&nbsp;</span>
+        </a>
+    </nav>
+    <!-----------------------------------Kết thúc Header--------------------------------------------------->
+            <!-- ======================= Cards ================== -->
+            <div class="chitietdonhang">
+                <div class="madh">
+                    <p id="banner">Mã đơn hàng: ĐH 5728319</p>
+                </div>
+                <div class="capnhatdonhang">
+                    <div class="progress-bar">
+                        <div class="step">
+                            <div class="step-icon">1</div>
+                            <div class="step-text">Đơn hàng được đặt</div>
+
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">2</div>
+                            <div class="step-text">Đã xác nhận</div>
+
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">3</div>
+                            <div class="step-text">Đã giao cho ĐVVC</div>
+
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">4</div>
+                            <div class="step-text">Đã nhận được hàng</div>
+
+                        </div>
+                    </div>
+                </div>
+                <p id="address">ĐỊA CHỈ GIAO HÀNG</p>
+                <div class="diachigiaohang">
+
+                    <div class="thongtinnguoimua">
+                        <p style="font-weight: bold; font-size: large;"> Lan Anh</p>
+                        <p> (+84) 795793509</p>
+                        <p> B1/9C, hẻm đối diện BIDV, Xã Bình Hưng, Huyện Bình Chánh, TP. Hồ Chí Minh</p>
+                    </div>
+                    <!-- Trong phần HTML -->
+                    <div class="trangthaigiaohang">
+                        <div class="delivery-status">
+                            <div class="status">
+                                <p id="time">08:13 04-12-2023</p>
+                                <p>Đơn hàng đã được giao thành công</p>
+                                <a href="#" style="color: blue;">Xem ảnh</a>
+                            </div>
+                            <div class="status">
+                                <p id="time">05:37 04-12-2023</p>
+                                <p>Đơn hàng đang trên đường giao đến bạn</p>
+                            </div>
+                            <div class="status">
+                                <p id="time">03:44 04-12-2023</p>
+                                <p>Người bán đang chuẩn bị hàng</p>
+                            </div>
+                            <a href="#" style="color: blue;">Xem thêm</a>
+                        </div>
+
+                    </div>
+
+                </div>
+                <p id="address">THÔNG TIN ĐƠN HÀNG</p>
+                
+                <div class="chitietsanpham">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><img src="../img/product/Nghệ thuật – Văn hóa/hoa sen 1.jpg"></td>
+                                <td id="name">Từng bước nở hoa sen<br> x1</td>
+                                <td id="price">150.450đ <br> <s style="color: grey; font-size: 14px;">275.450đ</s></td>
+                            </tr>
+                            <tr>
+                                <td><img src="../img/product/Manga – Comic/chuyện lạ 1.jpg"></td>
+                                <td id="name">Chuyện kỳ lạ ở tiệm sách cũ Tanabe<br> x2</td>
+                                <td id="price">200.700đ <br> <s style="color: grey; font-size: 14px;">304.450đ</s></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="thanhtoan">
+                        <tbody>
+                            <tr>
+                                <td>Tổng tiền hàng:</td>
+                                <td>579.900đ</td>
+                            </tr>
+                            <tr>
+                                <td>Phí vận chuyển:</td>
+                                <td>37.800đ</td>
+                            </tr>
+                            <tr>
+                                <td>Giảm giá phí vận chuyển:</td>
+                                <td>- 37.800đ</td>
+                            </tr>
+                            <tr>
+                                <td>Thành tiền:</td>
+                                <td>351.150đ</td>
+                            </tr>
+                            <tr>
+                                <td>Phương thức thanh toán:</td>
+                                <td>COD</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chon">
+                    <button onclick="done()">Đánh giá</button>
+                    
+                    </div>
+                    <script>
+                        function done() {
+                          alert("Cảm ơn đã đánh giá");
+                        }
+                      </script>
+        </div>
+    
+     <!-----------------------------------Bắt đầu Footer------------------------------------------->
+    <section class="contact" id="contact">
+      <h2>Liên hệ với chúng tôi</h2>
+      <p>Hãy liên hệ với chúng tôi nếu có bất kỳ thắc mắc hoặc phản hồi nào.</p>
+      <p>
+        -----------------------------------------------------------------------------------------------------------------
+      </p>
+      <div class="contact-details">
+        <div class="left-column">
+          <p><i class="fas fa-map-marker-alt"></i> 273 An Dương Vương, Quận 5</p>
+          <p><i class="fas fa-envelope"></i> HAT2004@gmail.com</p>
+          <p><i class="fas fa-phone"></i> (84) 796553739</p>
+        </div>
+        <div class="right-column">
+          <p><i class="fas fa-clock"></i> Thứ hai - Thứ bảy: 9:00 Sáng - 5:00 Chiều</p>
+          <p><i class="fas fa-clock"></i> Chủ nhật: Đóng cửa</p>
+          <p><i class="fas fa-globe"></i> www.hatbook.com</a></p>
+        </div>
+        <div class="getdetail">
+          <h3>Nhận thông báo từ chúng tôi:</h3>
+          <form>
+            <label for="emailInput">Email:</label>
+            <input type="email" id="emailInput" name="email" placeholder="Nhập địa chỉ email của bạn" required>
+            <input type="submit" value="Gửi">
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+  </div>
+  <footer>
+    <div>
+      <span>Copyright © 2023 All Rights Reserved</span>
+      <span class="link">
+        <a href="../html/index.html">Trang chủ</a>
+      </span>
+    </div>
+  </footer>
+
+</body>
+
+</html>

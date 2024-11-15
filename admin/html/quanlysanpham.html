@@ -18,15 +18,18 @@
             <ul>
                 <li>
                     <a href="#">
-                        <span class="logo">
-                            <img src="../img/banner/logooadmin.png">
-                        </span>
-                        <span class="title">MMB SHOP</span>
-                    </a>
+                        <div style="display: flex; align-items: center; position: relative;">
+
+                            <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
+    
+                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+    </div>
+    
+                        </a>
                 </li>
 
                 <li>
-                    <a href="trangchuadmin.html">
+                    <a href="trangchuadmin.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -35,7 +38,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html">
+                    <a href="quanlydonhang.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -44,7 +47,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlysanpham.html" id="active">
+                    <a href="quanlysanpham.html"style="color: black;" id="active">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -53,7 +56,7 @@
                 </li>
 
                 <li>
-                    <a href="quanlykhachhang.html">
+                    <a href="quanlykhachhang.html"style="color: black;">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -82,12 +85,12 @@
                     <div class="finder">
                         <select id="searchType" name="searchType" onchange="changeContent()">
                             <option value="category">Lọc theo danh mục</option>
-                            <option value="publisher">Lọc theo nhà xuất bản</option>
+                            <option value="publisher">Lọc theo nhà sản xuất</option>
                         </select>
                         <select id="contentBox">
-                            <option value="KNS-PTCN">Kỹ năng sống - Phát triển cá nhân</option>
-                            <option value="MG-CM">Manga-Comic</option>
-                            <option value="NT-VH">Nghệ thuật-Văn hóa</option>
+                            <option value="KNS-PTCN">Vợt</option>
+                            <option value="MG-CM">Áo</option>
+                            <option value="NT-VH">Phụ kiện</option>
                         </select>
                     </div>
                     <script>
@@ -118,7 +121,7 @@
                 </div>
                 <!-- ================ Add Charts JS ================= -->
                 <div class="chartsBx">
-                    <h2>TOP 10 SÁCH CÓ SỐ LƯỢNG BÁN RA CAO NHẤT TRONG NĂM 2023</h2>
+                    <h2>TOP 10 VỢT CÓ SỐ LƯỢNG BÁN RA CAO NHẤT TRONG NĂM 2024</h2>
                    
                 </div>
                 <div class="user-table">
@@ -142,7 +145,7 @@
                                 <td>1</td>
                                 <td>KNS49</td>
                                 <td><img src="../img/product-8.jpg"></td>
-                                <td>Đắc nhân tâm</td>
+                                <td>Vợt </td>
                                 <td>KNS-PTCN</td>
                                 <td>200.000đ</td>
                                 <td>1000</td>
@@ -166,7 +169,7 @@
                                 <td>1</td>
                                 <td>KNS49</td>
                                 <td><img src="../img/product-8.jpg"></td>
-                                <td>Đắc nhân tâm</td>
+                                <td>Vợt</td>
                                 <td>KNS-PTCN</td>
                                 <td>200.000đ</td>
                                 <td>1000</td>
@@ -190,7 +193,7 @@
                                 <td>1</td>
                                 <td>KNS49</td>
                                 <td><img src="../img/product-8.jpg"></td>
-                                <td>Đắc nhân tâm</td>
+                                <td>Vợt</td>
                                 <td>KNS-PTCN</td>
                                 <td>200.000đ</td>
                                 <td>1000</td>
@@ -212,7 +215,7 @@
                                 <td>1</td>
                                 <td>KNS49</td>
                                 <td><img src="../img/product-8.jpg"></td>
-                                <td>Đắc nhân tâm</td>
+                                <td>Vợt</td>
                                 <td>KNS-PTCN</td>
                                 <td>200.000đ</td>
                                 <td>1000</td>
@@ -234,7 +237,7 @@
                                 <td>1</td>
                                 <td>KNS49</td>
                                 <td><img src="../img/product-8.jpg"></td>
-                                <td>Đắc nhân tâm</td>
+                                <td>Vợt</td>
                                 <td>KNS-PTCN</td>
                                 <td>200.000đ</td>
                                 <td>1000</td>
@@ -270,7 +273,7 @@
                                         <div class="form-group">
                                             <label for="image1">Ảnh 1:</label>
                                             <div class="change_img">
-                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Đắc Nhân Tâm 1.jpg" id="product_pic1">
+                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Vợt 1.jpg" id="product_pic1">
                                                 <div class="change_action">
                                                     <label for="input_file1" class="change_button">Sửa</label>
                                                     <input type="file" id="input_file1" class="input_file" accept="image/*">
@@ -282,7 +285,7 @@
                                         <div class="form-group">
                                             <label for="image2">Ảnh 2:</label>
                                             <div class="change_img">
-                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Đắc Nhân Tâm 2.jpg" id="product_pic2">
+                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Vợt 2.jpg" id="product_pic2">
                                                 <div class="change_action">
                                                     <label for="input_file2" class="change_button">Sửa</label>
                                                     <input type="file" id="input_file2" class="input_file" accept="image/*">
@@ -294,7 +297,7 @@
                                         <div class="form-group">
                                             <label for="image3">Ảnh 3:</label>
                                             <div class="change_img">
-                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Đắc Nhân Tâm 3.jpg" id="product_pic3">
+                                                <img src="../img/product/Kỹ năng sống - Phát triển cá nhân/Vợt 3.jpg" id="product_pic3">
                                                 <div class="change_action">
                                                     <label for="input_file3" class="change_button">Sửa</label>
                                                     <input type="file" id="input_file3" class="input_file" accept="image/*">
@@ -311,7 +314,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="name">Tên sản phẩm:</label>
-                                            <input type="text" id="name" value="Đắc Nhân Tâm">
+                                            <input type="text" id="name" value="Vợt">
                                         </div>
 
                                         <div class="form-group">
@@ -329,7 +332,7 @@
                                         <div class="form-group">
                                             <label for="description">Mô tả:</label>
                                             <textarea
-                                                id="description">Đắc nhân tâm của Dale Carnegie là quyển sách của mọi thời đại và một hiện tượng đáng kinh ngạc trong ngành xuất bản Hoa Kỳ. Chiếm vị trí số một trong danh mục sách bán chạy nhất và trở thành một sự kiện có một không hai trong lịch sử ngành xuất bản thế giới và được đánh giá là một quyển sách có tầm ảnh hưởng nhất mọi thời đại.</textarea>
+                                                id="description">Vợt của Dale Carnegie là quyển sách của mọi thời đại và một hiện tượng đáng kinh ngạc trong ngành xuất bản Hoa Kỳ. Chiếm vị trí số một trong danh mục sách bán chạy nhất và trở thành một sự kiện có một không hai trong lịch sử ngành xuất bản thế giới và được đánh giá là một quyển sách có tầm ảnh hưởng nhất mọi thời đại.</textarea>
                                         </div>
                                         <div class="form-group">
                                             <label for="quatyti">Số lượng tồn kho:</label>
@@ -357,8 +360,8 @@
                 </div>
                 <div class="pagination">
                     <li class="hientai">1</li>
-                    <li><a href="quanlysanpham1.html" style="color: black;">2</a></li></a>
-                    <li><a href="quanlysanpham1.html" style="color: black;">NEXT</a></li>
+                    <li><a href="quanlysanpham.html" style="color: black;">2</a></li></a>
+                    <li><a href="quanlysanpham.html" style="color: black;">NEXT</a></li>
                 </div>
             </div>
         </div>

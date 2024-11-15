@@ -153,7 +153,9 @@
     border-radius: 20px;
   }
   .user-table{
-    padding: 30px;
+    padding: 150px;
+    width: 100%;
+    overflow-x: scroll; /* Thanh kéo ngang nếu nội dung vượt quá chiều rộng */
   }
   .user table {
     width: 100%;
@@ -176,6 +178,7 @@
     color: var(--white);
   }
   .user .user-table table tr td {
+    white-space: nowrap;
     padding: 10px;
     text-align: center;
   }
@@ -204,20 +207,29 @@
   }
   #xoanguoidung{
     padding: 4px;
-  background-color: red;
-  color: white;
-  border-radius: 4px;
-  border-color: red;
-  cursor: pointer;
+    
+
+    color: rgb(255, 0, 0);
+    border-radius: 4px;
+  
+  
+    cursor: pointer;
   }
   #suanguoidung{
     padding: 4px;
-  background-color: green;
-  color: white;
+    
+
+  color: rgb(11, 190, 59);
   border-radius: 4px;
-  border-color: green;
+
+
   cursor: pointer;
   }
+  
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
   #basic{
     color: green;
   }

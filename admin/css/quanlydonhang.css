@@ -106,17 +106,17 @@
   }
   #xoanguoidung{
     padding: 4px;
-  background-color: red;
+  background-color: rgb(209, 32, 32);
   color: white;
   border-radius: 4px;
-  border-color: red;
+  border-color: rgb(209, 32, 32);
   }
   #suanguoidung{
     padding: 4px;
-  background-color: green;
+  background-color: #0eae51;
   color: white;
   border-radius: 4px;
-  border-color: green;
+  border-color: #08a248;
   }
  
   .pagination {
