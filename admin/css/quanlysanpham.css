@@ -4,26 +4,28 @@
 }
 
 .banner {
-  display: flex;
-  background-color: black;
-  gap: 60px;
-  padding: 10px;
   margin: 20px;
+  display: flex;
+  background-color: white;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 20px;
+
 }
 
 .banner #adduser {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #fffbfb;
-  color: rgb(0, 0, 0);
+  background-color: white;
+  color: black;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .banner #adduser:hover {
-  background-color: white;
-  color: rgb(218, 75, 75);
+  background-color: rgb(194, 194, 194);
+  color: white;
   transform: translateY(-3px);
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -135,17 +137,48 @@ textarea {
 }
 .finder{
   text-align: left;
+  justify-content: space-between;
+
+
 }
 .finder select {
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 .finder select option {
   background-color: #fff;
   color: #333;
+}
+#option{
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 16px;
+  border-radius: 10px;
+}
+option:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+
+option {
+  background-color: #fff;
+  color: #333;
+}
+
+option:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+option:checked {
+  background-color: #3498db;
+  color: #fff;
 }
 
 #timnguoidung {
@@ -194,9 +227,9 @@ textarea {
 }
 
 .pagination li {
-  padding: 20px;
+  padding: 10px;
   display: inline-block;
-  margin: 20px 10px;
+  margin: 5px 3px;
   cursor: pointer;
 }
 
@@ -205,10 +238,9 @@ textarea {
 }
 
 .pagination li:not(.hientai):hover {
-  background-color: rgb(194, 194, 194);
+  background-color: rgb(196, 195, 195);
   border-radius: 10px;
 }
-
 
 #xoanguoidung{
   padding: 4px;
@@ -339,4 +371,13 @@ input[type="file"]{
 }
 .no-scroll {
   overflow: hidden;
+}
+#timnguoidung1 {
+  padding: 8px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px;
+  font-size: 16px; 
+  color: #333; 
+  margin-right: 25px;
+  
 }

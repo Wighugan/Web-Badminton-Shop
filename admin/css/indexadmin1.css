@@ -3,25 +3,54 @@
 
 /* =============== Globals ============== */
 * {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 :root {
-  --blue: #000000;
-  --white: #fff;
+  --blue: #fff;
+
+
+  --white: #99999949;
   --gray: #f5f5f5;
   --black1: #222;
   --black2: #999;
+
+
 }
 
 body {
   min-height: 100vh;
   overflow-x: hidden;
 }
+.banner {
+  margin: 20px;
+  display: flex;
+  background-color: white;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 20px;
 
+}
+
+.banner #adduser {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 25px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.banner #adduser:hover {
+  background-color: rgb(194, 194, 194);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
 .container {
   position: relative;
   width: 100%;
@@ -37,6 +66,7 @@ body {
   transition: 0.5s;
   overflow: hidden;
 }
+
 a{
   text-decoration: none;
 }
@@ -45,10 +75,20 @@ a{
   top: 20px;
   left: 20px;
   width: 100%;
+  list-style-type: none; /* Add this line to remove the black dots */
+
 }
 
-.navigation #active{
-    
+.navigation ul li:hover {
+  width: 350px; /* Mở rộng khi di chuột vào */
+  background: #99999949; /* Thay đổi màu nền khi di chuột */
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+
+}
+.navigation #active{ 
+  background-color: #99999949;
+  color: #000000;
   font-size: 18px;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
@@ -57,6 +97,21 @@ a{
   margin-bottom: 40px;
 }
 
+.custom-font {
+  font-family: sans-serif;
+  font-size: 50px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #000;
+}
+
+.custom-font1 {
+  font-family: sans-serif;
+  font-size: 30px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #000;
+}
 .navigation ul li a {
   position: relative;
   display: block;
@@ -72,6 +127,8 @@ a{
 .navigation ul li a .icon ion-icon {
   font-size: 1.75rem;
   margin: 15px;
+  font-weight: bold;
+  color: #000;
 }
 
 .navigation ul li a .title {
@@ -79,7 +136,18 @@ a{
   display: block;
   padding: 0 10px;
   line-height: 60px;
+ 
+  font-weight: bold;
+  color: #000;
+
+  
+
 }
+
+
+
+
+
 /* ===================== Main ===================== */
 .main {
   position: absolute;
@@ -136,6 +204,7 @@ a{
   outline: none;
   border: 1px solid var(--black2);
 }
+
 
 .search label ion-icon {
   position: absolute;
@@ -207,16 +276,26 @@ a{
 /* ================== Order Details List ============== */
 .details {
   position: relative;
-  width: 100%;
+  width: 150%;
   padding: 20px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-gap: 30px;
+  text-align: center;
   /* margin-top: 10px; */
+}
+
+.details td {
+  text-align: center;
+}
+.details img {
+  width: 120px;
+  /* Thay đổi giá trị này */
+  height:120px;
 }
 .details .recentOrders {
   position: relative;
-  background: var(--white);
+  background: white;
   padding: 20px;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
@@ -230,22 +309,44 @@ a{
 }
 .cardHeader h2 {
   font-weight: bolder;
-  color: var(--blue);
+  color: black;
 }
 .cardHeader .btn {
   position: relative;
   padding: 5px 10px;
-  background: var(--blue);
+  background: rgb(255, 255, 255);
   text-decoration: none;
-  color: var(--white);
+  color: black;
   border-radius: 6px;
+  font-weight: bolder;
+
 }
+.cardHeader .btn:hover {
+  position: relative;
+  padding: 5px 10px;
+  background: rgb(196, 195, 195);
+  text-decoration: none;
+  color: black;
+  border-radius: 6px;
+  font-weight: bolder;
+
+}
+
+
 
 .details table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
   text-align: left;
+  padding: 20px;
+  margin-left:20px;
+}
+
+
+
+.details .recentOrders table tr td:last-child {
+  text-align: center;
 }
 .details table thead td {
   font-weight: 600;
@@ -258,14 +359,13 @@ a{
   border-bottom: none;
 }
 .details .recentOrders table tbody tr:hover {
-  background: var(--blue);
-  color: var(--white);
+  color: gray;
 }
 .details .recentOrders table tr td {
   padding: 10px;
 }
 .details .recentOrders table tr td:last-child {
-  text-align: end;
+  text-align: center;
 }
 .details .recentOrders table tr td:nth-child(2) {
   text-align: center;
@@ -275,7 +375,7 @@ a{
 }
 .status.delivered {
   padding: 2px 4px;
-  background: #8de02c;
+  background: #27ae60;
   color: var(--white);
   border-radius: 4px;
   font-size: 14px;
@@ -357,28 +457,10 @@ a{
   width: 300px;
 }
 
-/* CSS cho bảng */
-#reportResult table {
-  width: 95%;
-  margin-left: 20px;
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  
-}
 
-#reportResult th, #reportResult td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-  text-align: center;
-}
-
-#reportResult thead:not(:nth-child(2)) {
-  background-color: #000000;
-  color: white;
-}
 
 .pagination {
+  padding: 10px;
   text-align: center;
   list-style: none;
   font-weight: lighter;
@@ -396,21 +478,21 @@ a{
 }
 
 .pagination li:not(.hientai):hover {
-  background-color: rgb(143, 142, 142);
+  background-color: rgb(196, 195, 195);
   border-radius: 10px;
 }
 
 #basic {
-  color: green;
+  color: #21874b;
 }
 
 #premium {
-  color: red;
+  color: rgb(209, 32, 32);
 }
 
 .filter{
 width: 90%;
-  align-items: center;
+  align-items: right;
   margin: 20px;
   font-size: 16px;
 }
@@ -445,16 +527,106 @@ display: none;
 .filter .date{
   margin: 20px 0;
 }
-.thongke{
+#option{
   padding: 10px;
-  background-color: #000000;
-  border: 2px solid black;
-  border-radius: 3px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 16px;
+  border-radius: 10px;
 }
-.thongke a{
+option:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+
+option {
+  background-color: #fff;
+  color: #333;
+}
+
+option:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+option:checked {
+  background-color: #3498db;
   color: #fff;
 }
-.thongke:hover{
-  background-color: #C92127;
-  border: 2px solid #C92127;
+#timnguoidung1 {
+  padding: 8px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px;
+  font-size: 16px; 
+  color: #333; 
+  margin-right: 25px;
+  
+}
+#timnguoidung1:hover {
+  background-color: #e0e0e0; /* Màu nền khi hover (tùy chọn) */
+}
+#timnguoidung {
+  padding: 10px;
+  margin-left: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  margin-top: 9px;
+}
+
+
+#timnguoidung:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+
+#timnguoidung::placeholder {
+  color: #aaa;
+}
+
+
+#timnguoidung[type="text"] {
+  width: 220px;
+}
+
+.date {
+  display: flex; /* Sắp xếp theo chiều ngang */
+  align-items: center; /* Căn giữa theo trục dọc */
+  gap: 8px; /* Khoảng cách giữa các phần tử */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+#timnguoidung2 {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  margin: 0; /* Xóa margin để căn chính xác */
+  display: flex; /* Đảm bảo icon căn giữa */
+  align-items: center;
+  text-decoration: none; /* Loại bỏ gạch chân của link */
+  background-color: #f9f9f9; /* Màu nền (tùy chọn) */
+  width: auto;
+}
+
+#timnguoidung2:hover {
+  background-color: #e0e0e0; /* Màu nền khi hover (tùy chọn) */
+}
+input[type="date"] {
+  font-size: 16px; /* Tăng kích thước chữ */
+  padding: 8px; /* Điều chỉnh khoảng cách bên trong */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #333;
+  width: auto; /* Đảm bảo kích thước phù hợp */
 }

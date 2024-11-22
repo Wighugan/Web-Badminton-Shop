@@ -35,16 +35,18 @@ input[type="submit"] {
     padding: 10px 20px;
     margin-top: 10px;
     margin-left: 220px;
-    border: 2px solid black;
+    border: 2px solid ;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    color:white;
+    background-color: #000000;
 }
 .return:hover,
 input[type="submit"]:hover {
-    background-color:#000000; /* Màu hover */
-    border: #000000;
-    color: rgb(255, 255, 255);
+    background-color:rgb(196, 195, 195); /* Màu hover */
+    border: white;
+    color: white;
 }
 .form-group input[type="file"] {
     padding: 6px;
@@ -53,10 +55,10 @@ input[type="submit"]:hover {
     margin-right: auto;
 }
 .return a{
-    color: rgb(0, 0, 0);
+    color: white;
 }
 .return a:hover{
-    color: rgb(255, 255, 255);
+    color: white;
 }
 
 

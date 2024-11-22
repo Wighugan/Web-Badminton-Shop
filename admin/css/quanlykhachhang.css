@@ -5,22 +5,24 @@
 .banner{
   margin: 20px;
     display: flex;
-    background-color: black;
+    background-color: white;
     justify-content: space-between;
     padding: 10px;
+    border-radius: 20px;
+
 }
 .banner #adduser{
     padding: 10px 20px;
   font-size: 16px;
-  background-color: #fffbfb;
-  color: rgb(0, 0, 0);
+  background-color: white;
+  color: black;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 .banner #adduser:hover{
-    background-color: white;
-    color: rgb(218, 75, 75);
+    background-color: rgb(194, 194, 194);
+    color: black;
     transform: translateY(-3px);
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -80,8 +82,8 @@
 
 .boxadduser input[type="submit"]:hover
  {
-  background-color: #C92127;
-  border: #C92127;
+  background-color: rgb(194, 194, 194);
+  border: rgb(194, 194, 194);
   color: #ffffff;
 }
 #goi{
@@ -127,8 +129,20 @@
     border-radius: 5px;
     font-size: 16px; 
     color: #333; 
+    
   }
   
+  #timnguoidung1 {
+    padding: 8px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+    font-size: 16px; 
+    color: #333; 
+    margin-right: 25px;
+    
+  }
+
+
   
   #timnguoidung:focus {
     outline: none; 
@@ -167,29 +181,29 @@
   overflow-x: scroll; /* Hiển thị thanh kéo ngang */
 
 }
- 
-  .pagination {
-    padding: 10px;
-    text-align: center;
-    list-style: none;
-    font-weight: lighter;
-  }
-  
-  .pagination li {
-    padding: 30px;
-    display: inline-block;
-    margin: 20px 10px;
-    cursor: pointer;
-  }
-  
-  .pagination .hientai {
-    border-bottom: 3px solid rgb(0, 0, 0);
-  }
-  
-  .pagination li:not(.hientai):hover {
-    background-color: rgb(152, 50, 50);
-    border-radius: 10px;
-  }
+.pagination1 {
+  padding: 10px;
+  text-align: center;
+  list-style: none;
+  font-weight: lighter;
+}
+
+.pagination1 li {
+  padding: 10px;
+  display: inline-block;
+  margin: 5px 3px;
+  cursor: pointer;
+}
+
+.pagination1 .hientai1 {
+  border-bottom: 3px solid rgb(0, 0, 0);
+}
+
+.pagination1 li:not(.hientai):hover {
+  background-color: rgb(196, 195, 195);
+  border-radius: 10px;
+}
+
   #xoanguoidung{
     padding: 4px;
     
@@ -237,4 +251,56 @@
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
   border: 1px solid var(--blue);
+}
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #e9ecef;
+  border: 1px solid #EDF1FF;
+}
+.bg-transparent {
+  background-color: transparent !important;
+}
+
+.text-primary {
+  color: #000 !important;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.pagination {
+  padding: 10px;
+  text-align: center;
+  list-style: none;
+  font-weight: lighter;
+}
+
+.pagination li {
+  padding: 20px;
+  display: inline-block;
+  margin: 20px 10px;
+  cursor: pointer;
+}
+
+.pagination .hientai {
+  border-bottom: 3px solid rgb(0, 0, 0);
+}
+
+.pagination li:not(.hientai):hover {
+  background-color: rgb(194, 194, 194);
+  border-radius: 10px;
 }

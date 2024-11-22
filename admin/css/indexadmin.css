@@ -7,6 +7,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
 }
 
 :root {
@@ -56,13 +57,13 @@ a{
 
 .navigation ul li:hover {
   width: 350px; /* Mở rộng khi di chuột vào */
-  background: rgb(196, 195, 195); /* Thay đổi màu nền khi di chuột */
+  background: #99999949; /* Thay đổi màu nền khi di chuột */
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
 
 }
 .navigation #active{ 
-  background-color: rgb(196, 195, 195);
+  background-color: #99999949;
   color: #000000;
   font-size: 18px;
   border-top-left-radius: 30px;
@@ -307,7 +308,9 @@ a{
 #report {
 padding:20px;
 }
-
+.details .recentOrders table tr td:last-child {
+  text-align: center;
+}
 .details table thead td {
   font-weight: 600;
 }
@@ -450,6 +453,7 @@ padding:20px;
 }
 
 .pagination {
+  padding: 10px;
   text-align: center;
   list-style: none;
   font-weight: lighter;

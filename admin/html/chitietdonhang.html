@@ -36,11 +36,11 @@
                 </li>
             </div>
                 <li>
-                    <a href="trangchuadmin.html" style="color: black;" id="active">
+                    <a href="trangchuadmin.html" style="color: black;" >
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
-                        <span class="title">Bảng điều khiển</span>
+                        <span class="title">Trang chủ</span>
                     </a>
                 </li>
 
@@ -70,6 +70,14 @@
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+                <li>
+                    <a href="thongke.html"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="bar-chart-outline"></ion-icon>
+                        </span>
+                        <span class="title">Thống kê</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -77,7 +85,7 @@
         <div class="main">
             <div class="topbar">
                 <div class="hello">
-                    <p>CHÀO MỪNG ADMIN CỦA MMB !!!</p>
+                    <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
                 <div class="search" >
                     <label>
@@ -87,96 +95,111 @@
                 </div>
             </div>
             <!-- ======================= Cards ================== -->
+
             <div class="chitietdonhang">
-                <div class="madh">
-                    <p id="banner">Mã đơn hàng: ĐH 5728319</p>
+                <div class="banner">
+                    <p>Mã đơn hàng: <a href ="chitietdonhang.html">HD1157292289338</a>
+                        
+                    </p>
+                    <p>20/11/2024 - 23:51 | NV tư vấn: Nguyễn Văn A - nguyenvana@gmail.com</p>
                 </div>
-                <div class="capnhatdonhang">
-                    <div class="progress-bar">
-                        <div class="step">
-                            <div class="step-icon">1</div>
-                            <div class="step-text">Đơn hàng được đặt</div>
 
-                        </div>
-                        <div class="step">
-                            <div class="step-icon">2</div>
-                            <div class="step-text">Đã xác nhận</div>
 
-                        </div>
-                        <div class="step">
-                            <div class="step-icon">3</div>
-                            <div class="step-text">Đã giao cho ĐVVC</div>
-
-                        </div>
-                        <div class="step">
-                            <div class="step-icon">4</div>
-                            <div class="step-text">Đã nhận được hàng</div>
-
-                        </div>
-                    </div>
-                </div>
-                <p id="address">ĐỊA CHỈ GIAO HÀNG</p>
+              
+               
+                <div class="address2">
                 <div class="diachigiaohang">
+                    <div class="address">
+                        <p >ĐỊA CHỈ LẤY HÀNG</p>
 
+                    </div>
+                   
                     <div class="thongtinnguoimua">
-                        <p style="font-weight: bold; font-size: large;"> Lan Anh</p>
-                        <p> (+84) 795793509</p>
-                        <p> B1/9C, hẻm đối diện BIDV, Xã Bình Hưng, Huyện Bình Chánh, TP. Hồ Chí Minh</p>
+                        <p style="font-weight: bold; ">MMB SHOP</p>
+                        <p> (+84) 0123456789</p>
+                        <p> 273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                     </div>
                     <!-- Trong phần HTML -->
-                    <div class="trangthaigiaohang">
-                        <div class="delivery-status">
-                            <div class="status">
-                                <p id="time">08:13 04-12-2023</p>
-                                <p>Đơn hàng đã bàn giao cho đơn vị vận chuyển</p>
-                                <a href="#">Xem ảnh</a>
-                            </div>
-                            <div class="status">
-                                <p id="time">05:37 04-12-2023</p>
-                                <p>Người bán đang chuẩn bị hàng</p>
-                            </div>
-                            <div class="status">
-                                <p id="time">03:44 04-12-2023</p>
-                                <p>Người bán đã xác nhận đơn hàng</p>
-                            </div>
-                            <a href="#">Xem thêm</a>
-                        </div>
-
-                    </div>
+                    
 
                 </div>
-                <p id="address">THÔNG TIN ĐƠN HÀNG</p>
-                <div class="chitietsanpham">
+                <div class="diachigiaohang">
+                    <div class="address">
+                        <p >ĐỊA CHỈ GIAO HÀNG</p>
+
+                    </div>
+                   
+                    <div class="thongtinnguoimua">
+                        <p style="font-weight: bold; ">tran thanh</p>
+                        <p> (+84) 0123456789</p>
+                        <p> 273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
+                    </div>
+                    <!-- Trong phần HTML -->
+                    
+
+                </div>
+            </div>
+
+               
+               
+               
+                    
+                       <div class="detail">
+                        <div class="recentOrder">
+                           
                     <table>
+                        <thead>
+                            <tr>
+                                
+                               
+                                <td>Ảnh</td>
+                                 <td>Tên SP</td>
+                                 <td>Số lượng</td>
+                                <td>Giá tiền </td>
+                                
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
-                                <td><img src="img/product-1.jpg"></td>
-                                <td id="name">Vợt Yonex Astrox 88D Pro <br> x1</td>
+                                <td><img src="../img/product-1.jpg"></td>
+                                <td id="name">Vợt Yonex Astrox 88D Pro <br></td>
+                                <td>1</td>
                                 <td id="price">4.039.000 VND</td>
                             </tr>
                             <tr>
-                                <td><img src="img/product-2.jpg"></td>
-                                <td id="name">Vợt Lining Calibar 900B<br> x1</td>
+                                <td><img src="../img/product-2.jpg"></td>
+                                <td id="name">Vợt Lining Calibar 900B<br> </td>
+                                <td>1</td>
+
+                            
+
                                 <td id="price">4.690.000 VND</td>
                             </tr>
                             <tr>
-                                <td><img src="img/product-3.jpg"></td>
-                                <td id="name">Yonex Astrox 100zz Kurenai<br> x1</td>
+                                <td><img src="../img/product-3.jpg"></td>
+                                <td id="name">Yonex Astrox 100zz Kurenai<br> </td>
+                                <td>1</td>
+
                                 <td id="price">4.350.000 VND</td>
                             </tr>
                             <tr>
-                                <td><img src="img/product-4.jpg"></td>
-                                <td id="name">Giày Cầu Lông Yonex Strider Wide<br> x1</td>
+                                <td><img src="../img/product-4.jpg"></td>
+                                <td id="name">Giày Cầu Lông Yonex Strider Wide<br> </td>
+                                <td>1</td>
+
                                 <td id="price">1.090.000 VND</td>
                             </tr>
                             <tr>
-                                <td><img src="img/product-5.jpg"></td>
-                                <td id="name">Túi Cầu Lông Yonex BA02331WEX (GC)<br> x1</td>
+                                <td><img src="../img/product-5.jpg"></td>
+                                <td id="name">Túi Cầu Lông Yonex BA02331WEX (GC)<br> </td>
+                                <td>1</td>
+
                                 <td id="price">950.000 VND</td>
                             </tr>
                         </tbody>
                     </table>
-                    <table id="thanhtoan">
+                    <div class="thanhtoan">
+                    <table >
                         <tbody>
                             <tr>
                                 <td>Tổng tiền hàng:</td>
@@ -204,24 +227,29 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="chon">
+                        <button onclick="done()">Đã xử lý</button>
+                        <button onclick="tra()">Thu hồi đơn hàng</button>
+                        </div>
                 </div>
-                <div class="chon">
-                <button onclick="done()">Đã xử lý</button>
-                <button onclick="tra()">Thu hồi đơn hàng</button>
+            </div>
                 </div>
-                <script>
-                    function done() {
-                      alert("Xác nhận đơn hàng đã xử lý!!!");
-                    }
-                  </script>
-                  <script>
-                    function tra() {
-                        const confirmation = confirm("Bạn có chắc chắn muốn thu hồi đơn hàng này ??? ");
-                        if (confirmation) {
-                            alert("Lệnh thu hồi đơn hàng sẽ được thông báo đến đơn vị vận chuyển!!")
+                </div>
+
+                
+                    <script>
+                        function done() {
+                          alert("Xác nhận đơn hàng đã xử lý!!!");
                         }
-                    }
-                </script>
+                      </script>
+                      <script>
+                        function tra() {
+                            const confirmation = confirm("Bạn có chắc chắn muốn thu hồi đơn hàng này ??? ");
+                            if (confirmation) {
+                                alert("Lệnh thu hồi đơn hàng sẽ được thông báo đến đơn vị vận chuyển!!")
+                            }
+                        }
+                    </script>
             </div>
         </div>
     </div>

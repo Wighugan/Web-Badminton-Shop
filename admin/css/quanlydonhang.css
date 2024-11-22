@@ -1,9 +1,10 @@
 .banner{
-    margin: 20px;
-      display: flex;
-      background-color: black;
-      justify-content: space-between;
-      padding: 10px;
+  margin: 20px;
+  display: flex;
+  background-color: white;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 20px;
   }
   #month, #find, #chon{
     padding: 10px;
@@ -103,9 +104,9 @@
   }
   
   .pagination li {
-    padding: 20px;
+    padding: 10px;
     display: inline-block;
-    margin: 20px 10px;
+    margin: 5px 3px;
     cursor: pointer;
   }
   
@@ -128,4 +129,21 @@
     text-align: center;
     padding: 20px;
     margin-left: 5px;
+}
+#timnguoidung1 {
+  padding: 8px;
+  margin-left: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+#timnguoidung {
+  padding: 8px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px;
+  font-size: 16px; 
+  color: #333; 
+  
 }
