@@ -84,7 +84,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -157,7 +157,7 @@
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông Tin Liên Hệ </h1>
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông Tin Cá Nhân </h1>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="">Trang Chủ</a></p>
             </div>
@@ -195,7 +195,7 @@ button:hover {
     <!-- Contact Start -->
     <div class="container-fluid pt-5">
         <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">Thông Tin Của Bạn</span></h2>
+            <h2 class="section-title px-5"><span class="px-2">Đổi Thông Tin Của Bạn</span></h2>
         </div>
         <div class="row px-xl-5">
             <div class="col-lg-7 mb-5">
@@ -203,41 +203,108 @@ button:hover {
                     <div id="success"></div>
                     <form name="sentMessage" id="contactForm" novalidate="novalidate">
                         <div class="control-group">
-                            <input type="text" class="form-control" id="name" placeholder="Họ Và Tên"
+                            <label>Họ và Tên</label>
+
+                            <input type="text" class="form-control" id="name" value="Lê Văn Liêm" placeholder="Nhập họ và Tên"
                                 required="required" data-validation-required-message="Please enter your name" />
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="control-group">
-                            <input type="email" class="form-control" id="email" placeholder="Email Của Bạn"
-                                required="required" data-validation-required-message="Please enter your email" />
+                            <label>Ngày Sinh</label>
+
+                            <input type="email" class="form-control" id="email" value="06/05/2005" placeholder="Nhập Ngày Sinh"
+                                required="required" data-validation-required-message="Please enter your date" />
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="control-group">
-                            <input type="text" class="form-control" id="subject" placeholder="Tiêu Đề"
+                            <label>Số điện thoại</label>
+                            <input type="email" class="form-control" id="email" value="09123456789" placeholder="Nhập số điện thoại"
+                                required="required" data-validation-required-message="Please enter your email" />
+                            <p class="help-block text-danger"></p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Email:</label>
+                            <input type="email" class="form-control" id="email" value="liem123@gmail.com" placeholder="Email Của Bạn"
+                                required="required" data-validation-required-message="Please enter your email" />
+                            <p class="help-block text-danger"></p>
+                        </div>
+
+
+                        <div class="control-group">
+                            <label>Địa chỉ</label>
+
+                            <input type="text" class="form-control" id="subject" value="273 An Dương Vương,Phường 3,Quận 5,TP.HCM	" placeholder="Nhập địa chỉ"
                                 required="required" data-validation-required-message="Please enter a subject" />
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="control-group">
-                            <textarea class="form-control" rows="6" id="message" placeholder="Mô Tả"
-                                required="required"
-                                data-validation-required-message="Please enter your message"></textarea>
+                            <label>Đổi Mật khẩu:</label>
+        
+                            <input type="password" class="form-control" id="name"  placeholder="Nhập Mật Khẩu cũ"
+                                required="required" data-validation-required-message="Please enter your name" />
                             <p class="help-block text-danger"></p>
                         </div>
                         <div>
-                            <button class="no-border-button-rec-contact" type="submit" id="sendMessageButton">Gửi Phản Hồi</button>
+                            <button onclick="myFunction()" class="no-border-button-rec-contact"  id="sendMessageButton">Lưu Thông Tin</button>
+                            
                         </div>
+                        
+                        <script>
+                            function myFunction() {
+                                alert ("Lưu thông tin người dùng thành công");
+                               
+                            }
+                        </script>
+
                     </form>
                 </div>
             </div>
             <div class="col-lg-5 mb-5">
-                <h5 class="font-weight-semi-bold mb-3">MMB - Shop Bán Đồ Cầu Lông</h5>
-                <p>Mọi Thắc Mắc Xin Liên Hệ.</p>
-                <div class="d-flex flex-column mb-3">   
-                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
-                    <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
+               
+                <div class="control-group">
+                    <label>Họ và Tên</label>
+
+                    <input type="text" class="form-control" id="name"  placeholder="Nhập họ và Tên mới"
+                        required="required" data-validation-required-message="Please enter your name" />
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="control-group">
+                    <label>Ngày Sinh</label>
+
+                    <input type="email" class="form-control" id="email" placeholder="Nhập Ngày Sinh mới"
+                        required="required" data-validation-required-message="Please enter your date" />
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="control-group">
+                    <label>Số điện thoại</label>
+                    <input type="email" class="form-control" id="email"  placeholder="Nhập số điện thoại mới"
+                        required="required" data-validation-required-message="Please enter your email" />
+                    <p class="help-block text-danger"></p>
                 </div>
                 
+                <div class="control-group">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" id="email"  placeholder="Nhập địa chỉ email mới"
+                        required="required" data-validation-required-message="Please enter your email" />
+                    <p class="help-block text-danger"></p>
+                </div>
+
+
+                <div class="control-group">
+                    <label>Địa chỉ</label>
+
+                    <input type="text" class="form-control" id="subject"  placeholder="Nhập địa chỉ mới"
+                        required="required" data-validation-required-message="Please enter a subject" />
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="control-group">
+                    <label>Đổi Mật khẩu:</label>
+
+                    <input type="password" class="form-control" id="name"  placeholder="Nhập Mật Khẩu mới"
+                        required="required" data-validation-required-message="Please enter your name" />
+                    <p class="help-block text-danger"></p>
+                </div>
             </div>
         </div>
     </div>
@@ -254,7 +321,7 @@ button:hover {
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
                     </div>
                 </a>
-                <p>Mọi mắc mắt xin liên hệ về.</p>
+                <p>Mọi thắc mắt xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
