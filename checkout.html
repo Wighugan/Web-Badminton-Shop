@@ -332,18 +332,191 @@
                                 <label class="custom-control-label" for="paypal">Thanh Toán Bằng Tiền Mặt</label>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Ngân hàng</label>
+                                <input type="radio" class="custom-control-input" name="payment" id="directcheck" onclick="showBankPopup()">
+                                <label class="custom-control-label" for="directcheck">Ngân Hàng</label>
                             </div>
                         </div>
-                        <div class="">
+                        
+                        <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                                <label class="custom-control-label" for="banktransfer">Ví Điện Tử</label>
+                                <input type="radio" class="custom-control-input" name="payment" id="eWallet" onclick="showEWalletPopup()">
+                                <label class="custom-control-label" for="eWallet">Ví Điện Tử</label>
                             </div>
                         </div>
+                        
+                        <script>
+                            function showBankPopup() {
+                                const popupContent = `
+                                    <style>
+                                        /* Toàn bộ popup */
+                                        #popup {
+                                            position: fixed;
+                                            top: 50%;
+                                            left: 50%;
+                                            transform: translate(-50%, -50%);
+                                            background-color: #f9f9f9;
+                                            border-radius: 15px;
+                                            border: 1px solid #e0e0e0;
+                                            padding: 20px;
+                                            width: 600px;
+                                            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                                            z-index: 1000;
+                                            font-family: Arial, sans-serif;
+                                            color: #333;
+                                        }
+                                        #popup h3 {
+                                            text-align: center;
+                                            margin-bottom: 20px;
+                                            font-size: 24px;
+                                            color: #444;
+                                        }
+                                        #popup .form-control {
+                                            width: 100%;
+                                            padding: 10px;
+                                            margin-bottom: 15px;
+                                            font-size: 16px;
+                                            border: 1px solid #ccc;
+                                            border-radius: 8px;
+                                            box-sizing: border-box;
+                                            outline: none;
+                                            transition: border-color 0.3s ease;
+                                        }
+                                        #popup .form-control:focus {
+                                            border-color: #007bff;
+                                            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                                        }
+                                        #popup button {
+                                            width: 100%;
+                                            padding: 12px 20px;
+                                            font-size: 18px;
+                                            color: white;
+                                            background-color: #000000;
+                                            border: none;
+                                            border-radius: 8px;
+                                            cursor: pointer;
+                                            transition: background-color 0.3s ease;
+                                        }
+                                        #popup button:hover {
+                                            background-color: #999999;
+                                        }
+                                        #popup-overlay {
+                                            position: fixed;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            background: rgba(0, 0, 0, 0.5);
+                                            z-index: 999;
+                                        }
+                                    </style>
+                                    <div id="popup">
+                                        <h3>Thanh Toán Qua Ngân Hàng</h3>
+                                        <label for="bankName">Nhập Ngân Hàng</label>
+                                        <input type="text" class="form-control" id="bankName" placeholder="Nhập Ngân Hàng">
+                                        <label for="cardNumber">Số Thẻ</label>
+                                        <input type="text" class="form-control" id="cardNumber" placeholder="Số Thẻ">
+                                        <label for="cardHolder">Tên Chủ Thẻ</label>
+                                        <input type="text" class="form-control" id="cardHolder" placeholder="Tên Chủ Thẻ">
+                                        <label for="expiryDate">Ngày Hết Hạn</label>
+                                        <input type="text" class="form-control" id="expiryDate" placeholder="Ngày Hết Hạn">
+                                        <label for="cvvCode">Mã CVV</label>
+                                        <input type="text" class="form-control" id="cvvCode" placeholder="Mã CVV">
+                                        <button onclick="closePopup()">Xác Nhận</button>
+                                    </div>
+                                    <div id="popup-overlay" onclick="closePopup()"></div>
+                                `;
+                                document.body.insertAdjacentHTML('beforeend', popupContent);
+                            }
+                        
+                            function showEWalletPopup() {
+                                const popupContent = `
+                                    <style>
+                                        /* Toàn bộ popup */
+                                        #popup {
+                                            position: fixed;
+                                            top: 50%;
+                                            left: 50%;
+                                            transform: translate(-50%, -50%);
+                                            background-color: #f9f9f9;
+                                            border-radius: 15px;
+                                            border: 1px solid #e0e0e0;
+                                            padding: 20px;
+                                            width: 500px;
+                                            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                                            z-index: 1000;
+                                            font-family: Arial, sans-serif;
+                                            color: #333;
+                                        }
+                                        #popup h3 {
+                                            text-align: center;
+                                            margin-bottom: 20px;
+                                            font-size: 24px;
+                                            color: #444;
+                                        }
+                                        #popup .form-control {
+                                            width: 100%;
+                                            padding: 10px;
+                                            margin-bottom: 15px;
+                                            font-size: 16px;
+                                            border: 1px solid #ccc;
+                                            border-radius: 8px;
+                                            box-sizing: border-box;
+                                            outline: none;
+                                            transition: border-color 0.3s ease;
+                                        }
+                                        #popup .form-control:focus {
+                                            border-color: #007bff;
+                                            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                                        }
+                                        #popup button {
+                                            width: 100%;
+                                            padding: 12px 20px;
+                                            font-size: 18px;
+                                            color: white;
+                                            background-color: #000000;
+                                            border: none;
+                                            border-radius: 8px;
+                                            cursor: pointer;
+                                            transition: background-color 0.3s ease;
+                                        }
+                                        #popup button:hover {
+                                            background-color: #999999;
+                                        }
+                                        #popup-overlay {
+                                            position: fixed;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            background: rgba(0, 0, 0, 0.5);
+                                            z-index: 999;
+                                        }
+                                    </style>
+                                    <div id="popup">
+                                        <h3>Thanh Toán Bằng Ví Điện Tử</h3>
+                                        <label for="walletType">Loại Ví Điện Tử</label>
+                                        <input type="text" class="form-control" id="walletType" placeholder="Nhập tên ví điện tử (Momo, ZaloPay,...)">
+                                        <label for="walletID">Tên Tài Khoản</label>
+                                        <input type="text" class="form-control" id="walletID" placeholder="Nhập tên">
+                                        <label for="walletID">Số Ví</label>
+                                        <input type="text" class="form-control" id="walletID" placeholder="Nhập số ví của bạn">
+                                        <button onclick="closePopup()">Xác Nhận</button>
+                                    </div>
+                                    <div id="popup-overlay" onclick="closePopup()"></div>
+                                `;
+                                document.body.insertAdjacentHTML('beforeend', popupContent);
+                            }
+                        
+                            function closePopup() {
+                                const popup = document.getElementById('popup');
+                                const overlay = document.getElementById('popup-overlay');
+                                if (popup) popup.remove();
+                                if (overlay) overlay.remove();
+                            }
+                        </script>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <a href="logedin.html">
@@ -367,7 +540,7 @@
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
                     </div>
                 </a>
-                <p>Mọi mắc mắt xin liên hệ về.</p>
+                <p>Mọi thắc mắt xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
