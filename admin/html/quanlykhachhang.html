@@ -109,41 +109,14 @@
             <!-- ================ LÀM QUẢN LÝ KHÁCH HÀNG Ở ĐÂY ================= -->
             <div class="user"  >         
                       <div class="banner">
-                    <button id="adduser">+ Thêm người dùng</button>
-                    <div class="boxadduser" id="boxadduser">
-                        <h2>Thêm người dùng mới</h2>
-                        <form action="#" method="post" id="addUserForm">
-                            <div class="form-group">
-                                <label for="username">Tên đăng nhập:</label>
-                                <input type="text" id="username" placeholder="aimeeceline00">
-                            </div>
-                            <div class="form-group">
-                                <label for="name">Họ và tên:</label>
-                                <input type="text" id="name" placeholder="Lê Thị Lan Anh">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="text" id="email" placeholder="lelananh02@gmail.com">
-                            </div>
-                            <div class="form-group">
-                                <label for="goi">Gói:</label>
-                                <select id="goi" name="goi">
-                                    <option>Cơ bản</option>
-                                    <option>Tiêu chuẩn</option>
-                                    <option>Cao cấp</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Mật khẩu mặc định:</label>
-                                <input type="password" id="password" value="password">
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Thêm">
-                            </div>
-                        </form>
-                    </div>
-
-                 
+                    <button onclick="myFunctio() "id="adduser">+ Thêm người dùng</button>
+                    
+                    <script>
+                        function myFunctio() {
+                            alert ("Thêm người dùng thành công");
+                           
+                        }
+                    </script>
 
                     <select id="option">
                         <option>Tất cả</option>
@@ -210,7 +183,7 @@
 
 
                                     
-                                    <a href ="" id="suanguoidung" >
+                                    <a href ="suakhachhang.html" id="suanguoidung" >
 
                                         <i class="fas fa-edit"></i> Sửa
 
@@ -229,7 +202,7 @@
                                             const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này ??? ");
                                             if (confirmation) {
                                                 alert("Khóa người dùng thành công!!")
-                                                window.location.href = 'qlkhlockeduser.html';
+                                                window.location.href = '';
                                             }
                                         }
                                     </script>
@@ -244,7 +217,7 @@
                                 <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>30/09/2024</td>
                                 <td>
-                                    <a href ="" id="suanguoidung" >
+                                    <a href ="suakhachhang.html" id="suanguoidung" >
 
                                         <i class="fas fa-edit"></i> Sửa
 
@@ -272,13 +245,13 @@
 
                             <tr>
                                 <td>3</td>
-                                <td>brayyeunuoc</td>
-                                <td>Nguyễn Văn Bảo</td>
-                                <td>ray123@gmail.com</td>
+                                <td>LionaldoRonessi</td>
+                                <td>Lê Văn Si</td>
+                                <td>si123@gmail.com</td>
                                 <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>07/09/2024</td>
                                 <td>
-                                    <a href ="" id="suanguoidung" >
+                                    <a href ="suakhachhang.html" id="suanguoidung" >
 
                                         <i class="fas fa-edit"></i> Sửa
 
@@ -306,13 +279,13 @@
 
                             <tr>
                                 <td>4</td>
-                                <td>cristionelmessnaldo</td>
+                                <td>CristionelMessnaldo</td>
                                 <td>Lê Văn Liêm</td>
                                 <td>liem123@gmail.com</td>
                                 <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>09/08/2024</td>
                                 <td>
-                                    <a href ="" id="suanguoidung" >
+                                    <a href ="suakhachhang.html" id="suanguoidung" >
 
                                         <i class="fas fa-edit"></i> Sửa
 
@@ -346,7 +319,7 @@
                                 <td >273 An Dương Vương,Phường 3,Quận 5,TP.HCM</td>
                                 <td>08/12/2024</td>
                                 <td>
-                                    <a href ="" id="suanguoidung" >
+                                    <a href ="suakhachhang.html" id="suanguoidung" >
 
                                         <i class="fas fa-edit"></i> Sửa
 

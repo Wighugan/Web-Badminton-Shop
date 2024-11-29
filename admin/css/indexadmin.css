@@ -46,6 +46,15 @@ body {
 a{
   text-decoration: none;
 }
+
+.navigation1 {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 100%;
+  list-style-type: none; /* Add this line to remove the black dots */
+}
+
 .navigation ul {
   position: absolute;
   top: 20px;
