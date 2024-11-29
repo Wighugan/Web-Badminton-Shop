@@ -13,6 +13,15 @@
     font-size: 16px;
     border-radius: 10px;
   }
+
+
+  #month1, #find, #chon{
+    padding: 5px;
+    background-color: #fff;
+    font-size: 16px;
+    border-radius: 10px;
+    text-align: center;
+  }
   #customDate {
     position: fixed;
     border: 1px solid #ccc;
