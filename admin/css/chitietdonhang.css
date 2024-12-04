@@ -159,12 +159,12 @@ p {
     display: flex;
 }
 .chon button{
+    border: 0px;
     width: 200px;
     height: 40px;
     font-size: 15px;
-    background-color: #fff;
-    font-weight: bold;
-    border: 2px solid rgb(0, 0, 0);
+    color:#ffffff;
+    background-color: #000000;
     border-radius: 8px;
     display: block;
     margin: 20px 12px;
@@ -172,12 +172,12 @@ p {
     margin-left: auto;
 }
 .chon button:first-child:hover{
-    background-color: rgb(196, 195, 195);
-    border-radius: 10px;
+    background-color: rgb(109, 109, 109);
+    border-radius: 8px;
 }
 .chon button:nth-child(2):hover{
-    background-color: rgb(196, 195, 195);
-    border-radius: 10px;
+    background-color: rgb(109, 109, 109);
+    border-radius: 8px;
 }
 /* ================== Order Details List ============== */
 .detail {
