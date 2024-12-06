@@ -262,11 +262,13 @@ a{
 .details {
   position: relative;
   width: 150%;
+  height: 180%;
   padding: 20px;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-gap: 30px;
-  /* margin-top: 10px; */
+  grid-gap: 40px;
+   margin-top: 80px; 
+   font-size: 17px;
 }
 
 .details td {
@@ -287,7 +289,7 @@ a{
 
 .details .cardHeader {
   display: flex;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -308,7 +310,7 @@ a{
 }
 .card {
     display: flex;
-    gap: 80px; /* Khoảng cách giữa các bảng */
+    gap: 100px; /* Khoảng cách giữa các bảng */
     padding: 20px; /* Khoảng cách ngoài cùng */
     margin:5px;
 
@@ -321,9 +323,9 @@ a{
 .details table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 20px;
   text-align: left;
-  padding: 20px;
+  padding: 25px;
   margin-left:20px;
 }
 
@@ -545,4 +547,27 @@ display: none;
 .thongke:hover{
   background-color: #000000;
   border: 2px solid #000000;
+}
+
+.pagination {
+  padding: 10px;
+  text-align: center;
+  list-style: none;
+  font-weight: lighter;
+}
+
+.pagination li {
+  padding: 10px;
+  display: inline-block;
+  margin: 5px 3px;
+  cursor: pointer;
+}
+
+.pagination .hientai {
+  border-bottom: 3px solid rgb(0, 0, 0);
+}
+
+.pagination li:not(.hientai):hover {
+  background-color: rgb(196, 195, 195);
+  border-radius: 10px;
 }

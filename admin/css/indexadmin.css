@@ -485,12 +485,54 @@ padding:20px;
 }
 
 #basic {
-  color: #21874b;
+  background-color: #27ae60;
+  color: #fff;
+  padding: 8px 8px;
+  border-radius: 5px;
+  font-size: 15px;
+  display: inline-block;
+
 }
 
-#premium {
-  color: rgb(209, 32, 32);
-}
+
+  #basic1 {
+    background-color: #27ae60;
+    color: #fff;
+    padding: 8px 8px;
+    border-radius: 10px;
+    font-size: 15px;
+    display: inline-block;
+  
+  }
+  #premium {
+     
+    background-color: #f04e2e;
+    color: #fff;
+    padding: 8px 8px;
+    border-radius: 5px;
+    font-size: 15px;
+    display: inline-block; /* hoặc block nếu muốn nó chiếm toàn bộ dòng */
+ 
+
+  }
+  #premium1 {
+     
+      background-color: #f04e2e;
+      color: #fff;
+      padding: 8px 8px;
+      border-radius: 5px;
+      font-size: 15px;
+      display: inline-block; /* hoặc block nếu muốn nó chiếm toàn bộ dòng */
+      
+    }
+    #premium2 {
+    background-color: #2196f3;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    display: inline-block;
+    }
 
 .filter{
 width: 90%;

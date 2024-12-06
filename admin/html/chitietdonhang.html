@@ -38,7 +38,7 @@
                 </li>
             </div>
                 <li>
-                    <a href="trangchuadmin.html" style="color: black;" id="active" >
+                    <a href="trangchuadmin.html" style="color: black;"  >
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -227,21 +227,30 @@
                                 <td>Phương thức thanh toán:</td>
                                 <td>COD</td>
                             </tr>
+                            <tr>
+                                <td>Trạng thái:</td>
+                                <td>   <select id="month1">
+                                    <option>Chờ xác nhận</option>
+                                    <option>Đã giao</option>
+                                    <option>Đang giao</option>
+                                    <option>Bị hủy</option>
+                                </select></td>
+                            </tr>
                         </tbody>
                     </table>
+                    
                     <div class="chon">
-                        <button onclick="done()">Đã xử lý</button>
-                        <button onclick="tra()">Thu hồi đơn hàng</button>
+                        <button onclick="done()">Cập nhật trạng thái</button>
                         </div>
                 </div>
             </div>
                 </div>
                 </div>
 
-                
+               
                     <script>
                         function done() {
-                          alert("Xác nhận đơn hàng đã xử lý!");
+                          alert("Đã cập nhật trạng thái thành công!");
                         }
                       </script>
                       <script>

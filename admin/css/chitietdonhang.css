@@ -156,7 +156,7 @@ p {
 }
 .chon{
     width: 80%;
-    display: flex;
+    display: center;
 }
 .chon button{
     border: 0px;
@@ -169,7 +169,7 @@ p {
     display: block;
     margin: 20px 12px;
     cursor: pointer;
-    margin-left: auto;
+    margin-left: 400px;
 }
 .chon button:first-child:hover{
     background-color: rgb(109, 109, 109);
@@ -261,4 +261,11 @@ p {
   .detail .recentOrder .thanhtoan table tr td:nth-child(2)  {
     text-align: left;
 
+  }
+  #month1, #find, #chon{
+    padding: 5px;
+    background-color: #fff;
+    font-size: 16px;
+    border-radius: 10px;
+    text-align: center;
   }
