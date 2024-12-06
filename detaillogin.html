@@ -84,7 +84,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="" class="btn border">
+                <a href="cart.html" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -236,24 +236,7 @@
                     ✔ Thanh toán sau khi kiểm tra và nhận hàng (Giao khung vợt)<br>
                     
                     ✔ Bảo hành chính hãng theo nhà sản xuất (Trừ hàng nội địa, xách tay).</p>
-                <div class="d-flex mb-3">
-                    <p class="text-dark font-weight-medium mb-0 mr-3">Trọng Lượng:</p>
-                    <form>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-1" name="size">
-                            <label class="custom-control-label" for="size-1">2U</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-2" name="size">
-                            <label class="custom-control-label" for="size-2">3U</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-3" name="size">
-                            <label class="custom-control-label" for="size-3">4U</label>
-                        </div>
-                        
-                    </form>
-                </div>
+               
                 <div class="d-flex mb-4">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p>
                     <form>
@@ -293,8 +276,15 @@
                             </button>
                         </div>
                     </div>
-                    <a class="btn btn-primary px-3" href="detaillogin.html"><i class="fa fa-shopping-cart mr-1"></i>Thêm Vào Giỏ Hàng</a>
+                    <a class="btn btn-primary px-3" href="detaillogin.html" onclick="done()"><i class="fa fa-shopping-cart mr-1"></i>Thêm Vào Giỏ Hàng</a>
                 </div>
+
+                <script>
+                    function done() {
+                      alert("Đã thêm vào giỏ hàng!");
+                    }
+                  </script>
+
                 <div class="d-flex pt-2">
                     <p class="text-dark font-weight-medium mb-0 mr-2">Chia Sẻ:</p>
                     <div class="d-inline-flex">
@@ -333,35 +323,15 @@
                                     <tbody>
                                         <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_brand">
                                             <th class="woocommerce-product-attributes-item__label">Thương Hiệu</th>
-                                            <td class="woocommerce-product-attributes-item__value">Yonex</td>
+                                            <td class="woocommerce-product-attributes-item__value"><p>Yonex</p></td>
                                         </tr>
                                         <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_diem-can-bang">
-                                            <th class="woocommerce-product-attributes-item__label">Điểm Cân Bằng</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Nặng đầu</p></td>
+                                            <th class="woocommerce-product-attributes-item__label">Mã Sản Phẩm</th>
+                                            <td class="woocommerce-product-attributes-item__value"><p>KNS49</p></td>
                                         </tr>
                                         <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_do-cung">
-                                            <th class="woocommerce-product-attributes-item__label">Độ Cứng</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Siêu cứng</p></td>
-                                        </tr>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_doi-tuong-su-dung">
-                                            <th class="woocommerce-product-attributes-item__label">Đối Tượng Sử Dụng</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Nam, Nữ đánh chuyên đôi hoặc đơn</p></td>
-                                        </tr>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_loi-choi">
-                                            <th class="woocommerce-product-attributes-item__label">Lối Chơi</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Tấn công mạnh mẽ</p></td>
-                                        </tr>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_trong-luong-chu-vi-can-vot">
-                                            <th class="woocommerce-product-attributes-item__label">Trọng Lượng/Chu Vi Cán Vợt</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>3U-G5, 4U-G5</p></td>
-                                        </tr>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_suc-cang">
-                                            <th class="woocommerce-product-attributes-item__label">Sức Căng</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>26-30Lbs (12.7kg)</p></td>
-                                        </tr>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_san-xuat">
-                                            <th class="woocommerce-product-attributes-item__label">Chọn Sản Phẩm</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Bản Công Ty, Bản Nội Địa</p></td>
+                                            <th class="woocommerce-product-attributes-item__label">Xuất Xứ</th>
+                                            <td class="woocommerce-product-attributes-item__value"><p>Nhật Bản</p></td>
                                         </tr>
                                     </tbody>
                                 </table>
