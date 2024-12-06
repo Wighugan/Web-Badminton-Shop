@@ -95,7 +95,35 @@
     </div>
     <!-- Topbar End -->
 
-    
+    <script>
+        function showVot(event) {
+            document.getElementById("output").innerText = "Vợt cầu lông";
+        }
+        function showGiay(event) {
+            document.getElementById("output").innerText = "Giày cầu lông";
+        }
+        function showTui(event) {
+            document.getElementById("output").innerText = "Túi cầu lông";
+        }
+        function showQuan(event) {
+            document.getElementById("output").innerText = "Quần cầu lông";
+        }
+        function showAo(event) {
+            document.getElementById("output").innerText = "Áo cầu lông";
+        }
+        function showVay(event) {
+            document.getElementById("output").innerText = "Váy cầu lông";
+        }
+        function showVo(event) {
+            document.getElementById("output").innerText = "Vớ cầu lông";
+        }
+        function showQuanCan(event) {
+            document.getElementById("output").innerText = "Quấn cán vợt";
+        }
+        function showOngCau(event) {
+            document.getElementById("output").innerText = "Ống cầu";
+        }
+    </script>
     <!-- Navbar Start -->
     <div class="container-fluid">
         <div class="row border-top px-xl-5">
@@ -112,8 +140,7 @@
                         <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
                         <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
                         <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
-                        
-
+                       
                 </nav>
             </div>
             <div class="col-lg-9">
@@ -152,7 +179,7 @@
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3">Áo Cầu Lông</h1>
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
             </div>
@@ -161,13 +188,12 @@
     <!-- Page Header End -->
 
 
-     <!-- Shop Start -->
-     <div class="container-fluid pt-5">
+    <!-- Shop Start -->
+    <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <!-- Shop Sidebar Start -->
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
-
                 <div class="mb-5">
                     <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
                     <form>
@@ -194,7 +220,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
                     <form>
@@ -271,7 +296,7 @@
                     </form>
                 </div>
                 <!-- Size End -->
-
+  
                 
 
                
@@ -288,6 +313,10 @@
                 }
             </style>
             <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
+                });
+
                 function showText() {
                     document.getElementById("output").innerText = "Kết quả tìm kiếm";
                 }
@@ -307,7 +336,7 @@
                                     </div>
                                 </div>
                             </form>
-                      
+                           
                         </div>
                         <p id="output"></p>
                     </div>
