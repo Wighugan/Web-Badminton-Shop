@@ -584,3 +584,45 @@ display: none;
   background-color: #000000;
   border: 2px solid #000000;
 }
+
+
+.date1 {
+  display: flex; /* Sắp xếp theo chiều ngang */
+  align-items: center; /* Căn giữa theo trục dọc */
+  gap: 18px; /* Khoảng cách giữa các phần tử */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+}
+input[type="date"] {
+  font-size: 16px; /* Tăng kích thước chữ */
+  padding: 8px; /* Điều chỉnh khoảng cách bên trong */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #333;
+  width: auto; /* Đảm bảo kích thước phù hợp */
+}
+.filter .date{
+  margin: 20px 0;
+}
+
+
+#timnguoidung2 {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  margin: 0; /* Xóa margin để căn chính xác */
+  display: flex; /* Đảm bảo icon căn giữa */
+  align-items: center;
+  text-decoration: none; /* Loại bỏ gạch chân của link */
+  background-color: #f9f9f9; /* Màu nền (tùy chọn) */
+  width: auto;
+}
+
+#timnguoidung2:hover {
+  background-color: #e0e0e0; /* Màu nền khi hover (tùy chọn) */
+}
