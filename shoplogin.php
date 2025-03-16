@@ -1,7 +1,16 @@
+<?php
+include 'db_connect.php';
+// Xử lý tìm kiếm
+
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
+    
+
 
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
     <link href='img/logo.png' rel='icon' type='image/x-icon' />
@@ -312,23 +321,32 @@
                     font-size: 30px;
                 }
             </style>
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
-                });
+           <script>
+function searchProduct() {
+    let keyword = document.getElementById("searchInput").value;
 
-                function showText() {
-                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
-                }
-            </script>
+    $.ajax({
+        url: "search.php",
+        type: "GET",
+        data: { search: keyword },
+        success: function(response) {
+            document.getElementById("productList").innerHTML = response;
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi AJAX:", error);
+        }
+    });
+}
+</script>
             <!-- Shop Product Start -->
             <div class="col-lg-9 col-md-12">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form onsubmit="showText(); return false;">
+                            <form onsubmit="searchProduct(); return false;">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" onkeyup="searchProduct()">
+
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-primary" type="submit">
                                             <i class="fa fa-search"></i>

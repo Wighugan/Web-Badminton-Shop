@@ -62,7 +62,7 @@
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="index.html" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -86,7 +86,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="" onclick="showMessage()" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -134,18 +134,18 @@
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Giày Cầu Lông</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
-                       
+                        <a href="vot.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a href="giay.html" class="nav-item nav-link">Giày Cầu Lông</a>
+                        <a href="tui.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a href="quan.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a href="ao.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a href="vay.html" class="nav-item nav-link">Váy Cầu Lông</a>
+                        
                 </nav>
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
+                    <a href="index.html" class="text-decoration-none d-block d-lg-none">
                         <div style="display: flex; align-items: center; position: relative;">
                             <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                             <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -156,17 +156,13 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.html" class="nav-item nav-link">Trang Chủ</a>
-                            <a href="shoplogin.html" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="index.php" class="nav-item nav-link">Trang chủ</a>
+                            <a href="shop.html" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown">Nguoi em cua gio</a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.html" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.html" class="dropdown-item">Đổi Thông Tin</a>
-                                    <a href="history.html" class="dropdown-item">Lịch sử mua hàng</a>
+                            <a href="Login.html" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="Signup.html" class="nav-item nav-link">Đăng Kí</a>
                         </div>
                     </div>
                 </nav>
@@ -181,7 +177,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="index.html">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -194,6 +190,7 @@
             <!-- Shop Sidebar Start -->
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
+
                 <div class="mb-5">
                     <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
                     <form>
@@ -220,6 +217,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
                     <form>
@@ -296,7 +294,7 @@
                     </form>
                 </div>
                 <!-- Size End -->
-  
+
                 
 
                
@@ -313,10 +311,6 @@
                 }
             </style>
             <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
-                });
-
                 function showText() {
                     document.getElementById("output").innerText = "Kết quả tìm kiếm";
                 }
@@ -336,7 +330,7 @@
                                     </div>
                                 </div>
                             </form>
-                           
+                      
                         </div>
                         <p id="output"></p>
                     </div>
@@ -352,11 +346,9 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"  ></i> Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
-
-                            
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
@@ -371,8 +363,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -388,8 +380,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -405,8 +397,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -422,8 +414,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -439,8 +431,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -456,8 +448,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -473,8 +465,8 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
                     </div>
@@ -490,15 +482,10 @@
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
+                                <a href="detail.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
+                                <a onclick="showMessage()" href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
                             </div>
                         </div>
-                        <script>
-                            function done() {
-                              alert("Đã thêm vào giỏ hàng!");
-                            }
-                          </script>
                     </div>
                     <div class="col-12 pb-1">
                         <nav aria-label="Page navigation">
@@ -538,21 +525,26 @@
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
                     </div>
                 </a>
-                <p>Mọi mắc mắt xin liên hệ về.</p>
+                <p>Mọi thắc mắc xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
             </div>
+            <script>
+                function showMessage() {
+                    alert("Chưa đăng nhập!");
+                }
+            </script>
             <div class="col-lg-8 col-md-12">
                 <div class="row">
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
