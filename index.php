@@ -1,6 +1,31 @@
 
 
 <?php include 'header.php'; ?>
+<div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <a href="ind" class="text-decoration-none d-block d-lg-none">
+                        <div style="display: flex; align-items: center; position: relative;">
+                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
+                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+                        </div> 
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="index.html" class="nav-item nav-link active">Trang Chủ</a>
+                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm
+                            </a>
+                            <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>    
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
+                        </div>
+                    </div>
+                </nav>
+               
 <div id="header-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active" style="height: 410px;">
@@ -47,6 +72,8 @@
                     </a>
                 </div>
             </div>
+
+            
         </div>
     </div>
     <!-- Navbar End -->
@@ -82,6 +109,8 @@
         </div>
     </div>
     <!-- Featured End -->
+
+    
     <!-- Categories Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5 pb-3">
@@ -524,21 +553,7 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <?php
-include 'db_connect.php';
 
-// Xử lý tìm kiếm
-$search = "";
-if (isset($_GET['search'])) {
-    $search = $_GET['search'];
-    $sql = "SELECT * FROM users WHERE name LIKE '%$search%' OR email LIKE '%$search%'";
-} else {
-    $sql = "SELECT * FROM users";
-}
-
-$result = $conn->query($sql);
-
-?>
 
 
 

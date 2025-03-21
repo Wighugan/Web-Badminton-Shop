@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head><?php
+<?php
 session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
 
 // Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
@@ -10,120 +9,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 ?>
-    <meta charset="utf-8">
-    <title>MMB- Shop Bán Đồ Cầu Lông</title>
-    <link href='img/logo.png' rel='icon' type='image/x-icon' />
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+<?php include 'header.php'; ?>
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
-</head>
-
-<body>
-    <!-- Topbar Start -->
-    <div class="container-fluid">
-        <div class="row bg-secondary py-2 px-xl-5">
-            <div class="col-lg-6 d-none d-lg-block">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-dark" href="">Câu Hỏi Thường Gặp</a>
-                    <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Trợ Giúp</a>
-                    <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Hỗ Trợ</a>
-                </div>
-            </div>
-            <div class="col-lg-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a class="text-dark pl-2" href="">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="row align-items-center py-3 px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
-                    <div style="display: flex; align-items: center; position: relative;">
-                        <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-6 col-6 text-left">
-                <form action="shoptimkiem_login.html">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
-                        <div class="input-group-append">
-                            <button class="input-group-text bg-transparent text-primary" class="fa fa-search">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-lg-3 col-6 text-right">
-                <a href="" class="btn border">
-                    <i class="fas fa-heart text-primary"></i>
-                    <span class="badge">0</span>
-                </a>
-                <a href="cart.html" class="btn border">
-                    <i class="fas fa-shopping-cart text-primary"></i>
-                    <span class="badge">0</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar End -->
-    
-
-    <!-- Navbar Start -->
-    <div class="container-fluid mb-5">
-        <div class="row border-top px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                    <h6 class="m-0">Phân Loại Sản Phẩm</h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
-                    <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Giày Cầu Lông</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
-                        
-                </nav>
-            </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
+                    <a href="logedin.php" class="text-decoration-none d-block d-lg-none">
                         <div style="display: flex; align-items: center; position: relative;">
                             <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                             <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -139,6 +29,8 @@ if (!isset($_SESSION['user_id'])) {
                             </a>
                             <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
+
+
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link" data-toggle="dropdown">
@@ -148,11 +40,13 @@ if (!isset($_SESSION['user_id'])) {
                                 </a>
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.html" class="dropdown-item">Đổi Thông Tin</a>
-                                    <a href="history.html" class="dropdown-item">Lịch sử mua hàng</a>
+                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
                     </div>
                 </nav>
+
+
                 <div id="header-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active" style="height: 410px;">
@@ -161,7 +55,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <div class="p-3" style="max-width: 700px;">
                                     <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm giá 10%</h4>
                                     <h3 class="display-4 text-white font-weight-semi-bold mb-4">Áo và Quần cầu lông</h3>
-                                    <a href="shoplogin.html" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -171,7 +65,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <div class="p-3" style="max-width: 700px;">
                                     <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm 20%</h4>
                                     <h3 class="display-4 text-white font-weight-semi-bold mb-4">Cho đơn hàng đầu tiên</h3>
-                                    <a href="shoplogin.html" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -181,7 +75,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <div class="p-3" style="max-width: 700px;">
                                     <h4 class="text-light text-uppercase font-weight-medium mb-3">Ưu đãi</h4>
                                     <h3 class="display-4 text-white font-weight-semi-bold mb-4">Bảo hành trong 12 tháng</h3>
-                                    <a href="shoplogin.html" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -307,7 +201,7 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="position-relative" style="z-index: 1;">
                         <h5 class="text-uppercase text-primary mb-3">Giảm 20% Bộ Sưu Tập</h5>
                         <h1 class="mb-4 font-weight-semi-bold">Yonex Astrox</h1>
-                        <a href="shoplogin.html" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
+                        <a href="shoplogin.php" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
                     </div>
                 </div>
             </div>
@@ -317,7 +211,7 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="position-relative" style="z-index: 1;">
                         <h5 class="text-uppercase text-primary mb-3">Giảm 20% Bộ Sưu Tập</h5>
                         <h1 class="mb-4 font-weight-semi-bold">Lining Tectonic</h1>
-                        <a href="shoplogin.html" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
+                        <a href="shoplogin.php" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
                     </div>
                 </div>
             </div>

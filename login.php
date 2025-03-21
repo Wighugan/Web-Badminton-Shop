@@ -4,15 +4,14 @@
 
 <?php
 session_start();
-include "db.php"; // Kết nối MySQL
-?>
+ob_start(); // Bắt đầu buffer
 
-<?php 
+require 'db.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Truy vấn lấy user từ database
     $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -22,20 +21,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_result($id, $db_password);
         $stmt->fetch();
 
-        // Kiểm tra mật khẩu (nếu không mã hóa)
         if ($password === $db_password) {
             $_SESSION['user_id'] = $id;
-            $_SESSION['username'] = $username; // Lưu username vào session
+            $_SESSION['username'] = $username;
             header("Location: logedin.php");
             exit();
         } else {
-            echo "❌ Sai mật khẩu!";
+            $error = "⚠  Sai mật khẩu!";
         }
     } else {
-        echo "❌ Sai tên đăng nhập!";
+        $error = "⚠  Sai tên đăng nhập!";
     }
 }
+ob_end_flush(); // Xuất buffer ra HTML
 ?>
+
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -176,6 +176,15 @@ button:hover {
     font-size: 0.85rem; /* Giảm kích thước chữ trong footer */
     color: #777;
 }
+
+.error {
+            background: #fdecea;
+            color: #d32f2f;
+            border: 1px solid #d32f2f;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
 </style>
 
 </head>
@@ -229,8 +238,13 @@ button:hover {
 
 
     <div class="login-container">
-      
+   
+    <?php if (!empty($error)) { ?>
+    <div class="error"><?php echo $error; ?></div>
+<?php } ?>
+
             <h2>Đăng Nhập</h2>
+
             <form action="login.php" method="post">
                 <div class="form-group">
                     <label for="username">Tên đăng nhập hoặc Email</label>
@@ -241,17 +255,15 @@ button:hover {
                     <input type="password" id="password" name="password" placeholder="Mật Khẩu" required>
                     
                 </div>
-              
+  
                 <button class="no-border-button" type="submit">Đăng Nhập</button>
                
             </form>
             <div class="footer">
-                <p>Chưa có tài khoản? <a href="signup.html">Đăng Ký</a></p>
+                <p>Chưa có tài khoản? <a href="signup.php">Đăng Ký</a></p>
             </div>
         </div>
-        <?php if (!empty($error)) { ?>
-    <p style="color: red;"><?php echo $error; ?></p>
-<?php } ?>
+        
 </html>
 
 <!-- Footer Start -->

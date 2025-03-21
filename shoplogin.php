@@ -1,13 +1,20 @@
-<?php
-include 'db_connect.php';
-// Xử lý tìm kiếm
 
-?>
 
 <!DOCTYPE html>
 <html lang="vi">
     
+<?php
+include 'db.php';
 
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    exit();
+}
+// Xử lý tìm kiếm
+
+?>
 
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -71,7 +78,7 @@ include 'db_connect.php';
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="logedin.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -95,7 +102,7 @@ include 'db_connect.php';
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -154,7 +161,7 @@ include 'db_connect.php';
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
+                    <a href="logedin.php" class="text-decoration-none d-block d-lg-none">
                         <div style="display: flex; align-items: center; position: relative;">
                             <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                             <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -165,15 +172,20 @@ include 'db_connect.php';
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.html" class="nav-item nav-link">Trang Chủ</a>
-                            <a href="shoplogin.html" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
+                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
                             <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown">Nguoi em cua gio</a>
+                                <a href="#" class="nav-link" data-toggle="dropdown">
+
+                                <?php 
+                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                ?>
+                                </a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.html" class="dropdown-item">Đăng Xuất</a>
+                                    <a href="index.php" class="dropdown-item">Đăng Xuất</a>
                                     <a href="suathongtinuser.html" class="dropdown-item">Đổi Thông Tin</a>
                                     <a href="history.html" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
@@ -499,7 +511,7 @@ function searchProduct() {
                     <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                         <div class="card product-item border-0 mb-4">
                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product1.jpg" alt="">
+                                <img class="img-fluid w-100" src="img/product-9.jpg" alt="">
                             </div>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3">Vợt Yonex 100zz Kurenai</h6>

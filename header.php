@@ -85,7 +85,7 @@
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="" class="btn border">
+                <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -114,28 +114,6 @@
                         
                 </nav>
             </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="ind" class="text-decoration-none d-block d-lg-none">
-                        <div style="display: flex; align-items: center; position: relative;">
-                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                        </div> 
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="index.html" class="nav-item nav-link active">Trang Chủ</a>
-                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm
-                            </a>
-                            <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>    
-                        </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.html" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.html" class="nav-item nav-link">Đăng Kí</a>
-                        </div>
-                    </div>
-                </nav>
-               
+
+            
+            
