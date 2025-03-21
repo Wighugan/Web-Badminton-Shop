@@ -1,0 +1,52 @@
+.notfound {
+    height: 400px;
+    padding-top: 5%;
+    text-align: center;
+    color: red;
+}
+
+.search-results {
+    display: none;
+    width: 300px;
+    height: 220px;
+    padding: 20px;
+    border: 2px solid #bab1b1;
+    border-top: none;
+    background-color: #ffffff;
+    /* Màu nền của box */
+    box-shadow: 3px 3px 5px #888888;
+    border-radius: 15px;
+}
+
+
+.hoasen {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+    gap: 10%;
+}
+
+.chuthuat {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+    gap: 10%;
+}
+.chuthuat {
+    padding-top: 20px;
+}
+
+.search-results img {
+    width: 20%;
+}
+
+.search-results .name {
+    color: #827c7c;
+    border: 2px #888888;
+}
+
+.san-pham:first-child:hover {
+    transform: scale(1.1);
+    z-index: 1;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
