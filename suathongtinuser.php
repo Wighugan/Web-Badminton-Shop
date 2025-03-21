@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <?php
+
+session_start();
+
+// Kiểm tra nếu user chưa đăng nhập
+if (!isset($_SESSION['user_id'])) {
+    die("Bạn chưa đăng nhập! Vui lòng đăng nhập lại.");
+}
+
+$user_id = $_SESSION['user_id']; // Lấy ID user từ session
+
 // Kết nối MySQL
 $conn = new mysqli("localhost", "root", "", "mydp");
 
-// Kiểm tra kết nối
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
-// Kiểm tra nếu có ID hợp lệ
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = $_GET['id'];
-    $sql = "SELECT * FROM users WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+// Truy vấn thông tin user dựa vào session
+$sql = "SELECT * FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
-    if (!$user) {
-        die("Không tìm thấy người dùng!");
-    }
-} else {
-    die("ID không hợp lệ!");
+if (!$user) {
+    die("Không tìm thấy người dùng!");
 }
 
 $stmt->close();
 $conn->close();
 ?>
+
+
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -202,7 +209,7 @@ button {
 }
 
 button:hover {
-    background-color: #969393;
+    background-color:rgb(8, 8, 8);
 }
 .no-border-button-rec-contact{
         border: 0px;      /* Loại bỏ viền */
@@ -230,6 +237,15 @@ button:hover {
                     <form action="update.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
+
+                    <div class="control-group">
+                            <label for="name">Tên đăng nhập:</label>
+
+                            <input class="form-control" type="text" name="username"  value="<?= $user['username'] ?>" required>
+
+                            <p class="help-block text-danger"></p>
+                        </div>
+
                         <div class="control-group">
                             <label for="name">Họ và Tên</label>
 
@@ -241,20 +257,22 @@ button:hover {
                         <div class="control-group">
                             <label>Ngày Sinh</label>
 
-                            <input type="birthday" class="form-control" type="text" name="birthday"  value="<?= $user['birthday'] ?>" required>
+                            <input class="form-control" type="date" id="birthday" name="birthday" value="<?= $user['birthday'] ?>" required>
+
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="control-group">
                             <label>Số điện thoại</label>
-                            <input type="email" class="form-control" id="email" value="09123456789" placeholder="Nhập số điện thoại"
-                                required="required" data-validation-required-message="Please enter your email" />
+                            <input class="form-control" type="text" id="numberphone" name="numberphone" value="<?= $user['numberphone'] ?>" required>
+                            
                             <p class="help-block text-danger"></p>
                         </div>
                         
                         <div class="control-group">
                             <label>Email:</label>
-                            <input type="email" class="form-control" id="email" value="liem123@gmail.com" placeholder="Email Của Bạn"
-                                required="required" data-validation-required-message="Please enter your email" />
+                            
+                                <input class="form-control" type="text" id="email" name="email" value="<?= $user['email'] ?>" required>
+
                             <p class="help-block text-danger"></p>
                         </div>
 
@@ -262,15 +280,15 @@ button:hover {
                         <div class="control-group">
                             <label>Địa chỉ</label>
 
-                            <input type="text" class="form-control" id="subject" value="273 An Dương Vương,Phường 3,Quận 5,TP.HCM	" placeholder="Nhập địa chỉ"
-                                required="required" data-validation-required-message="Please enter a subject" />
+                           
+                                <input  class="form-control"  type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
+
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="control-group">
                             <label>Đổi Mật khẩu:</label>
         
-                            <input type="password" class="form-control" id="name"  placeholder="Nhập Mật Khẩu cũ"
-                                required="required" data-validation-required-message="Please enter your name" />
+                            <input type="password" class="form-control" id="password" name="password" value="<?= $user['password'] ?>" required>
                             <p class="help-block text-danger"></p>
                         </div>
                         <div>
