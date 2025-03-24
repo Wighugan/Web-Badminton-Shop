@@ -95,9 +95,12 @@ if (!$product) {
             <div id="product-carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner border">
                     <div class="carousel-item active">
-                        <img class="w-100 h-100" src="../img/<?= htmlspecialchars($product['product-1.jpg']) ?>" alt="Image">
+                    <img class="w-100 h-100" 
+                        src="<?= isset($product['image1']) ? '../img/' . htmlspecialchars($product['image1']) : '../img/default.jpg'; ?>" 
+                        alt="Product Image">
+
                     </div>
-                    <div class="carousel-item">
+                    <!-- <div class="carousel-item">
                         <img class="w-100 h-100" src="img/<?= htmlspecialchars($product['image2']) ?>" alt="Image">
                     </div>
                     <div class="carousel-item">
@@ -105,7 +108,7 @@ if (!$product) {
                     </div>
                     <div class="carousel-item">
                         <img class="w-100 h-100" src="img/<?= htmlspecialchars($product['image4']) ?>" alt="Image">
-                    </div>
+                    </div> -->
                 </div>
                 <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
                     <i class="fa fa-2x fa-angle-left text-dark"></i>
@@ -122,25 +125,26 @@ if (!$product) {
             <div class="d-flex mb-3">
                 <div class="text-primary mr-2">
                     <?php
-                    $fullStars = floor($product['rating']);
-                    $halfStar = ($product['rating'] - $fullStars) >= 0.5 ? 1 : 0;
-                    $emptyStars = 5 - ($fullStars + $halfStar);
+                    // $fullStars = floor($product['rating']);
+                    // $halfStar = ($product['rating'] - $fullStars) >= 0.5 ? 1 : 0;
+                    // $emptyStars = 5 - ($fullStars + $halfStar);
 
-                    for ($i = 0; $i < $fullStars; $i++) echo '<small class="fas fa-star"></small>';
-                    if ($halfStar) echo '<small class="fas fa-star-half-alt"></small>';
-                    for ($i = 0; $i < $emptyStars; $i++) echo '<small class="far fa-star"></small>';
-                    ?>
+                    // for ($i = 0; $i < $fullStars; $i++) echo '<small class="fas fa-star"></small>';
+                    // if ($halfStar) echo '<small class="fas fa-star-half-alt"></small>';
+                    // for ($i = 0; $i < $emptyStars; $i++) echo '<small class="far fa-star"></small>';
+                    // ?>
                 </div>
-                <small class="pt-1">(<?= $product['reviews'] ?> Đánh Giá)</small>
+                <!-- <small class="pt-1">(<?= $product['reviews'] ?> Đánh Giá)</small> -->
             </div>
             <h3 class="font-weight-semi-bold mb-4"><?= number_format($product['price'], 0, ',', '.') ?> VND</h3>
-            <p class="mb-4"><?= $product['description'] ?></p>
 
             <!-- Màu sắc -->
             <div class="d-flex mb-4">
-                <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p>
+                <!-- <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p> -->
                 <form>
-                    <?php foreach ($colors as $index => $color) : ?>
+                    <?php 
+                    $colors = isset($product['color_options']) ? $product['color_options'] : [];
+                    foreach ($colors as $index => $color) : ?>
                         <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="color-<?= $index ?>" name="color">
                             <label class="custom-control-label" for="color-<?= $index ?>"><?= htmlspecialchars($color) ?></label>
@@ -168,7 +172,6 @@ if (!$product) {
                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                     <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
                     <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                    <input type="hidden" name="product_image" value="<?= $product['image1'] ?>">
                     <button type="submit" name="add_to_cart" class="btn btn-primary px-3">
                         <i class="fa fa-shopping-cart mr-1"></i> Thêm Vào Giỏ Hàng
                     </button>
