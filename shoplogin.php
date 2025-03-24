@@ -370,187 +370,144 @@ function searchProduct() {
                         </div>
                         <p id="output"></p>
                     </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-1.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt Cầu Lông Yonex Astrox 77 Pro Xanh Limited</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>13.500.000đ</h6><h6 class="text-muted ml-2"><del>50.500.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"  ></i> Thêm vào giỏ hàng</a>
-                            </div>
+                    <?php
 
-                            
-                        </div>
+include "db.php"; // Gọi file kết nối database
+
+// Xác định trang hiện tại (mặc định trang 1)
+$limit = 6; // Số sản phẩm mỗi trang
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Lấy tổng số sản phẩm
+$total_result = $conn->query("SELECT COUNT(*) AS total FROM products");
+$total_row = $total_result->fetch_assoc();
+$total_products = $total_row['total'];
+$total_pages = ceil($total_products / $limit);
+
+// Lấy sản phẩm cho trang hiện tại
+$sql = "SELECT * FROM products ORDER BY id DESC LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        /* Căn giữa trang */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Bố cục sản phẩm: 2 hàng x 3 cột */
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .product {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .product img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .product h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .product p {
+            font-size: 16px;
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        /* Phân trang */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            padding: 8px 12px;
+            margin: 0 5px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .pagination a.active {
+            background: #0056b3;
+            font-weight: bold;
+        }
+
+        /* Responsive: Hiển thị 2 cột trên màn hình nhỏ */
+        @media (max-width: 768px) {
+            .product-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Responsive: Hiển thị 1 cột trên điện thoại */
+        @media (max-width: 480px) {
+            .product-list {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="product-list">
+        <?php while ($row = $result->fetch_assoc()) { ?>
+            <div class="product">
+    <a href="detaillogin.php?id=<?= $row['id'] ?>">
+        <img src="uploads/<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
+        <h3><?= htmlspecialchars($row['name']) ?></h3>
+        <p>Giá: <?= number_format($row['price'], 0, ',', '.') ?> VND</p>
+    </a>
+</div>
+
+        <?php } ?>
+    </div>
+
+    <!-- Phân trang -->
+    <div class="pagination">
+        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+            <a href="?page=<?= $i ?>" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
+        <?php } ?>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+                        
                     </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-2.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Yonex Nanoflare 1000Z</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>4.888.000đ</h6><h6 class="text-muted ml-2"><del>6.550.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-3.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Mizuno XYST 07</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>4.050.000đ</h6><h6 class="text-muted ml-2"><del>5.100.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-4.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Lining Halbertec 8000</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>3.500.000đ</h6><h6 class="text-muted ml-2"><del>4.990.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-5.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Lining Aeronaut 7000B</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>3.390.000đ</h6><h6 class="text-muted ml-2"><del>3.890.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-6.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Victor Auraspeed 100X TUC/AC</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>2.300.000đ</h6><h6 class="text-muted ml-2"><del>2.800.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-7.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt Cầu Lông Lining Axforce 90 Xanh Dragon </h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>1.349.000đ</h6><h6 class="text-muted ml-2"><del>1.549.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-8.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt cầu lông Victor Ryuga Metallic 2024</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>2.650.000đ</h6><h6 class="text-muted ml-2"><del>3.650.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="img/product-9.jpg" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Vợt Yonex 100zz Kurenai</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>2.600.000đ</h6><h6 class="text-muted ml-2"><del>3.600.000đ</del></h6>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem chi tiết</a>
-                                <a href="" class="btn btn-sm text-dark p-0"onclick="done()"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ hàng</a>
-                            </div>
-                        </div>
-                        <script>
-                            function done() {
-                              alert("Đã thêm vào giỏ hàng!");
-                            }
-                          </script>
-                    </div>
-                    <div class="col-12 pb-1">
-                        <nav aria-label="Page navigation">
-                          <ul class="pagination justify-content-center mb-3">
-                            <li class="page-item disabled">
-                              <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                              </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                              <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                              </a>
-                            </li>
-                          </ul>
-                        </nav>
-                    </div>
+                    
                 </div>
             </div>
             <!-- Shop Product End -->
