@@ -215,9 +215,11 @@ if (!$product) {
                                 <a href="#" class="nav-link" data-toggle="dropdown"> 
                                     <?php 
                     echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?></a>
+                ?>
+                
+            </a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="logedin.php" class="dropdown-item">Đăng Xuất</a>
+                                    <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
                                     <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
                                     <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>

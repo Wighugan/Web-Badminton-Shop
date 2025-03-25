@@ -1,5 +1,7 @@
+
 <!DOCTYPE html>
 <html lang="vi">
+    
 <?php
 include 'db.php';
 
@@ -7,9 +9,24 @@ session_start();
 
 
 // Xử lý tìm kiếm
+// Xác định trang hiện tại (mặc định trang 1)
+$limit = 6; // Số sản phẩm mỗi trang
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
+// Lấy tổng số sản phẩm
+$total_result = $conn->query("SELECT COUNT(*) AS total FROM product");
+$total_row = $total_result->fetch_assoc();
+$total_products = $total_row['total'];
+$total_pages = ceil($total_products / $limit);
+
+// Lấy sản phẩm cho trang hiện tại
+$sql = "SELECT * FROM product ORDER BY id ASC LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
 ?>
+
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
     <link href='img/logo.png' rel='icon' type='image/x-icon' />
@@ -70,7 +87,7 @@ session_start();
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="index.php" class="text-decoration-none">
+                <a href="logedin.html" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -94,7 +111,7 @@ session_start();
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="" onclick="showMessage()" class="btn border">
+                <a href="cart.html" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -142,18 +159,18 @@ session_start();
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot.html" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="giay.html" class="nav-item nav-link">Giày Cầu Lông</a>
-                        <a href="tui.html" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="quan.html" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="ao.html" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="vay.html" class="nav-item nav-link">Váy Cầu Lông</a>
-                        
+                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Giày Cầu Lông</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
+                       
                 </nav>
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="index.php" class="text-decoration-none d-block d-lg-none">
+                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
                         <div style="display: flex; align-items: center; position: relative;">
                             <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                             <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -164,13 +181,19 @@ session_start();
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index.php" class="nav-item nav-link">Trang chủ</a>
-                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
+                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.php" class="nav-item nav-link">Đăng Kí</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link" data-toggle="dropdown"> <?php 
+                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                ?></a>
+                                <div class="dropdown-menu rounded-0 m-0">
+                                    <a href="index.php" class="dropdown-item">Đăng Xuất</a>
+                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
                     </div>
                 </nav>
@@ -185,7 +208,7 @@ session_start();
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="index.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -198,7 +221,6 @@ session_start();
             <!-- Shop Sidebar Start -->
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
-
                 <div class="mb-5">
                     <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
                     <form>
@@ -225,7 +247,6 @@ session_start();
                         </div>
                     </form>
                 </div>
-
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
                     <form>
@@ -302,7 +323,7 @@ session_start();
                     </form>
                 </div>
                 <!-- Size End -->
-
+  
                 
 
                
@@ -318,19 +339,32 @@ session_start();
                     font-size: 30px;
                 }
             </style>
-            <script>
-                function showText() {
-                    document.getElementById("output").innerText = "Kết quả tìm kiếm";
-                }
-            </script>
+           <script>
+function searchProduct() {
+    let keyword = document.getElementById("searchInput").value;
+
+    $.ajax({
+        url: "search.php",
+        type: "GET",
+        data: { search: keyword },
+        success: function(response) {
+            document.getElementById("productList").innerHTML = response;
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi AJAX:", error);
+        }
+    });
+}
+</script>
             <!-- Shop Product Start -->
             <div class="col-lg-9 col-md-12">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form onsubmit="showText(); return false;">
+                            <form onsubmit="searchProduct(); return false;">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" onkeyup="searchProduct()">
+
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-primary" type="submit">
                                             <i class="fa fa-search"></i>
@@ -338,145 +372,81 @@ session_start();
                                     </div>
                                 </div>
                             </form>
-                      
+                           
                         </div>
                         <p id="output"></p>
                     </div>
-                    <?php
-
-include "db.php"; // Gọi file kết nối database
-
-// Xác định trang hiện tại (mặc định trang 1)
-$limit = 6; // Số sản phẩm mỗi trang
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
-
-// Lấy tổng số sản phẩm
-$total_result = $conn->query("SELECT COUNT(*) AS total FROM products");
-$total_row = $total_result->fetch_assoc();
-$total_products = $total_row['total'];
-$total_pages = ceil($total_products / $limit);
-
-// Lấy sản phẩm cho trang hiện tại
-$sql = "SELECT * FROM products ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$result = $conn->query($sql);
-?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Shop</title>
-    <link rel="stylesheet" href="styles.css"> 
-    <style>
-        /* Căn giữa trang */
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        /* Bố cục sản phẩm: 2 hàng x 3 cột */
-        .product-list {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .product {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 15px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-radius: 8px;
-        }
-
-        .product img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
-        .product h3 {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-
-        .product p {
-            font-size: 16px;
-            color: #d9534f;
-            font-weight: bold;
-        }
-
-        /* Phân trang */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .pagination a {
-            text-decoration: none;
-            padding: 8px 12px;
-            margin: 0 5px;
-            background: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .pagination a.active {
-            background: #0056b3;
-            font-weight: bold;
-        }
-
-        /* Responsive: Hiển thị 2 cột trên màn hình nhỏ */
-        @media (max-width: 768px) {
-            .product-list {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Responsive: Hiển thị 1 cột trên điện thoại */
-        @media (max-width: 480px) {
-            .product-list {
-                grid-template-columns: repeat(1, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="product-list">
+                    
+                    
+                    <div class="container">
+    <div class="row">
         <?php while ($row = $result->fetch_assoc()) { ?>
-            <div class="product">
-                    <img src="uploads/<?= htmlspecialchars($row['image']) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-                    <h3><?= htmlspecialchars($row['name']) ?></h3>
-                    <p>Giá: <?= number_format($row['price'], 0, ',', '.') ?> VND</p>
-                </a>
-            </div>
-        <?php } ?>
-    </div>
-
-    <!-- Phân trang -->
-    <div class="pagination">
-        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-            <a href="?page=<?= $i ?>" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
-        <?php } ?>
-    </div>
-</div>
-</body>
-</html>
-
-
-
-
+            <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                <div class="card product-item border-0 mb-4">
+                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
                     </div>
+                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                        <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
+                        <div class="d-flex justify-content-center">
+                            <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-light border">
+                        <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0">
+                            <i class="fas fa-eye text-primary mr-1"></i> Xem chi tiết
+                        </a>
+                        <a  class="btn btn-sm text-dark p-0" onclick="showMessage()" href="">
+                            <i class="fas fa-shopping-cart text-primary mr-1"></i> Thêm vào giỏ hàng
+                        </a>
+                    </div>
+                    <script>
+                function showMessage() {
+                    alert("Chưa đăng nhập!");
+                }
+            </script>
+              </script>
                 </div>
             </div>
+        <?php } ?>
+    </div>
+
+    <div class="col-12 pb-1">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-3">
+            <!-- Nút Previous -->
+            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page > 1) ? ($page - 1) : 1 ?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+
+            <!-- Hiển thị số trang -->
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                </li>
+            <?php } ?>
+
+            <!-- Nút Next -->
+            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page < $total_pages) ? ($page + 1) : $total_pages ?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</div>
+
+
+
+<?php
+$conn->close();
+?>
             <!-- Shop Product End -->
         </div>
     </div>
@@ -492,26 +462,21 @@ $result = $conn->query($sql);
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
                     </div>
                 </a>
-                <p>Mọi thắc mắc xin liên hệ về.</p>
+                <p>Mọi mắc mắt xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
             </div>
-            <script>
-                function showMessage() {
-                    alert("Chưa đăng nhập!");
-                }
-            </script>
             <div class="col-lg-8 col-md-12">
                 <div class="row">
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">

@@ -5,10 +5,25 @@ session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
 
 // Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
+
+
+$servername = "localhost"; // Thay đổi nếu cần
+$username = "root"; // Tài khoản MySQL mặc định trên XAMPP
+$password = ""; // Mật khẩu (nếu có)
+$database = "mydp"; // Thay bằng tên database của bạn
+
+// Tạo kết nối
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Kiểm tra kết nối
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
 ?>
+
 <?php include 'header.php'; ?>
 
             <div class="col-lg-9">
@@ -225,345 +240,111 @@ if (!isset($_SESSION['user_id'])) {
         <div class="text-center mb-4">
             <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Nổi Bật</span></h2>
         </div>
-        <div class="row px-xl-5 pb-3">
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-1.jpg" alt="">
-                        </a>
-                        </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt Cầu Lông Yonex Astrox 77 Pro Xanh Limited</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>7.300.000đ</h6><h6 class="text-muted ml-2"><del>10.530.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-2.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Yonex Nanoflare 1000Z</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>5.050.000đ</h6><h6 class="text-muted ml-2"><del>6.050.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-3.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Mizuno XYST 07</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>3.800.000đ</h6><h6 class="text-muted ml-2"><del>5.300.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-4.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Lining Halbertec 8000</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>3.729.000đ</h6><h6 class="text-muted ml-2"><del>4.600.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-5.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Lining Aeronaut 7000B</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.050.000đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-7.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt Cầu Lông Lining Axforce 90 Xanh Dragon </h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.500.000đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-6.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Victor Auraspeed 100X TUC/AC</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.900.000 đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-8.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Victor Ryuga Metallic 2024</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.400.000đ</h6><h6 class="text-muted ml-2"><del>4.700.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Products End -->
 
-    <!-- Products Start -->
-    <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Mới</span></h2>
-        </div>
         <div class="row px-xl-5 pb-3">
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-1.jpg" alt="">
-                        </a>
-                        </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt Cầu Lông Yonex Astrox 77 Pro Xanh Limited</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>7.300.000đ</h6><h6 class="text-muted ml-2"><del>10.530.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
+
+        <?php
+
+// Lấy danh sách sản phẩm
+$sql = "SELECT * FROM product ORDER BY id ASC";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) { ?>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="card product-item border-0 mb-4">
+                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
+                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
+                    </a>
+                </div>
+                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
+                    <div class="d-flex justify-content-center">
+                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        <?php if ($row['price'] > 0) { ?>
+                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
+                        <?php } ?>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-2.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Yonex Nanoflare 1000Z</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>5.050.000đ</h6><h6 class="text-muted ml-2"><del>6.050.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
+                <div class="card-footer d-flex justify-content-between bg-light border">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
+                    <a href="logedin.php" class="btn btn-sm text-dark p-0" onclick="done()">
+                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
+                    </a>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-3.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Mizuno XYST 07</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>3.800.000đ</h6><h6 class="text-muted ml-2"><del>5.300.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-4.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Lining Halbertec 8000</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>3.729.000đ</h6><h6 class="text-muted ml-2"><del>4.600.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-5.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Lining Aeronaut 7000B</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.050.000đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-7.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt Cầu Lông Lining Axforce 90 Xanh Dragon </h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.500.000đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-6.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Victor Auraspeed 100X TUC/AC</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.900.000 đ</h6><h6 class="text-muted ml-2"><del>5.000.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"             onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.html">
-                            <img class="img-fluid w-100" src="img/product-8.jpg" alt="">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">Vợt cầu lông Victor Ryuga Metallic 2024</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6>4.400.000đ</h6><h6 class="text-muted ml-2"><del>4.700.000đ</del></h6>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="detaillogin.html" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                        <a href="logedin.html" class="btn btn-sm text-dark p-0"            onclick="done()"
-                        ><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng</a>
-                    </div>
-                </div>
-            </div>
-            <script>
+                <script>
                 function done() {
                   alert("Đã thêm vào giỏ hàng!");
                 }
               </script>
-
+            </div>
         </div>
-    </div>
+    <?php }
+} else {
+    echo "<p>Không có sản phẩm nào!</p>";
+}
+?>
+
+
+
+
+
+
+
+    <!-- Products Start -->
+    <div class="container-fluid pt-5">
+        
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Mới</span></h2>
+        </div>
+
+        <div class="row px-xl-5 pb-3">
+            
+           
+        <?php
+
+// Lấy danh sách sản phẩm
+$sql = "SELECT * FROM product ORDER BY id ASC";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) { ?>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="card product-item border-0 mb-4">
+                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
+                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
+                    </a>
+                </div>
+                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
+                    <div class="d-flex justify-content-center">
+                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        <?php if ($row['price'] > 0) { ?>
+                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
+                        <?php } ?>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between bg-light border">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
+                    <a href="logedin.php" class="btn btn-sm text-dark p-0" onclick="done()">
+                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
+                    </a>
+                </div>
+                <script>
+                function done() {
+                  alert("Đã thêm vào giỏ hàng!");
+                }
+              </script>
+            </div>
+        </div>
+    <?php }
+} else {
+    echo "<p>Không có sản phẩm nào!</p>";
+}
+$conn->close();
+?>
     <!-- Products End -->
 
 

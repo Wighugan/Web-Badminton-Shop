@@ -8,7 +8,7 @@ include 'db.php';
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    header("Location: index.php"); // Chuyển hướng nếu chưa đăng nhập
     exit();
 }
 // Xử lý tìm kiếm
