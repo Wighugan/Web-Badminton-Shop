@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
+<?php
+include 'db.php';
 
+session_start();
+
+
+// Xử lý tìm kiếm
+
+?>
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -62,7 +70,7 @@
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="index.html" class="text-decoration-none">
+                <a href="index.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -145,7 +153,7 @@
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="index.html" class="text-decoration-none d-block d-lg-none">
+                    <a href="index.php" class="text-decoration-none d-block d-lg-none">
                         <div style="display: flex; align-items: center; position: relative;">
                             <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                             <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -157,12 +165,12 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index.php" class="nav-item nav-link">Trang chủ</a>
-                            <a href="shop.html" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
                             <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.html" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.html" class="nav-item nav-link">Đăng Kí</a>
+                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="Signup.php" class="nav-item nav-link">Đăng Kí</a>
                         </div>
                     </div>
                 </nav>

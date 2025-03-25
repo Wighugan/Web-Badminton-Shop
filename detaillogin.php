@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <?php
@@ -15,7 +14,7 @@ if (!isset($_GET['id'])) {
 }
 $id = intval($_GET['id']);
 
-$sql = "SELECT * FROM products WHERE id = ?";
+$sql = "SELECT * FROM product WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -30,7 +29,170 @@ if (!$product) {
 
 ?>
 
-<?php include 'header.php'; ?>
+<head>
+    <meta charset="utf-8">
+    <title>MMB- Shop Bán Đồ Cầu Lông</title>
+    <link href='img/logo.png' rel='icon' type='image/x-icon' />
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .product-info {
+  font-size: 14px; /* Cỡ chữ nhỏ hơn tiêu đề */
+  color: #333; /* Màu xám đậm để dễ nhìn */
+}
+
+.product-code {
+  color: #e65100; /* Màu cam đỏ */
+  font-weight: bold;
+}
+
+.brand {
+  color: #e65100; /* Màu cam đỏ */
+  font-weight: bold;
+}
+
+.status {
+  color: #e65100; /* Màu cam đỏ */
+  font-weight: bold;
+}
+        </style>
+
+</head>
+
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row bg-secondary py-2 px-xl-5">
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="d-inline-flex align-items-center">
+                    <a class="text-dark" href="">Câu Hỏi Thường Gặp</a>
+                    <span class="text-muted px-2">|</span>
+                    <a class="text-dark" href="">Trợ Giúp</a>
+                    <span class="text-muted px-2">|</span>
+                    <a class="text-dark" href="">Hỗ Trợ</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center text-lg-right">
+                <div class="d-inline-flex align-items-center">
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a class="text-dark pl-2" href="">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center py-3 px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a href="logedin.php" class="text-decoration-none">
+                    <div style="display: flex; align-items: center; position: relative;">
+                        <img src="img/logo.png" alt="a logo" width="85px" height="85px">
+                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 col-6 text-left">
+                <form action="shoplogin.php">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+                        <div class="input-group-append">
+                            <button class="input-group-text bg-transparent text-primary" class="fa fa-search">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-3 col-6 text-right">
+                <a href="" class="btn border">
+                    <i class="fas fa-heart text-primary"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="cart.php" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <span class="badge">0</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+    <script>
+        function showVot(event) {
+            document.getElementById("output").innerText = "Vợt cầu lông";
+        }
+        function showGiay(event) {
+            document.getElementById("output").innerText = "Giày cầu lông";
+        }
+        function showTui(event) {
+            document.getElementById("output").innerText = "Túi cầu lông";
+        }
+        function showQuan(event) {
+            document.getElementById("output").innerText = "Quần cầu lông";
+        }
+        function showAo(event) {
+            document.getElementById("output").innerText = "Áo cầu lông";
+        }
+        function showVáy(event) {
+            document.getElementById("output").innerText = "Váy cầu lông";
+        }
+        function showVo(event) {
+            document.getElementById("output").innerText = "Vớ cầu lông";
+        }
+        function showQuanCan(event) {
+            document.getElementById("output").innerText = "Quấn cán vợt";
+        }
+        function showOngCau(event) {
+            document.getElementById("output").innerText = "Ống cầu";
+        }
+    </script>
+
+    <!-- Navbar Start -->
+    <div class="container-fluid">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+                    <h6 class="m-0">Phân Loại Sản Phẩm</h6>
+                    <i class="fa fa-angle-down text-dark"></i>
+                </a>
+                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
+                    <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
+                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Giầy Cầu Lông</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
+                       
+                    </div>
+                </nav>
+            </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="logedin.php" class="text-decoration-none d-block d-lg-none">
@@ -44,33 +206,35 @@ if (!$product) {
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
-                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm
-                            </a>
+                            <a href="logedin.php" class="nav-item nav-link">Trang chủ</a>
+                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
                             <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
-
-
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown">
-                                <?php 
+                                <a href="#" class="nav-link" data-toggle="dropdown"> 
+                                    <?php 
                     echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?>
-                                </a>
+                ?></a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                    <a href="logedin.php" class="dropdown-item">Đăng Xuất</a>
                                     <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
                                     <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
                     </div>
                 </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông Tin Chi Tiết</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -78,117 +242,111 @@ if (!$product) {
 
 
     <!-- Shop Detail Start -->
-    <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title><?= htmlspecialchars($product['name']) ?></title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 pb-5">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner border">
+                        <div class="carousel-item active">
+                        <img class="w-100 h-100" src="<?= isset($product['image']) ? htmlspecialchars(str_replace('../', '', $product['image'])) : 'img/default.jpg'; ?>" 
+     alt="<?= htmlspecialchars($product['name']) ?>">
 
-<div class="container-fluid py-5">
-    <div class="row px-xl-5">
-        <!-- Hình ảnh sản phẩm -->
-        <div class="col-lg-5 pb-5">
-            <div id="product-carousel" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner border">
-                    <div class="carousel-item active">
-                    <img class="w-100 h-100" 
-                        src="<?= isset($product['image1']) ? '../img/' . htmlspecialchars($product['image1']) : '../img/default.jpg'; ?>" 
-                        alt="Product Image">
 
                     </div>
-                    <!-- <div class="carousel-item">
-                        <img class="w-100 h-100" src="img/<?= htmlspecialchars($product['image2']) ?>" alt="Image">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="w-100 h-100" src="img/<?= htmlspecialchars($product['image3']) ?>" alt="Image">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="w-100 h-100" src="img/<?= htmlspecialchars($product['image4']) ?>" alt="Image">
-                    </div> -->
+    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
                 </div>
-                <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
-                    <i class="fa fa-2x fa-angle-left text-dark"></i>
-                </a>
-                <a class="carousel-control-next" href="#product-carousel" data-slide="next">
-                    <i class="fa fa-2x fa-angle-right text-dark"></i>
-                </a>
             </div>
-        </div>
 
-        <!-- Thông tin sản phẩm -->
-        <div class="col-lg-7 pb-5">
-            <h3 class="font-weight-semi-bold"><?= htmlspecialchars($product['name']) ?></h3>
-            <div class="d-flex mb-3">
-                <div class="text-primary mr-2">
-                    <?php
-                    // $fullStars = floor($product['rating']);
-                    // $halfStar = ($product['rating'] - $fullStars) >= 0.5 ? 1 : 0;
-                    // $emptyStars = 5 - ($fullStars + $halfStar);
+            <div class="col-lg-7 pb-5">
 
-                    // for ($i = 0; $i < $fullStars; $i++) echo '<small class="fas fa-star"></small>';
-                    // if ($halfStar) echo '<small class="fas fa-star-half-alt"></small>';
-                    // for ($i = 0; $i < $emptyStars; $i++) echo '<small class="far fa-star"></small>';
-                    // ?>
+               <h3 class="font-weight-semi-bold"><?= htmlspecialchars($product['name']) ?></h3>
+
+               <p class="product-info">
+    Mã: <span class="product-code"><?= htmlspecialchars($product['productcode']) ?></span><br>
+    Thương hiệu: <span class="brand"><?= htmlspecialchars($product['category']) ?></span> | Tình trạng: <span class="status">Còn hàng</span>
+</p>
+                <div class="d-flex mb-3">
+                    <div class="text-primary mr-2">
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star"></small>
+                        <small class="fas fa-star-half-alt"></small>
+                        <small class="far fa-star"></small>
+                    </div>
+                    <small class="pt-1">(50 Đánh Giá)</small>
                 </div>
-                <!-- <small class="pt-1">(<?= $product['reviews'] ?> Đánh Giá)</small> -->
-            </div>
-            <h3 class="font-weight-semi-bold mb-4"><?= number_format($product['price'], 0, ',', '.') ?> VND</h3>
+                <p class="mb-4">✔ Sản phẩm cam kết chính hãng<br>
 
-            <!-- Màu sắc -->
-            <div class="d-flex mb-4">
-                <!-- <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p> -->
-                <form>
-                    <?php 
-                    $colors = isset($product['color_options']) ? $product['color_options'] : [];
-                    foreach ($colors as $index => $color) : ?>
+                    ✔ Một số sản phẩm sẽ được tặng bao đơn hoặc bao nhung bảo vệ vợt<br>
+                    
+                    ✔ Thanh toán sau khi kiểm tra và nhận hàng (Giao khung vợt)<br>
+                    
+                    ✔ Bảo hành chính hãng theo nhà sản xuất (Trừ hàng nội địa, xách tay).</p>
+               
+                    <h3 class="font-weight-semi-bold mb-4"><?= number_format($product['price'], 0, ',', '.') ?> VND</h3>
+
+                <div class="d-flex mb-4">
+                    <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p>
+                    <form>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-<?= $index ?>" name="color">
-                            <label class="custom-control-label" for="color-<?= $index ?>"><?= htmlspecialchars($color) ?></label>
+                            <input type="radio" class="custom-control-input" id="color-1" name="color">
+                            <label class="custom-control-label" for="color-1">Đỏ Đen</label>
                         </div>
-                    <?php endforeach; ?>
-                </form>
-            </div>
-
-            <!-- Số lượng & Nút thêm vào giỏ hàng -->
-            <div class="d-flex align-items-center mb-4 pt-2">
-                <div class="input-group quantity mr-3" style="width: 130px;">
-                    <div class="input-group-btn">
-                        <button class="btn btn-primary btn-minus">
-                            <i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                    <input type="text" class="form-control bg-secondary text-center" value="1">
-                    <div class="input-group-btn">
-                        <button class="btn btn-primary btn-plus">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-2" name="color">
+                            <label class="custom-control-label" for="color-2">Xanh Đen</label>
+                        </div>
+                        <!--<div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-3" name="color">
+                            <label class="custom-control-label" for="color-3">Red</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-4" name="color">
+                            <label class="custom-control-label" for="color-4">Blue</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-5" name="color">
+                            <label class="custom-control-label" for="color-5">Green</label>
+                        </div>-->
+                    </form>
                 </div>
-                <form method="POST" action="cart.php">
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <div class="input-group quantity mr-3" style="width: 130px;">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary btn-minus" >
+                            <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control bg-secondary text-center" value="1">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary btn-plus">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="cart.php">
                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                     <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
                     <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
                     <button type="submit" name="add_to_cart" class="btn btn-primary px-3">
                         <i class="fa fa-shopping-cart mr-1"></i> Thêm Vào Giỏ Hàng
                     </button>
-                </form>
+                </form>               
+            
             </div>
 
-            <script>
-                function done() {
-                    alert("Đã thêm vào giỏ hàng!");
-                }
-            </script>
-        </div>
-    </div>
-</div>
-
-</body>
-</html>
+                <script>
+                    function done() {
+                      alert("Đã thêm vào giỏ hàng!");
+                    }
+                  </script>
 
                 <div class="d-flex pt-2">
                     <p class="text-dark font-weight-medium mb-0 mr-2">Chia Sẻ:</p>
@@ -219,24 +377,27 @@ if (!$product) {
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-pane-1">
                         <h4 class="mb-3">Mô Tả Sản Phẩm</h4>
-                        <p>Vợt cầu lông Yonex Astrox 100ZZ kurenai đỏ tấn công cực kỳ mạnh mẽ, vung vợt nhanh, mượt và ít biến dạng thân vợt. Vợt nặng đầu, thân cứng cho ra các cú smash, tạt cầu uy lực, cầu bay nhanh, mạnh, cắm sân. Công nghệ vợt chống rung chống xoắn, giúp người chơi có những pha cầu chắc chắn, ổn định và chính xác nhất.</p>
+                        <p><?= htmlspecialchars($product['description']) ?></p>
                         <div class="center-content">
                             <div class="basel-tab-wrapper">
                                 <a href="#tab-additional-information" class="basel-accordion-title tab-title-addtional-information"></a>
                                 <h4 class="mb-3">Thông Tin Chi Tiết</h4>
                                 <table class="woocommerce-product-attributes shop_attributes">
                                     <tbody>
-                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_brand">
-                                            <th class="woocommerce-product-attributes-item__label">Thương Hiệu</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Yonex</p></td>
-                                        </tr>
+                                        
                                         <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_diem-can-bang">
-                                            <th class="woocommerce-product-attributes-item__label">Mã Sản Phẩm</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>KNS49</p></td>
+                                            <th class="woocommerce-product-attributes-item__label">Độ cứng</th>
+                                            <td class="woocommerce-product-attributes-item__value"><?= htmlspecialchars($product['flex']) ?></td>
                                         </tr>
+
                                         <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_do-cung">
-                                            <th class="woocommerce-product-attributes-item__label">Xuất Xứ</th>
-                                            <td class="woocommerce-product-attributes-item__value"><p>Nhật Bản</p></td>
+                                            <th class="woocommerce-product-attributes-item__label">Chiều dài vợt</th>
+                                            <td class="woocommerce-product-attributes-item__value"><p><?= htmlspecialchars($product['length']) ?></td>
+                                        </tr>
+                                        
+                                        <tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_brand">
+                                            <th class="woocommerce-product-attributes-item__label">Trọng lượng</th>
+                                            <td class="woocommerce-product-attributes-item__value"><p><?= htmlspecialchars($product['weight']) ?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -366,9 +527,9 @@ if (!$product) {
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
                             <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
                             <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
