@@ -318,37 +318,59 @@ if (!$product) {
                         </div>-->
                     </form>
                 </div>
-                <div class="d-flex align-items-center mb-4 pt-2">
-                    <div class="input-group quantity mr-3" style="width: 130px;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-minus" >
-                            <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                        <input type="text" class="form-control bg-secondary text-center" value="1">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-plus">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <form method="POST" action="cart.php">
-                    <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                    <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                    <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                    <button type="submit" name="add_to_cart" class="btn btn-primary px-3">
-                        <i class="fa fa-shopping-cart mr-1"></i> Thêm Vào Giỏ Hàng
-                    </button>
-                </form>               
-            
+                <form action="addcart.php" method="GET">
+    <input type="hidden" name="id" value="<?= $product['id']; ?>">
+
+    <div class="d-flex align-items-center mb-4 pt-2">
+        <div class="input-group quantity mr-3" style="width: 130px;">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-primary btn-minus">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+            <input type="text" class="form-control bg-secondary text-center" name="quantity" value="1">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-primary btn-plus">
+                    <i class="fa fa-plus"></i>
+                </button>
             </div>
 
-                <script>
-                    function done() {
-                      alert("Đã thêm vào giỏ hàng!");
-                    }
-                  </script>
+        </div>
+        <button onclick="done()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+
+    </div>
+    <script>
+                        function done() {
+                          alert("Đã thêm vào giỏ hàng thành công!");
+                        }
+                      </script>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const minusBtn = document.querySelector(".btn-minus");
+    const plusBtn = document.querySelector(".btn-plus");
+    const quantityInput = document.querySelector("input[name='quantity']");
+
+    minusBtn.addEventListener("click", function () {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    });
+
+    plusBtn.addEventListener("click", function () {
+        let currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+    });
+});
+</script>
+
+
+         
+
+
+
 
                 <div class="d-flex pt-2">
                     <p class="text-dark font-weight-medium mb-0 mr-2">Chia Sẻ:</p>
@@ -367,8 +389,14 @@ if (!$product) {
                         </a>
                     </div>
                 </div>
+                </div>
+
+
             </div>
         </div>
+
+
+
         <div class="row px-xl-5">
             <div class="col">
                 <div class="nav nav-tabs justify-content-center border-secondary mb-4">

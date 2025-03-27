@@ -256,12 +256,7 @@ if ($result->num_rows > 0) {
                         <?php } ?>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                    <a class="btn btn-sm text-dark p-0" onclick="showMessage()" href="">
-                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
-                    </a>
-                </div>
+                
                 <script>
                 function showMessage() {
                     alert("Chưa đăng nhập!");
@@ -315,12 +310,7 @@ if ($result->num_rows > 0) {
                         <?php } ?>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                    <a  class="btn btn-sm text-dark p-0" onclick="showMessage()" href="">
-                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
-                    </a>
-                </div>
+                
                 <script>
                 function showMessage() {
                     alert("Chưa đăng nhập!");

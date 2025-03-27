@@ -261,18 +261,13 @@ if ($result->num_rows > 0) {
                 <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                     <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
                     <div class="d-flex justify-content-center">
-                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+    <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
                         <?php if ($row['price'] > 0) { ?>
                             <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
                         <?php } ?>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                    <a href="logedin.php" class="btn btn-sm text-dark p-0" onclick="done()">
-                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
-                    </a>
-                </div>
+               
                 <script>
                 function done() {
                   alert("Đã thêm vào giỏ hàng!");
@@ -320,18 +315,13 @@ if ($result->num_rows > 0) {
                 <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                     <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
                     <div class="d-flex justify-content-center">
-                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
                         <?php if ($row['price'] > 0) { ?>
                             <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
                         <?php } ?>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem Chi Tiết</a>
-                    <a href="logedin.php" class="btn btn-sm text-dark p-0" onclick="done()">
-                        <i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm Vào Giỏ Hàng
-                    </a>
-                </div>
+               
                 <script>
                 function done() {
                   alert("Đã thêm vào giỏ hàng!");

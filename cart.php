@@ -9,8 +9,23 @@ if (!isset($_SESSION['username'])) {
     header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
     exit();
 }
-// Xử lý tìm kiếm
+$user_id = $_SESSION['user_id'];
 
+// Lấy danh sách sản phẩm trong giỏ hàng
+$query = $conn->prepare("
+    SELECT cart.id, products.name, products.image, products.price, cart.quantity 
+    FROM cart 
+    INNER JOIN products ON cart.product_id = products.id 
+    WHERE cart.user_id = ?
+");
+$query->bind_param("i", $user_id);
+$query->execute();
+$result = $query->get_result();
+
+$cart_items = [];
+while ($row = $result->fetch_assoc()) {
+    $cart_items[] = $row;
+}
 ?>
 <head>
     <meta charset="utf-8">
@@ -138,8 +153,8 @@ if (!isset($_SESSION['username'])) {
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.html" class="nav-item nav-link">Trang Chủ</a>
-                            <a href="shoplogin.html" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
+                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
                             <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
@@ -150,8 +165,8 @@ if (!isset($_SESSION['username'])) {
                 ?>
                                 </a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.html" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.html" class="dropdown-item">Đổi Thông Tin</a>
+                                    <a href="index.php" class="dropdown-item">Đăng Xuất</a>
+                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
                                     <a href="history.html" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
                     </div>
@@ -167,177 +182,93 @@ if (!isset($_SESSION['username'])) {
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Giỏ Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang chủ</a></p>
+                <p class="m-0"><a href="logedin.php">Trang chủ</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Giỏ Hàng</p>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
-
-
-    <!-- Cart Start -->
     <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <div class="col-lg-8 table-responsive mb-5">
-                <table class="table table-bordered text-center mb-0">
-                    <thead class="bg-secondary text-dark">
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>Sản Phẩm</th>
+                        <th>Giá Tiền</th>
+                        <th>Số Lượng</th>
+                        <th>Tổng Tiền</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $total = 0;
+                    if (!empty($cart_items)): 
+                        foreach ($cart_items as $item): 
+                            $subtotal = $item['price'] * $item['quantity'];
+                            $total += $subtotal;
+                    ?>
                         <tr>
-                            <th>Sản Phẩm</th>
-                            <th>Giá Tiền</th>
-                            <th>Số Lượng</th>
-                            <th>Tổng Tiền</th>
-                            <th>Xóa</th>
+                            <td class="align-middle"><img src="<?= str_replace('../', '', htmlspecialchars($item['image'])) ?>" width="50"> <?= $item['name'] ?></td>
+                            <td class="align-middle"><?= number_format($item['price'], 0, ',', '.') ?> VND</td>
+                            <td class="align-middle"><?= $item['quantity'] ?></td>
+                            <td class="align-middle"><?= number_format($subtotal, 0, ',', '.') ?> VND</td>
+                            <td class="align-middle"><a href="removecart.php?id=<?= $item['id'] ?>" class="btn btn-sm btn-danger">Xóa</a></td>
                         </tr>
-                    </thead>
-                    <tbody class="align-middle">
-                        <tr>
-                            <td class="align-middle text-left"><img src="img/product-1.jpg" alt="" style="width: 50px;">Vợt Yonex Astrox 88D Pro</td>
-                            <td class="align-middle text-left">4.039.000 VND</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle text-left">4.039.000 VND</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle text-left"><img src="img/product-2.jpg" alt="" style="width: 50px;"> Vợt Lining Calibar 900B</td>
-                            <td class="align-middle text-left">4.690.000 VND</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle text-left">4.690.000 VND</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle text-left"><img src="img/product-3.jpg" alt="" style="width: 50px;"> Yonex Astrox 100zz Kurenai</td>
-                            <td class="align-middle text-left">4.350.000 VND</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle text-left">4.350.000 VND</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle text-left"><img src="img/product-4.jpg" alt="" style="width: 50px;">Giày Cầu Lông Yonex Strider Wide </td>
-                            <td class="align-middle text-left">1.090.000 VND</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle text-left">1.090.000 VND</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle text-left"><img src="img/product-5.jpg" alt="" style="width: 50px;"> Túi Cầu Lông Yonex BA02331WEX (GC)</td>
-                            <td class="align-middle text-left">950.000 VND</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle text-left">950.000 VND</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-lg-4">
-                <form class="mb-5" action="">
-                    <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Mã Giảm GIá">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary">Áp Dụng</button>
-                        </div>
-                    </div>
-                </form>
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Giỏ Hàng</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Tổng</h6>
-                            <h6 class="font-weight-medium">15.119.000 VND</h6>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
-                            <h6 class="font-weight-medium">50.000 VND</h6>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Phí Bảo Đảm</h6>
-                            <h6 class="font-weight-medium">30.000 VND</h6>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <div class="d-flex justify-content-between mt-2">
-                            <h5 class="font-weight-bold">Tổng Cộng</h5>
-                            <h5 class="font-weight-bold">15.199.000 VND</h5>
-                        </div>
-                        <form action="checkout.html">
-                        <button class="btn btn-block btn-primary my-3 py-3">Thanh Toán</button>
-                    </form>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Tổng tiền:</strong></td>
+                        <td colspan="2"><strong><?= number_format($total, 0, ',', '.') ?> VND</strong></td>
+                    </tr>
+                    <?php else: ?>
+                        <tr><td colspan="5">Giỏ hàng trống!</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+</div>
+<div class="col-lg-4">
+    <form class="mb-5" action="">
+        <div class="input-group">
+            <input type="text" class="form-control p-4" placeholder="Mã Giảm Giá">
+            <div class="input-group-append">
+                <button class="btn btn-primary">Áp Dụng</button>
             </div>
         </div>
+    </form>
+    <div class="card border-secondary mb-5">
+        <div class="card-header bg-secondary border-0">
+            <h4 class="font-weight-semi-bold m-0">Giỏ Hàng</h4>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3 pt-1">
+                <h6 class="font-weight-medium">Tổng</h6>
+                <h6 class="font-weight-medium"><?= number_format($total, 0, ',', '.') ?> VND</h6>
+            </div>
+            <div class="d-flex justify-content-between">
+                <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
+                <h6 class="font-weight-medium">50.000 VND</h6>
+            </div>
+            <div class="d-flex justify-content-between mb-3 pt-1">
+                <h6 class="font-weight-medium">Phí Bảo Đảm</h6>
+                <h6 class="font-weight-medium">30.000 VND</h6>
+            </div>
+        </div>
+        <div class="card-footer border-secondary bg-transparent">
+            <div class="d-flex justify-content-between mt-2">
+                <h5 class="font-weight-bold">Tổng Cộng</h5>
+                <h5 class="font-weight-bold">
+                    <?= number_format($total + 50000 + 30000, 0, ',', '.') ?> VND
+                </h5>
+            </div>
+            <form action="checkout.php">
+                <button class="btn btn-block btn-primary my-3 py-3">Thanh Toán</button>
+            </form>
+        </div>
+    </div>
+</div>
     </div>
     <!-- Cart End -->
 
