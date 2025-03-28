@@ -32,7 +32,7 @@ if (!$user) {
 
 
 // Lấy danh sách sản phẩm trong giỏ hàng
-$sql = "SELECT p.name, p.price, c.quantity 
+$sql = "SELECT p.name, p.price, c.quantity , p.image
         FROM cart c 
         JOIN product p ON c.product_id = p.id 
         WHERE c.user_id = ?";
@@ -44,6 +44,27 @@ $result = $stmt->get_result();
 $total = 0;
 $shipping_fee = 50000;
 $insurance_fee = 30000;
+
+
+
+
+
+
+// Xóa tất cả sản phẩm trong giỏ hàng của user đó
+$sql = "DELETE FROM cart WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stmt->close();
+
+// Chuyển hướng về trang giỏ hàng với thông báo
+header("Location: logedin.php?success=checkout");
+
+
+
+
+
+
 
 $stmt->close();
 $conn->close();
@@ -322,8 +343,9 @@ $conn->close();
 
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="d-flex justify-content-between">
-                    <p><img src="<?= isset($row['image']) ? htmlspecialchars(str_replace('../', '', $row['image'])) : 'img/default.jpg'; ?>"> <?= $row['name'] ?> (x<?= $row['quantity'] ?>)</p>
-                    <p><?= number_format($row['price'] * $row['quantity'], 0, ',', '.') ?> VND</p>
+                    <p><img src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" width="50"> </p>
+                    <p><?= $row['name'] ?></p>
+                    <p><?= number_format($row['price'] * $row['quantity'], 0, ',', '.') ?>đ</p>
                 </div>
                 <?php $total += $row['price'] * $row['quantity']; ?>
             <?php endwhile; ?>
@@ -331,22 +353,22 @@ $conn->close();
             <hr class="mt-0">
             <div class="d-flex justify-content-between mb-3 pt-1">
                 <h6 class="font-weight-medium">Tổng</h6>
-                <h6 class="font-weight-medium"><?= number_format($total, 0, ',', '.') ?> VND</h6>
+                <h6 class="font-weight-medium"><?= number_format($total, 0, ',', '.') ?> đ</h6>
             </div>
             <div class="d-flex justify-content-between">
                 <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
-                <h6 class="font-weight-medium"><?= number_format($shipping_fee, 0, ',', '.') ?> VND</h6>
+                <h6 class="font-weight-medium"><?= number_format($shipping_fee, 0, ',', '.') ?> đ</h6>
             </div>
             <div class="d-flex justify-content-between">
                 <h6 class="font-weight-medium">Phí Bảo Đảm</h6>
-                <h6 class="font-weight-medium"><?= number_format($insurance_fee, 0, ',', '.') ?> VND</h6>
+                <h6 class="font-weight-medium"><?= number_format($insurance_fee, 0, ',', '.') ?> đ</h6>
             </div>
         </div>
         <div class="card-footer border-secondary bg-transparent">
             <div class="d-flex justify-content-between mt-2">
                 <h5 class="font-weight-bold">Tổng Cộng</h5>
                 <h5 class="font-weight-bold">
-                    <?= number_format($total + $shipping_fee + $insurance_fee, 0, ',', '.') ?> VND
+                    <?= number_format($total + $shipping_fee + $insurance_fee, 0, ',', '.') ?> đ
                 </h5>
             </div>
         </div>
