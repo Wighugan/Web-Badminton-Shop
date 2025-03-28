@@ -318,7 +318,7 @@ if (!$product) {
                         </div>-->
                     </form>
                 </div>
-                <form action="addcart.php" method="GET">
+                <form action="addcart.php" method="POST">
     <input type="hidden" name="id" value="<?= $product['id']; ?>">
 
     <div class="d-flex align-items-center mb-4 pt-2">
@@ -328,43 +328,37 @@ if (!$product) {
                     <i class="fa fa-minus"></i>
                 </button>
             </div>
-            <input type="text" class="form-control bg-secondary text-center" name="quantity" value="1">
+            <input type="text" id="quantity" class="form-control bg-secondary text-center" name="quantity" value="1" readonly>
             <div class="input-group-btn">
                 <button type="button" class="btn btn-primary btn-plus">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
-
         </div>
-        <button onclick="done()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
-
+        <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
     </div>
-    <script>
-                        function done() {
-                          alert("Đã thêm vào giỏ hàng thành công!");
-                        }
-                      </script>
 </form>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const minusBtn = document.querySelector(".btn-minus");
-    const plusBtn = document.querySelector(".btn-plus");
-    const quantityInput = document.querySelector("input[name='quantity']");
+document.addEventListener("DOMContentLoaded", function() {
+    let quantityInput = document.getElementById("quantity");
+    let btnMinus = document.querySelector(".btn-minus");
+    let btnPlus = document.querySelector(".btn-plus");
 
-    minusBtn.addEventListener("click", function () {
-        let currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
+    btnMinus.addEventListener("click", function() {
+        let quantity = parseInt(quantityInput.value);
+        if (quantity > 1) {
+            quantityInput.value = quantity - 1;
         }
     });
 
-    plusBtn.addEventListener("click", function () {
-        let currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
+    btnPlus.addEventListener("click", function() {
+        let quantity = parseInt(quantityInput.value);
+        quantityInput.value = quantity + 1;
     });
 });
 </script>
+
 
 
          
@@ -394,8 +388,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             </div>
         </div>
-
-
 
         <div class="row px-xl-5">
             <div class="col">

@@ -5,6 +5,8 @@ include 'db.php';
 
 session_start();
 
+$total = 0;
+
 if (!isset($_SESSION['username'])) {
     header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
     exit();
@@ -199,7 +201,7 @@ while ($row = $result->fetch_assoc()) {
                         <th>Giá Tiền</th>
                         <th>Số Lượng</th>
                         <th>Tổng Tiền</th>
-                        <th>Hành Động</th>
+                        <th>Thao Tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -239,30 +241,45 @@ while ($row = $result->fetch_assoc()) {
         </div>
     </form>
     <div class="card border-secondary mb-5">
-        <div class="card-header bg-secondary border-0">
-            <h4 class="font-weight-semi-bold m-0">Giỏ Hàng</h4>
-        </div>
-        <div class="card-body">
-            <div class="d-flex justify-content-between mb-3 pt-1">
-                <h6 class="font-weight-medium">Tổng</h6>
-                <h6 class="font-weight-medium"><?= number_format($total, 0, ',', '.') ?> VND</h6>
-            </div>
-            <div class="d-flex justify-content-between">
-                <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
-                <h6 class="font-weight-medium">50.000 VND</h6>
-            </div>
-            <div class="d-flex justify-content-between mb-3 pt-1">
-                <h6 class="font-weight-medium">Phí Bảo Đảm</h6>
-                <h6 class="font-weight-medium">30.000 VND</h6>
-            </div>
-        </div>
-        <div class="card-footer border-secondary bg-transparent">
-            <div class="d-flex justify-content-between mt-2">
-                <h5 class="font-weight-bold">Tổng Cộng</h5>
-                <h5 class="font-weight-bold">
-                    <?= number_format($total + 50000 + 30000, 0, ',', '.') ?> VND
-                </h5>
-            </div>
+    <?php
+$shipping_fee = 50000;
+$insurance_fee = 30000;
+
+// Nếu giỏ hàng trống, không tính phí
+if ($total == 0) {
+    $shipping_fee = 0;
+    $insurance_fee = 0;
+}
+
+$final_total = $total + $shipping_fee + $insurance_fee;
+?>
+
+<div class="card-header bg-secondary border-0">
+    <h4 class="font-weight-semi-bold m-0">Giỏ Hàng</h4>
+</div>
+<div class="card-body">
+    <div class="d-flex justify-content-between mb-3 pt-1">
+        <h6 class="font-weight-medium">Tổng</h6>
+        <h6 class="font-weight-medium"><?= number_format($total, 0, ',', '.') ?> VND</h6>
+    </div>
+    <div class="d-flex justify-content-between">
+        <h6 class="font-weight-medium">Phí Vận Chuyển</h6>
+        <h6 class="font-weight-medium"><?= number_format($shipping_fee, 0, ',', '.') ?> VND</h6>
+    </div>
+    <div class="d-flex justify-content-between mb-3 pt-1">
+        <h6 class="font-weight-medium">Phí Bảo Đảm</h6>
+        <h6 class="font-weight-medium"><?= number_format($insurance_fee, 0, ',', '.') ?> VND</h6>
+    </div>
+</div>
+<div class="card-footer border-secondary bg-transparent">
+    <div class="d-flex justify-content-between mt-2">
+        <h5 class="font-weight-bold">Tổng Cộng</h5>
+        <h5 class="font-weight-bold">
+            <?= number_format($final_total, 0, ',', '.') ?> VND
+        </h5>
+    </div>
+</div>
+
             <form action="checkout.php">
                 <button class="btn btn-block btn-primary my-3 py-3">Thanh Toán</button>
             </form>
