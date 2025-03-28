@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+// Thông tin kết nối database
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "mydp";
 
+// Kết nối đến MySQL
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+// Kiểm tra kết nối
+if (!$conn) {
+	die("Kết nối thất bại: " . mysqli_connect_error());
+}
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -107,7 +121,8 @@
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Thêm sản phẩm mới ------------------------------</h1>
-                <form id="suaUserForm">
+                <form action="addproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+
                     <div class="form-group">
                         <label for="goi">Danh mục:</label>
                         <select id="goi" name="goi">
@@ -120,16 +135,14 @@
                             <option>Váy Cầu Lông</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label for="image1">Ảnh 1:</label>
                         <input type="file" id="image1" accept="image/*">
 
                     </div>
-                    <div class="form-group">
-                        <label for="image1">Ảnh 2:</label>
-                        <input type="file" id="image2" accept="image/*">
 
-                    </div>
+                  
                   
                     
                   
@@ -141,34 +154,44 @@
                             <option>Đỏ đen</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label for="name">Mã sản phẩm:</label>
                         <input type="text" id="name" placeholder="KNS49">
                     </div>
+
                     <div class="form-group">
                         <label for="name">Tên sản phẩm:</label>
                         <input type="text" id="name" placeholder="Vợt Yonex 100zz Kurenai">
                     </div>
+
 
                     <div class="form-group">
                         <label for="email">Giá:</label>
                         <input type="text" id="email" placeholder="4.350.000 VND">
                     </div>
                    
+
                     <div class="form-group">
                         <label for="email">Xuất xứ:</label>
                         <input type="text" id="email" placeholder="Nhật Bản">
                     </div>
+
+
                     <div class="form-group">
                         <label for="email">Thương Hiệu:</label>
                         <input type="text" id="email" placeholder="Yonex">
                     </div>
+
+
+                    
                     <div class="form-group">
                         <label for="description">Mô tả:</label>
                         <textarea style="height: 100px;"
                             id="description" placeholder="Vợt cầu lông Yonex Astrox 100ZZ kurenai đỏ tấn công cực kỳ mạnh mẽ, vung vợt nhanh, mượt và ít biến dạng thân vợt. Vợt nặng đầu, thân cứng cho ra các cú smash, tạt cầu uy lực, cầu bay nhanh, mạnh, cắm sân. Công nghệ vợt chống rung chống xoắn, giúp người chơi có những pha cầu chắc chắn, ổn định và chính xác nhất."></textarea>
                     </div>
-                   
+                
+
 
                     <div class="form-group">
                         <input type="submit" value="Lưu vào Database" onclick="myFunction()">

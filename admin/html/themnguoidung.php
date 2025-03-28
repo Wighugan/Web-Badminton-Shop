@@ -117,6 +117,7 @@ if (!$conn) {
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin Khách Hàng ----------------</h1>
+                
                 <form action="insert.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
                    
                    
@@ -172,7 +173,12 @@ function previewImage(event) {
                         <label for="email">Email:</label>
                         <input type="text" id="email" name="email">
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label for="email">Số điện thoại:</label>
+                        <input type="text" id="numberphone" name="numberphone">
+                    </div>
+
                     <div class="form-group">
                         <label for="email">Địa chỉ:</label>
                         <input type="text" id="address" name="address">

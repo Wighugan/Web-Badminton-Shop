@@ -186,6 +186,7 @@ if (!$conn) {
                         <thead>
                             <tr>
                                 <td>STT</td>
+                                <td>Mã Sản Phẩm</td>
                                 <td>Ảnh</td>
                                 <td>Tên SP </td>
                                 <td>Danh mục</td>
@@ -206,6 +207,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 ?>          
     <tr>
         <td><?= $stt++ ?></td> <!-- Số thứ tự -->
+        <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
+
         <td><img src="<?= htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
         <td><?= htmlspecialchars($row['name']) ?></td> <!-- Tên sản phẩm -->
         <td><?= htmlspecialchars($row['category']) ?></td> <!-- Danh mục (Cố định, bạn có thể sửa thành dynamic nếu cần) -->
@@ -213,17 +216,31 @@ while ($row = mysqli_fetch_assoc($result)) {
         <td><?= htmlspecialchars($row['stock']) ?></td> <!-- Số lượng tồn kho -->
         <td><?= date("d/m/Y H:i", strtotime($row['updated_at'])) ?></td>
 <td>
-            <a href="suasanpham.html?id=<?= $row['id']?>" id="suanguoidung" style="display: block;">
+            <a href="suasanpham.php?id=<?= $row['id']?>" id="suanguoidung" style="display: block;">
                 <i class="fas fa-edit"></i> Sửa
             </a>  
             <a href="quanlysanpham.php?id=<?= $row['id']?>" onclick="return confirmDelete()" id="xoanguoidung" style="display: block;">
                 <i class="fas fa-trash-alt"></i> Xóa
             </a>  
+
+            
             <script>
-    function confirmDelete() {
-        return confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?");
+    function confirmDelete(productId) {
+        if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+            // Gửi yêu cầu AJAX để xóa sản phẩm
+            fetch('delete_product.php?id=' + productId, {
+                method: 'GET'
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Hiển thị thông báo từ PHP
+                location.reload(); // Làm mới trang sau khi xóa thành công
+            })
+            .catch(error => console.error('Lỗi:', error));
+        }
     }
 </script>
+
         </td>
     </tr>
 <?php
