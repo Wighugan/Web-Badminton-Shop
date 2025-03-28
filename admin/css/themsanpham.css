@@ -128,3 +128,27 @@ input[type="submit"]:hover {
 #birthday {
     min-width: 150px; /* Đảm bảo input không thu nhỏ */
 }
+
+
+.form-group input[type="file"]
+ {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #bbb8b8; /* Màu viền */
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-right:180px;
+    align-items: center; /* Căn giữa theo chiều ngang */
+    text-align: center; /* Căn giữa nội dung */
+gap:20px;
+}
+#form-group input[type="image"]
+ {
+    width: 200%;
+    padding: 8px;
+    border: 2px solid #bbb8b8; /* Màu viền */
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-left:150px;
+
+}
