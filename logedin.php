@@ -42,9 +42,8 @@ if ($conn->connect_error) {
                             <a href="" class="nav-item nav-link active">Trang Chủ</a>
                             <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm
                             </a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                         </div>
-
 
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">

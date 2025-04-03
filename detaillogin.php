@@ -178,17 +178,17 @@ if (!$product) {
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                    <h6 class="m-0">Phân Loại Sản Phẩm</h6>
+                    <h6 class="m-0">Phân Loại Nhãn Hàng</h6>
                     <i class="fa fa-angle-down text-dark"></i>
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Giầy Cầu Lông</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
+                        <a href="vot_login.html" class="nav-item nav-link">Yonex</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Lining</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Victor</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Mizuno</a>
+                        <a href="ao_login.html" class="nav-item nav-link">VNB</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Apacs</a>
                        
                     </div>
                 </nav>

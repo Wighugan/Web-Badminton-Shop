@@ -37,7 +37,7 @@ if ($conn->connect_error) {
                             <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
                             <a href="shop.php" class="nav-item nav-link">Sản Phẩm
                             </a>
-                            <a href="contact.html" class="nav-item nav-link">Liên Hệ</a>    
+                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>    
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
