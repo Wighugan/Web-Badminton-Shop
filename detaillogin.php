@@ -178,17 +178,17 @@ if (!$product) {
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                    <h6 class="m-0">Phân Loại Nhãn Hàng</h6>
+                    <h6 class="m-0">Phân Loại Sản Phẩm</h6>
                     <i class="fa fa-angle-down text-dark"></i>
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot_login.html" class="nav-item nav-link">Yonex</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Lining</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Victor</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Mizuno</a>
-                        <a href="ao_login.html" class="nav-item nav-link">VNB</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Apacs</a>
+                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Giầy Cầu Lông</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
                        
                     </div>
                 </nav>
@@ -212,16 +212,20 @@ if (!$product) {
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown"> 
-                                    <?php 
-                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?>
-                
-            </a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                            <a href="#" class="nav-link" data-toggle="dropdown"> 
+            <?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Tài Khoản"; ?>
+                    
+                </a>            
+                <div class="dropdown-menu rounded-0 m-0">
+            <?php if (isset($_SESSION['username'])): ?>
+                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+            <?php else: ?>
+                <a href="login.php" class="dropdown-item">Đăng Nhập</a>
+                <a href="signup.php" class="dropdown-item">Đăng Ký</a>
+            <?php endif; ?>
+
                         </div>
                     </div>
                 </nav>
@@ -335,8 +339,15 @@ if (!$product) {
                 </button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+        <button onclick="done()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
     </div>
+
+    <script>
+                function done() {
+                  alert("Đã thêm vào giỏ hàng!");
+                }
+              </script>
+
 </form>
 
 <script>
