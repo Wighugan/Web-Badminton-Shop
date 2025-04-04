@@ -7,7 +7,7 @@ $username = "root";
 $password = "";
 $dbname = "mydp";
 
-// Kết nối đến MySQL
+// Kết nối đến MySQL   
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
@@ -121,83 +121,86 @@ if (!$conn) {
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Thêm sản phẩm mới ------------------------------</h1>
-                <form action="addproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+                <form action="insertproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
 
-                    <div class="form-group">
-                        <label for="goi">Danh mục:</label>
-                        <select id="goi" name="goi">
-                            <option>Không có</option>
-                            <option>Vợt Cầu Lông</option>
-                            <option>Giày Cầu Lông</option>
-                            <option>Túi Cầu Lông</option>
-                            <option>Quần Cầu Lông</option>
-                            <option>Áo Cầu Lông</option>
-                            <option>Váy Cầu Lông</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+            <label for="category">Loại:</label>
+            <select id="category" name="category" required>
+                <option value="Không có">Không có</option>
+                <option value="Yonex">Yonex</option>
+                <option value="Mizuno">Mizuno</option>
+                <option value="Lining">Lining</option>
+                <option value="Victor">Victor</option>
+            </select>
+        </div>
 
-                    <div class="form-group">
-                        <label for="image1">Ảnh 1:</label>
-                        <input type="file" id="image1" accept="image/*">
+        <div class="form-group">
+        <label for="image">Ảnh sản phẩm:</label>
+            <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
+            <br>
+            <img id="preview" src="https://bizweb.dktcdn.net/100/485/982/collections/248f25eb211faf87af29dfe6be4b3b0b.jpg?v=1695029604207" alt="Xem trước ảnh" width="150" height="150" style="display: block; margin-top: 10px;">
+        </div>
 
-                    </div>
+        <div class="form-group">
+            <label for="color">Màu sắc:</label>
+            <select id="color" name="color" required>
+                <option value="Không có">Không có</option>
+                <option value="Đỏ đen">Đỏ đen</option>
+                <option value="Xanh đen">Xanh đen</option>
+                <option value="Trắng">Trắng</option>
+            </select>
+        </div>
 
-                  
-                  
-                    
-                  
-                    <div class="form-group">
-                        <label for="color">Màu sắc:</label>
-                        <select id="color" name="color">
-                            <option>Không có</option>
-                            <option>Xanh đen</option>
-                            <option>Đỏ đen</option>
-                        </select>
-                    </div>
+        <div class="form-group">
+            <label for="productcode">Mã sản phẩm:</label>
+            <input type="text" id="productcode" name="productcode" required>
+        </div>
 
-                    <div class="form-group">
-                        <label for="name">Mã sản phẩm:</label>
-                        <input type="text" id="name" placeholder="KNS49">
-                    </div>
+        <div class="form-group">
+            <label for="name">Tên sản phẩm:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
 
-                    <div class="form-group">
-                        <label for="name">Tên sản phẩm:</label>
-                        <input type="text" id="name" placeholder="Vợt Yonex 100zz Kurenai">
-                    </div>
+        <div class="form-group">
+            <label for="price">Giá:</label>
+            <input type="text" id="price" name="price" required>
+        </div>
 
+        <div class="form-group">
+            <label for="flex">Độ cứng:</label>
+            <input type="text" id="flex" name="flex" required>
+        </div>
 
-                    <div class="form-group">
-                        <label for="email">Giá:</label>
-                        <input type="text" id="email" placeholder="4.350.000 VND">
-                    </div>
-                   
+        <div class="form-group">
+            <label for="length">Chiều dài vợt:</label>
+            <input type="text" id="length" name="length" required>
+        </div>
 
-                    <div class="form-group">
-                        <label for="email">Xuất xứ:</label>
-                        <input type="text" id="email" placeholder="Nhật Bản">
-                    </div>
+        <div class="form-group">
+            <label for="weight">Trọng lượng:</label>
+            <input type="text" id="weight" name="weight" required>
+        </div>
 
+        <div class="form-group">
+            <label for="description">Mô tả:</label>
+            <textarea id="description" name="description" required></textarea>
+        </div>
 
-                    <div class="form-group">
-                        <label for="email">Thương Hiệu:</label>
-                        <input type="text" id="email" placeholder="Yonex">
-                    </div>
-
-
-                    
-                    <div class="form-group">
-                        <label for="description">Mô tả:</label>
-                        <textarea style="height: 100px;"
-                            id="description" placeholder="Vợt cầu lông Yonex Astrox 100ZZ kurenai đỏ tấn công cực kỳ mạnh mẽ, vung vợt nhanh, mượt và ít biến dạng thân vợt. Vợt nặng đầu, thân cứng cho ra các cú smash, tạt cầu uy lực, cầu bay nhanh, mạnh, cắm sân. Công nghệ vợt chống rung chống xoắn, giúp người chơi có những pha cầu chắc chắn, ổn định và chính xác nhất."></textarea>
-                    </div>
-                
-
-
-                    <div class="form-group">
+        <div class="form-group">
                         <input type="submit" value="Lưu vào Database" onclick="myFunction()">
-                        <button class="return"><a href="quanlysanpham.html">Quay lại</a></button>
+                        <button class="return"><a href="quanlysanpham.php">Quay lại</a></button>
                     </div>
-                </form>
+    </form>
+
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            preview.style.display = 'block';
+        }
+    </script>
+
+
                 <script>
                     function myFunction() {
                         alert("Đã lưu thành công thông tin sản phẩm mới vào Database!");
