@@ -98,17 +98,17 @@ $result = $conn->query($sql);
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form onsubmit="showText(); return false;">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary" type="submit">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <form action="shoplogin.php" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-append">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+ </div>
             <div class="col-lg-3 col-6 text-right">
                 <a href="" class="btn border">
                     <i class="fas fa-heart text-primary"></i>
@@ -121,6 +121,8 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
+
+    
     <!-- Topbar End -->
 
     <script>
@@ -171,6 +173,37 @@ $result = $conn->query($sql);
                        
                 </nav>
             </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+$(document).ready(function() {
+    $("#search").keyup(function() {
+        var query = $(this).val().trim();
+        if (query.length > 0) { // 🔥 Nếu ô tìm kiếm có chữ
+            $.ajax({
+                url: "suggest.php",
+                method: "GET",
+                data: { query: query },
+                success: function(data) {
+                    if (data.trim() != '') {
+                        $("#search-suggestions").html(data).show();
+                    } else {
+                        $("#search-suggestions").hide();
+                    }
+                }
+            });
+        } else { // 🔥 Nếu ô tìm kiếm rỗng thì ẩn luôn
+            $("#search-suggestions").hide();
+        }
+    });
+
+    $(document).on("click", ".suggestion-item", function() {
+        $("#search").val($(this).text());
+        $("#search-suggestions").hide();
+    });
+});
+</script>
+
+
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
@@ -363,24 +396,114 @@ function searchProduct() {
             <div class="col-lg-9 col-md-12">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form onsubmit="searchProduct(); return false;">
-                                <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" onkeyup="searchProduct()">
-
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                           
-                        </div>
+                    <div class="col-lg-6 col-6 text-left">
+            <form action="shoplogin.php" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-append">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+ </div>
                         <p id="output"></p>
                     </div>
                     
-                    
+                    <style>
+.container {
+    margin-top: 20px;
+}
+
+/* Giữ đúng lưới Bootstrap, chỉ cách đều bằng margin */
+.card {
+    height: 97%;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ảnh sản phẩm */
+.card-img-top {
+    height: 450px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+/* Zoom ảnh khi hover */
+.card-img-top:hover {
+    transform: scale(0.5);
+}
+
+/* Nội dung sản phẩm */
+.card-body {
+    text-align: center;
+}
+
+/* Tên sản phẩm */
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Giá sản phẩm */
+.card-text {
+    font-weight: bold;
+    color:rgb(0, 0, 0);
+    font-size: 1.1rem;
+}
+</style>
+
+
+
+                    <?php
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$database = "mydp"; 
+
+$conn = new mysqli($servername, $username, $password, $database);
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+
+if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
+    $search = $conn->real_escape_string($_GET['query']);
+    $sql = "SELECT * FROM products WHERE name LIKE '%$search%'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        echo '<div class="container">';
+        echo '<h2>Kết quả tìm kiếm:</h2>';
+        echo '<div class="row">';
+        while ($row = $result->fetch_assoc()) {
+            echo '<div class="col-md-4">';
+            echo '<div class="card mb-4">';
+            // Bọc ảnh bằng thẻ <a> để click vào ảnh => đi đến chi tiết
+            echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
+            echo '<img src="img/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
+            echo '</a>';
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
+            echo '<p class="card-text">Giá: ' . number_format($row['price'], 0, ',', '.') . ' VNĐ</p>';
+            echo '</div></div></div>';
+        }
+        echo '</div></div>';
+    } else {
+        echo "<h2>Không tìm thấy sản phẩm phù hợp.</h2>";
+    }
+} else {
+    echo "<h2>Vui lòng nhập từ khóa tìm kiếm!</h2>";
+}
+?>
+      
                     <div class="container">
     <div class="row">
         <?php while ($row = $result->fetch_assoc()) { ?>

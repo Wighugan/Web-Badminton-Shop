@@ -69,17 +69,17 @@
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="shoptimkiem.html">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
-                        <div class="input-group-append">
-                            <button class="input-group-text bg-transparent text-primary" class="fa fa-search">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <form action="shoplogin.php" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-append">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+ </div>
             <div class="col-lg-3 col-6 text-right">
                 <a href="" class="btn border">
                     <i class="fas fa-heart text-primary"></i>
@@ -114,6 +114,37 @@
                     </div>
                 </nav>
             </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+            <script>
+$(document).ready(function() {
+    $("#search").keyup(function() {
+        var query = $(this).val().trim();
+        if (query.length > 0) { // 🔥 Nếu ô tìm kiếm có chữ
+            $.ajax({
+                url: "suggest.php",
+                method: "GET",
+                data: { query: query },
+                success: function(data) {
+                    if (data.trim() != '') {
+                        $("#search-suggestions").html(data).show();
+                    } else {
+                        $("#search-suggestions").hide();
+                    }
+                }
+            });
+        } else { // 🔥 Nếu ô tìm kiếm rỗng thì ẩn luôn
+            $("#search-suggestions").hide();
+        }
+    });
+
+    $(document).on("click", ".suggestion-item", function() {
+        $("#search").val($(this).text());
+        $("#search-suggestions").hide();
+    });
+});
+</script>
+
 
             
             
