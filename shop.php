@@ -3,39 +3,6 @@
 <html lang="vi">
     
 <?php
-// Xử lý tìm kiếm sản phẩm khi có yêu cầu từ AJAX
-if (isset($_POST['keyword'])) {
-    $servername = "localhost";
-    $username = "root"; // Thay bằng username thực tế
-    $password = ""; // Thay bằng mật khẩu thực tế
-    $dbname = "mydp"; // Cơ sở dữ liệu của bạn
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Kết nối thất bại: " . $conn->connect_error);
-    }
-
-    $keyword = $conn->real_escape_string($_POST['keyword']);
-    $sql = "SELECT * FROM product WHERE name LIKE '%$keyword%'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        echo "<ul>";
-        while ($row = $result->fetch_assoc()) {
-            echo "<div class='product'>";
-            echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "' width='200'>";
-            echo "<h3>" . htmlspecialchars($row['name']) . "</h3>";
-            echo "<p>Giá: " . number_format($row['price'], 0, ',', '.') . " VND</p>";
-            echo "</div>";
-        }
-        echo "</ul>";
-    } else {
-        echo "<p>Không tìm thấy sản phẩm nào.</p>";
-    }
-
-    $conn->close();
-    exit(); // Dừng xử lý PHP sau khi trả kết quả
-}
 include 'db.php';
 
 session_start();
@@ -383,128 +350,20 @@ $result = $conn->query($sql);
                 }
             </style>
            <script>
-            function searchProduct() {
-                let keyword = document.getElementById("searchInput").value;
+function searchProduct() {
+    let keyword = document.getElementById("searchInput").value;
 
-                $.ajax({
-                    url: "search.php",
-                    type: "GET",
-                    data: { search: keyword },
-                    success: function(response) {
-                        document.getElementById("productList").innerHTML = response;
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Lỗi AJAX:", error);
-                    }
-                });
-                const itemsPerPage = 9;
-let currentPage = 1;
-
-function filterAndPaginate() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const matchedProducts = [];
-
-    // Lọc sản phẩm theo tìm kiếm
-    products.forEach((product) => {
-        const title = product.name.toLowerCase();
-        const isMatch = title.includes(input);
-        if (isMatch) matchedProducts.push(product);
-    });
-
-    // Tính số trang
-    const totalPages = Math.ceil(matchedProducts.length / itemsPerPage);
-    currentPage = 1; // Quay lại trang đầu khi tìm kiếm
-
-    // Hiển thị phân trang nếu có nhiều hơn 1 trang
-    document.getElementById("paginationWrapper").style.display = totalPages > 1 ? "block" : "none";
-
-    // Hiển thị sản phẩm cho trang hiện tại
-    renderProducts(matchedProducts);
-    renderCustomPagination(totalPages);
-}
-
-function renderProducts(products) {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const productsToShow = products.slice(startIndex, endIndex);
-
-    const productList = document.getElementById("productList");
-    productList.innerHTML = '';  // Clear current products
-
-    productsToShow.forEach(product => {
-        const productHTML = `
-            <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <a href="detaillogin.php?id=${product.id}">
-                            <img class="img-fluid w-100" src="img/${product.image}" alt="${product.name}">
-                        </a>
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">${product.name}</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6 class="font-weight-bold">${product.price.toLocaleString()}đ</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        productList.innerHTML += productHTML;
-    });
-}
-
-function renderCustomPagination(totalPages) {
-    const pagination = document.getElementById("pagination");
-    pagination.innerHTML = "";
-
-    // Nút Previous
-    const prevItem = document.createElement("li");
-    prevItem.className = `page-item ${currentPage <= 1 ? 'disabled' : ''}`;
-    prevItem.innerHTML = `<a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>`;
-    prevItem.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            filterAndPaginate();
+    $.ajax({
+        url: "search.php",
+        type: "GET",
+        data: { search: keyword },
+        success: function(response) {
+            document.getElementById("productList").innerHTML = response;
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi AJAX:", error);
         }
-    };
-    pagination.appendChild(prevItem);
-
-    // Các nút số trang
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement("li");
-        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-        li.onclick = () => {
-            currentPage = i;
-            filterAndPaginate();
-        };
-        pagination.appendChild(li);
-    }
-
-    // Nút Next
-    const nextItem = document.createElement("li");
-    nextItem.className = `page-item ${currentPage >= totalPages ? 'disabled' : ''}`;
-    nextItem.innerHTML = `<a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>`;
-    nextItem.onclick = () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            filterAndPaginate();
-        }
-    };
-    pagination.appendChild(nextItem);
-}
-
-// Khởi động khi người dùng gõ tìm kiếm
-document.getElementById("searchInput").addEventListener("input", filterAndPaginate);
-
-// Ẩn pagination nếu không có tìm kiếm
-window.onload = () => {
-    document.getElementById("paginationWrapper").style.display = "block"; // Hiển thị phân trang khi vào từ PHP
-};
-
+    });
 }
 </script>
             <!-- Shop Product Start -->
@@ -529,8 +388,8 @@ window.onload = () => {
                     </div>
                     
                     
-    <div class="container">
-    <div class="row" id="productList">
+                    <div class="container">
+    <div class="row">
         <?php while ($row = $result->fetch_assoc()) { ?>
             <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
@@ -557,38 +416,36 @@ window.onload = () => {
             </div>
         <?php } ?>
     </div>
-    <div id="paginationWrapper">
-        <ul class="pagination justify-content-center mb-3" id="pagination">
-            <div class="col-12 pb-1">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mb-3">
-                        <!-- Nút Previous -->
-                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="?page=<?= ($page > 1) ? ($page - 1) : 1 ?>" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
 
-                        <!-- Hiển thị số trang -->
-                        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                            <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                            </li>
-                        <?php } ?>
+    <div class="col-12 pb-1">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-3">
+            <!-- Nút Previous -->
+            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page > 1) ? ($page - 1) : 1 ?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
 
-                        <!-- Nút Next -->
-                        <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="?page=<?= ($page < $total_pages) ? ($page + 1) : $total_pages ?>" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
-                    </ul>
-            </ul>
-        </div>
+            <!-- Hiển thị số trang -->
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                </li>
+            <?php } ?>
+
+            <!-- Nút Next -->
+            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page < $total_pages) ? ($page + 1) : $total_pages ?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
     </nav>
-    </div>
+</div>
+
 </div>
 
 
