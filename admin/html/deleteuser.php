@@ -15,7 +15,7 @@ if (!$conn) {
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Lấy đường dẫn ảnh trước khi xóa
+    // Lấy đường dẫn avatar
     $sql = "SELECT avatar FROM users WHERE id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $id);
@@ -23,24 +23,26 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
 
-    // Nếu có ảnh và ảnh không phải mặc định, thì xóa file ảnh
+    // Xóa ảnh nếu tồn tại và không phải ảnh mặc định
     if ($row && $row['avatar'] != "uploads/default.jpg" && file_exists($row['avatar'])) {
         unlink($row['avatar']);
     }
 
-    // Xóa user từ database
+    // Xóa orders của user trước
+    $sql = "DELETE FROM orders WHERE user_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+
+    // Xóa user
     $sql = "DELETE FROM users WHERE id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $id);
 
     if (mysqli_stmt_execute($stmt)) {
-        // Reset lại ID
-        mysqli_query($conn, "SET @num := 0;");
-        mysqli_query($conn, "UPDATE users SET id = @num := (@num+1);");
-        mysqli_query($conn, "ALTER TABLE users AUTO_INCREMENT = 1;");
+        echo "<script>alert('Người dùng đã bị khóa thành công!'); window.location.href = 'quanlykhachhang.php';</script>";
 
-        echo "User đã bị xóa. Đang chuyển hướng...";
-        header("Location: quanlykhachhang.php");
+        header("refresh:1;url=quanlykhachhang.php");
         exit();
     } else {
         echo "Lỗi: " . mysqli_error($conn);

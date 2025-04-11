@@ -118,7 +118,7 @@ if (!$conn) {
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin Khách Hàng ----------------</h1>
                 
-                <form action="insert.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+                <form action="insertuser.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
                    
                    
                     <div class="form-group">

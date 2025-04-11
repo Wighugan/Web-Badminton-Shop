@@ -62,7 +62,7 @@ if (!$conn) {
                 </div>
         <li>
                 <li>
-                    <a href="trangchuadmin.html"style="color: black;">
+                    <a href="trangchuadmin.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -71,7 +71,7 @@ if (!$conn) {
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html"style="color: black;">
+                    <a href="quanlydonhang.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -97,7 +97,7 @@ if (!$conn) {
                     </a>
                 </li>
                 <li>
-                    <a href="thongke.html"style="color: black;">
+                    <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
                         </span>
@@ -176,6 +176,7 @@ if (!$conn) {
                                 <td>Tên đăng nhập </td>
                                 <td>Họ và tên</td>
                                 <td>Email</td>
+                                <td>Số điện thoại</td>
                                 <td>Địa chỉ</td>
                                 <td>Ngày Sinh</td>
                                 <td>Ghi chú</td>
@@ -194,6 +195,7 @@ if ($result->num_rows > 0) {
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
                 <td>{$row['email']}</td>
+                <td>{$row['numberphone']}</td>
                 <td>{$row['address']}</td>
                 <td>" . date("d/m/Y", strtotime($row['birthday'])) . "</td>
                 <td>

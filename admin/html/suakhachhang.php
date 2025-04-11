@@ -178,6 +178,12 @@ $conn->close();
                     </div>
                     
                     <div class="form-group">
+                        <label for="name">Số điện thoại:</label>
+                        <input type="text" id="numberphone" name="numberphone" value="<?= $user['numberphone'] ?>" required>
+                        
+                    </div>
+
+                    <div class="form-group">
                         <label for="email">Địa chỉ:</label>
                         <input type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
                         </div>
