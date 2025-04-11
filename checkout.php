@@ -2,70 +2,86 @@
 <html lang="en">
 <?php
 include 'db.php';
-
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    header("Location: login.php");
     exit();
 }
-$user_id = $_SESSION['user_id']; // Lấy ID user từ session
 
-// Kết nối MySQL
+$user_id = $_SESSION['user_id'];
+
 $conn = new mysqli("localhost", "root", "", "mydp");
-
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
-// Truy vấn thông tin user dựa vào session
+// Lấy thông tin user
 $sql = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user = $stmt->get_result()->fetch_assoc();
 
 if (!$user) {
     die("Không tìm thấy người dùng!");
 }
 
-
-// Lấy danh sách sản phẩm trong giỏ hàng
-$sql = "SELECT p.name, p.price, c.quantity , p.image
-        FROM cart c 
-        JOIN product p ON c.product_id = p.id 
+// Lấy giỏ hàng user
+$sql = "SELECT p.id, p.name, p.price, p.image, c.quantity
+        FROM cart c
+        JOIN product p ON c.product_id = p.id
         WHERE c.user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$result = $stmt->get_result();
+$result = $stmt->get_result();  // Phải có cái này
 
 $total = 0;
 $shipping_fee = 50000;
 $insurance_fee = 30000;
 
+// Tính tổng tiền hàng
+$cart_items = [];
+while ($row = $result->fetch_assoc()) {
+    $cart_items[] = $row;
+    $total += $row['price'] * $row['quantity'];
+}
 
+$grand_total = $total + $shipping_fee + $insurance_fee;
 
+// Tạo mã đơn hàng random
+$order_code = 'HD' . rand(1000000000000, 9999999999999);
 
+// Insert đơn hàng
+$sql = "INSERT INTO orders (code, user_id, total, status, created_at)
+        VALUES (?, ?, ?, 'Thành công', NOW())";
+        
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sid", $order_code, $user_id, $grand_total);
+$stmt->execute();
 
+$order_id = $stmt->insert_id; // Lấy id đơn hàng mới
 
-// Xóa tất cả sản phẩm trong giỏ hàng của user đó
+// Insert chi tiết từng sản phẩm
+foreach ($cart_items as $item) {
+    $sql = "INSERT INTO order_details (order_id, product_name, product_price, quantity)
+            VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("isdi", $order_id, $item['name'], $item['price'], $item['quantity']);
+    $stmt->execute();
+}
+
+// Xoá giỏ hàng sau khi đặt xong
 $sql = "DELETE FROM cart WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 
-// Chuyển hướng về trang giỏ hàng với thông báo
-
-
-
-
-
-
-
 $stmt->close();
 $conn->close();
+
+// Thông báo & chuyển hướng
 ?>
 
 
