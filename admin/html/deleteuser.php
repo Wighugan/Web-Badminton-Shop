@@ -40,6 +40,14 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     mysqli_stmt_bind_param($stmt, "i", $id);
 
     if (mysqli_stmt_execute($stmt)) {
+        $result_max = mysqli_query($conn, "SELECT MAX(id) AS max_id FROM users");
+    $row_max = mysqli_fetch_assoc($result_max);
+    $next_id = $row_max['max_id'] + 1;
+
+    // Reset lại AUTO_INCREMENT đúng số tiếp theo
+    $reset_sql = "ALTER TABLE users AUTO_INCREMENT = $next_id";
+    mysqli_query($conn, $reset_sql);
+
         echo "<script>alert('Người dùng đã bị khóa thành công!'); window.location.href = 'quanlykhachhang.php';</script>";
 
         header("refresh:1;url=quanlykhachhang.php");

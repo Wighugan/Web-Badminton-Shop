@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "mydp";
+
+// Kết nối đến MySQL
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+// Kiểm tra kết nối
+if (!$conn) {
+	die("Kết nối thất bại: " . mysqli_connect_error());
+}
+
+
+
+
+$sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, SUM(orders.total) AS tongtien 
+        FROM users 
+        LEFT JOIN orders ON users.id = orders.user_id 
+        GROUP BY users.id, users.fullname";
+
+$result = $conn->query($sql);
+
+
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -121,12 +147,12 @@
         
     
         <select id="option">
-            <option>Vợt</option>
-            <option>Áo</option>
-            <option >Quần</option>
-            <option >Giày</option>
-            <option>Váy</option>
-            <option>Túi</option>
+            <option>Yonex</option>
+            <option>Lining</option>
+            <option >Victor</option>
+            <option >Mizuno</option>
+            <option>VNB</option>
+            <option>Apacs</option>
 
 
            
@@ -177,50 +203,50 @@
         <tbody>
             <tr>
                 <td>MH001</td>
-                <td>Vợt</a></td>
+                <td>Yonex</a></td>
                 <td>200</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
             <tr>
                 <td>MH002</td>
-                <td> Áo </a></td>
+                <td> Lining </a></td>
                 <td>100</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
             <tr>
                 <td>MH003</td>
-                <td>Quần </a></td>
+                <td>Victor </a></td>
                 <td>100</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
             <tr>
                 <td>MH004</td>
-                <td>Giày </a></td>
+                <td>VNB </a></td>
                 <td>50</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
             <tr>
                 <td>MH005</td>
-                <td>Váy</a></td>
+                <td>Mizuno</a></td>
                 <td>100</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
             <tr>
                 <td>MH005</td>
-                <td>Túi</a></td>
+                <td>Apacs</a></td>
                 <td>100</td>
                 <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
+                <td> <a href="xemhoadon.php">Xem</td></a>
                 <td></td>
             </tr>
            
@@ -249,8 +275,8 @@
   </script>
   <div class="pagination">
     <li class="hientai">1</li>
-    <li><a href="thongke.html" style="color: black;">2</a></li></a> 
-    <li><a href="thongke.html" style="color: black;" >NEXT</a></li>
+    <li><a href="thongke.php" style="color: black;">2</a></li></a> 
+    <li><a href="thongke.php" style="color: black;" >NEXT</a></li>
   </div>
   
   </div>
@@ -274,47 +300,15 @@
         </thead>
   
         <tbody>
-            <tr>
-                <td>KH001</td>
-                <td>Nguyễn Văn A</a></td>
-                <td>20</td>
-                <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
-                <td></td>
-            </tr>
-            <tr>
-                <td>KH002</td>
-                <td> Nguyễn Văn B </a></td>
-                <td>10</td>
-                <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
-                <td></td>
-            </tr>
-            <tr>
-                <td>KH003</td>
-                <td>Nguyễn Văn C </a></td>
-                <td>10</td>
-                <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
-                <td></td>
-            </tr>
-            <tr>
-                <td>KH004</td>
-                <td>Nguyễn Văn D </a></td>
-                <td>15</td>
-                <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
-                <td></td>
-            </tr>
-            <tr>
-                <td>KH005</td>
-                <td>Nguyễn Văn E</a></td>
-                <td>10</td>
-                <td>15.199.000 VND</td>
-                <td> <a href="xemhoadon.html">Xem</td></a>
-
-                <td></td>
-            </tr>
+        <?php while($row = $result->fetch_assoc()) { ?>
+<tr>
+    <td><?= 'KH00'.$row['makh'] ?></td>
+    <td><?= $row['tenkh'] ?></td>
+    <td><?= $row['sohoadon'] ?></td>
+    <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+    <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
+</tr>
+<?php } ?>
             
            
         </tbody>
@@ -367,51 +361,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>20</td>
-                        <td>HD1157292859058</td>
-                        <td>15.990.000 VND</td>
-                        <td> <a href="xemhoadon.html">Xem</td></a>
+                    <?php
+                $sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, SUM(orders.total) AS tongtien 
+        FROM users 
+        LEFT JOIN orders ON users.id = orders.user_id 
+        GROUP BY users.id, users.fullname 
+        ORDER BY sohoadon DESC 
+        LIMIT 5";
 
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Đàm Vĩnh Hưng</td>
-                        <td>19</td>
-                        <td>HD1157292859059</td>
-                        <td>15.190.000 VND</td>
-                        <td> <a href="xemhoadon.html">Xem</td></a>
+$result = $conn->query($sql);
+?>
+                   <tbody>
+<?php while($row = $result->fetch_assoc()) { ?>
+<tr>
+    <td><?= 'KH00'.$row['makh'] ?></td>
+    <td><?= $row['tenkh'] ?></td>
+    
+    <td><?= $row['sohoadon'] ?></td>
+    <td>  </td>
+    <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+    <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
+</tr>
+<?php } ?>
+</tbody>
 
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Lê Văn Bảy</td>
-                        <td>18</td>
-                        <td>HD1157292859060</td>
-                        <td>14.550.000 VND</td>
-                        <td> <a href="xemhoadon.html">Xem</td></a>
-
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Kendrick Lmao</td>
-                        <td>17</td>
-                        <td>HD1157292859065</td>
-                        <td>14.190.000 VND</td>
-                        <td> <a href="xemhoadon.html">Xem</td></a>
-
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Lê Văn Si</td>
-                        <td>14</td>
-                        <td>HD1157292859070</td>
-                        <td>13.590.000 VND</td>
-                        <td> <a href="xemhoadon.html">Xem</td></a>
-
-                    </tr>
                 </tbody>
             </table>
         </div>

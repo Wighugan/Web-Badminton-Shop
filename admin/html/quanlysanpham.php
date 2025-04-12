@@ -219,27 +219,19 @@ while ($row = mysqli_fetch_assoc($result)) {
             <a href="suasanpham.php?id=<?= $row['id']?>" id="suanguoidung" style="display: block;">
                 <i class="fas fa-edit"></i> Sửa
             </a>  
-            <a href="quanlysanpham.php?id=<?= $row['id']?>" onclick="return confirmDelete()" id="xoanguoidung" style="display: block;">
-                <i class="fas fa-trash-alt"></i> Xóa
-            </a>  
+            <a href="#" onclick="return confirmDelete(<?= $row['id'] ?>)" id="xoanguoidung" style="display: block;">
+    <i class="fas fa-trash-alt"></i> Xóa
+</a>  
 
-            
-            <script>
+<script>
     function confirmDelete(productId) {
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
-            // Gửi yêu cầu AJAX để xóa sản phẩm
-            fetch('delete_product.php?id=' + productId, {
-                method: 'GET'
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data); // Hiển thị thông báo từ PHP
-                location.reload(); // Làm mới trang sau khi xóa thành công
-            })
-            .catch(error => console.error('Lỗi:', error));
+            // Gửi yêu cầu xoá đến file deleteproduct.php
+            window.location.href = 'deleteproduct.php?id=' + productId;
         }
     }
 </script>
+
 
         </td>
     </tr>

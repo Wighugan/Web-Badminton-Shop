@@ -33,7 +33,20 @@ $stt = 1;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
-
+<style>
+    .success {
+        color: green;
+        font-weight: bold;
+    }
+    .pending {
+        color: red;
+        font-weight: bold;
+    }
+    .cancelled {
+        color: gray;
+        font-weight: bold;
+    }
+</style>
 <body>
     <!-- =============== Navigation ================ -->
     <div class="container">
@@ -250,7 +263,7 @@ $stt = 1;
                                 <td>Địa chỉ</td>
                              
                                 <td>Tình Trạng</td>
-                                <td>Thời gian</td>
+                                <td>Ngày</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -262,9 +275,22 @@ $stt = 1;
         <td><?= htmlspecialchars($row['numberphone']) ?></td>
         <td><?= htmlspecialchars($row['city']) ?></td>
 
-        <td id="premium"><?= htmlspecialchars($row['status']) ?></td>
+        <?php
+$status = $row['status'];
+$class = '';
 
+if ($status == 'Thành công') {
+    $class = 'success';
+} elseif ($status == 'Chờ xác nhận') {
+    $class = 'pending';
+} elseif ($status == 'Đã hủy') {
+    $class = 'cancelled';
+}
+?>
+
+<td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
         <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+
     </tr>
 <?php } ?>
 

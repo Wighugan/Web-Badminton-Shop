@@ -34,7 +34,20 @@ $stt = 1;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
-
+<style>
+    .success {
+        color: green;
+        font-weight: bold;
+    }
+    .pending {
+        color: red;
+        font-weight: bold;
+    }
+    .cancelled {
+        color: gray;
+        font-weight: bold;
+    }
+</style>
 <body>
     <!-- =============== Navigation ================ -->
     <div class="container">
@@ -181,8 +194,20 @@ $stt = 1;
         <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
         <td><?= htmlspecialchars($row['fullname']) ?></td>
         <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td id="premium"><?= htmlspecialchars($row['status']) ?></td>
-        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
+        <?php
+$status = $row['status'];
+$class = '';
+
+if ($status == 'Thành công') {
+    $class = 'success';
+} elseif ($status == 'Chờ xác nhận') {
+    $class = 'pending';
+} elseif ($status == 'Đã hủy') {
+    $class = 'cancelled';
+}
+?>
+
+<td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
 
         <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
     </tr>

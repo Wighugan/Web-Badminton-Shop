@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
     $sql = "DELETE FROM product WHERE id = $productId";
 
     if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Sản phẩm đã được xóa thành công!'); window.location.href = 'products.php';</script>";
+        echo "<script>alert('Sản phẩm đã được xóa thành công!'); window.location.href = 'quanlysanpham.php';</script>";
     } else {
         echo "Lỗi: " . $conn->error;
     }
