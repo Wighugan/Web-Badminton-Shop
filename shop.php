@@ -3,6 +3,10 @@
 <html lang="vi">
     
 <?php
+// Xử lý tìm kiếm sản phẩm khi có yêu cầu từ AJAX
+
+
+   
 include 'db.php';
 
 session_start();
@@ -17,12 +21,14 @@ $offset = ($page - 1) * $limit;
 // Lấy tổng số sản phẩm
 $total_result = $conn->query("SELECT COUNT(*) AS total FROM product");
 $total_row = $total_result->fetch_assoc();
-$total_products = $total_row['total'];
-$total_pages = ceil($total_products / $limit);
+$total_product = $total_row['total'];
+$total_pages = ceil($total_product / $limit);
 
 // Lấy sản phẩm cho trang hiện tại
 $sql = "SELECT * FROM product ORDER BY id ASC LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
+
+
 ?>
 
 <head>
@@ -370,47 +376,98 @@ function searchProduct() {
             <div class="col-lg-9 col-md-12">
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form onsubmit="searchProduct(); return false;">
-                                <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" onkeyup="searchProduct()">
-
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                           
-                        </div>
+                    <div class="col-lg-6 col-6 text-left">
+            <form action="shop.php" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-append">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+ </div>
                         <p id="output"></p>
                     </div>
                     
-                    
+                    <style>
+.container {
+    margin-top: 20px;
+}
+
+/* Giữ đúng lưới Bootstrap, chỉ cách đều bằng margin */
+
+
+/* Ảnh sản phẩm */
+
+/* Nội dung sản phẩm */
+
+</style>
+
+
+
+                    <?php
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$database = "mydp"; 
+
+$conn = new mysqli($servername, $username, $password, $database);
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+
+if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
+    $search = $conn->real_escape_string($_GET['query']);
+    $sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        echo '<div class="container">';
+        echo '<h2>Kết quả tìm kiếm:</h2>';
+        echo '<div class="row">';
+        while ($row = $result->fetch_assoc()) {
+            echo '<div class="col-md-4">';
+            echo '<div class="card mb-4">';
+            // Bọc ảnh bằng thẻ <a> để click vào ảnh => đi đến chi tiết
+            echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
+            echo '<img src="img/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
+            echo '</a>';
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
+            echo '<p class="card-text">Giá: ' . number_format($row['price'], 0, ',', '.') . ' VNĐ</p>';
+            echo '</div></div></div>';
+        }
+        echo '</div></div>';
+    } else {
+        echo "<h2>Không tìm thấy sản phẩm phù hợp.</h2>";
+    }
+} else {
+    echo "<h2>Vui lòng nhập từ khóa tìm kiếm!</h2>";
+}
+?>
+      
                     <div class="container">
     <div class="row">
         <?php while ($row = $result->fetch_assoc()) { ?>
             <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
                     <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-
                     <a href="detaillogin.php?id=<?= $row['id'] ?>">
                     <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-        </a>
-                    </div>
+                    </a>                    </div>
                     <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                         <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
                         <div class="d-flex justify-content-center">
                             <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
                         </div>
                     </div>
-                   
+                    
                     <script>
-                function showMessage() {
-                    alert("Chưa đăng nhập!");
+                function done() {
+                  alert("Đã thêm vào giỏ hàng!");
                 }
-            </script>
               </script>
                 </div>
             </div>
