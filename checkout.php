@@ -144,7 +144,7 @@ $conn->close();
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="logedin.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -152,7 +152,7 @@ $conn->close();
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="shoptimkiem_login.html">
+                <form action="shoptimkiem_login.php">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
@@ -168,7 +168,7 @@ $conn->close();
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -188,12 +188,13 @@ $conn->close();
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Giày Cầu Lông</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
-                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
+                    <a href="vot_login.html" class="nav-item nav-link">Yonex</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Lining</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Victor</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Mizuno</a>
+                        <a href="ao_login.html" class="nav-item nav-link">VNB</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Apacs</a>
+                        
                         
                             
                 </nav>
@@ -213,7 +214,7 @@ $conn->close();
                         <div class="navbar-nav mr-auto py-0">
                             <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
                             <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="contactlogin.php" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
@@ -238,7 +239,7 @@ $conn->close();
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thanh Toán</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
                 <!--<p class="m-0 px-2">-</p>
                 <p class="m-0">Kiểm Tra</p>-->
             </div>
@@ -272,7 +273,7 @@ $conn->close();
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Địa Chỉ Liên Hệ:</label>
-                            <input class="form-control" type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
+                            <input class="form-control" type="text" id="address" name="address" value="<?= $user['address1'] ?>" required>
                         </div>
                        
                       
@@ -629,11 +630,11 @@ $conn->close();
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
