@@ -15,9 +15,9 @@ $user_id = $_SESSION['user_id'];
 
 // Lấy danh sách sản phẩm trong giỏ hàng
 $query = $conn->prepare("
-    SELECT cart.id, products.name, products.image, products.price, cart.quantity 
+    SELECT cart.id, product.name, product.image, product.price, cart.quantity 
     FROM cart 
-    INNER JOIN products ON cart.product_id = products.id 
+    INNER JOIN product ON cart.product_id = product.id 
     WHERE cart.user_id = ?
 ");
 $query->bind_param("i", $user_id);
@@ -157,7 +157,7 @@ while ($row = $result->fetch_assoc()) {
                         <div class="navbar-nav mr-auto py-0">
                             <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
                             <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">

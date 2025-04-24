@@ -2,86 +2,70 @@
 <html lang="en">
 <?php
 include 'db.php';
+
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
+    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
     exit();
 }
+$user_id = $_SESSION['user_id']; // Lấy ID user từ session
 
-$user_id = $_SESSION['user_id'];
-
+// Kết nối MySQL
 $conn = new mysqli("localhost", "root", "", "mydp");
+
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
-// Lấy thông tin user
+// Truy vấn thông tin user dựa vào session
 $sql = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
 if (!$user) {
     die("Không tìm thấy người dùng!");
 }
 
-// Lấy giỏ hàng user
-$sql = "SELECT p.id, p.name, p.price, p.image, c.quantity
-        FROM cart c
-        JOIN product p ON c.product_id = p.id
+
+// Lấy danh sách sản phẩm trong giỏ hàng
+$sql = "SELECT p.name, p.price, c.quantity , p.image
+        FROM cart c 
+        JOIN product p ON c.product_id = p.id 
         WHERE c.user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$result = $stmt->get_result();  // Phải có cái này
+$result = $stmt->get_result();
 
 $total = 0;
 $shipping_fee = 50000;
 $insurance_fee = 30000;
 
-// Tính tổng tiền hàng
-$cart_items = [];
-while ($row = $result->fetch_assoc()) {
-    $cart_items[] = $row;
-    $total += $row['price'] * $row['quantity'];
-}
 
-$grand_total = $total + $shipping_fee + $insurance_fee;
 
-// Tạo mã đơn hàng random
-$order_code = 'HD' . rand(1000000000000, 9999999999999);
 
-// Insert đơn hàng
-$sql = "INSERT INTO orders (code, user_id, total, status, created_at)
-        VALUES (?, ?, ?, 'Thành công', NOW())";
-        
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sid", $order_code, $user_id, $grand_total);
-$stmt->execute();
 
-$order_id = $stmt->insert_id; // Lấy id đơn hàng mới
 
-// Insert chi tiết từng sản phẩm
-foreach ($cart_items as $item) {
-    $sql = "INSERT INTO order_details (order_id, product_name, product_price, quantity)
-            VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isdi", $order_id, $item['name'], $item['price'], $item['quantity']);
-    $stmt->execute();
-}
-
-// Xoá giỏ hàng sau khi đặt xong
+// Xóa tất cả sản phẩm trong giỏ hàng của user đó
 $sql = "DELETE FROM cart WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 
+// Chuyển hướng về trang giỏ hàng với thông báo
+
+
+
+
+
+
+
 $stmt->close();
 $conn->close();
-
-// Thông báo & chuyển hướng
 ?>
 
 
@@ -144,7 +128,7 @@ $conn->close();
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.php" class="text-decoration-none">
+                <a href="logedin.html" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -152,7 +136,7 @@ $conn->close();
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="shoptimkiem_login.php">
+                <form action="shoptimkiem_login.html">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
@@ -168,7 +152,7 @@ $conn->close();
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.php" class="btn border">
+                <a href="cart.html" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -188,13 +172,12 @@ $conn->close();
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 245px">
-                    <a href="vot_login.html" class="nav-item nav-link">Yonex</a>
-                        <a href="giay_login.html" class="nav-item nav-link">Lining</a>
-                        <a href="tui_login.html" class="nav-item nav-link">Victor</a>
-                        <a href="quan_login.html" class="nav-item nav-link">Mizuno</a>
-                        <a href="ao_login.html" class="nav-item nav-link">VNB</a>
-                        <a href="vay_login.html" class="nav-item nav-link">Apacs</a>
-                        
+                        <a href="vot_login.html" class="nav-item nav-link">Vợt Cầu Lông</a>
+                        <a href="giay_login.html" class="nav-item nav-link">Giày Cầu Lông</a>
+                        <a href="tui_login.html" class="nav-item nav-link">Túi Cầu Lông</a>
+                        <a href="quan_login.html" class="nav-item nav-link">Quần Cầu Lông</a>
+                        <a href="ao_login.html" class="nav-item nav-link">Áo Cầu Lông</a>
+                        <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
                         
                             
                 </nav>
@@ -214,7 +197,7 @@ $conn->close();
                         <div class="navbar-nav mr-auto py-0">
                             <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
                             <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.php" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
@@ -239,7 +222,7 @@ $conn->close();
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thanh Toán</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
                 <!--<p class="m-0 px-2">-</p>
                 <p class="m-0">Kiểm Tra</p>-->
             </div>
@@ -494,10 +477,7 @@ $conn->close();
                                         <input type="text" class="form-control" id="cardNumber" placeholder="Số Thẻ">
                                         <label for="cardHolder">Tên Chủ Thẻ</label>
                                         <input type="text" class="form-control" id="cardHolder" placeholder="Tên Chủ Thẻ">
-                                        <label for="expiryDate">Ngày Hết Hạn</label>
-                                        <input type="text" class="form-control" id="expiryDate" placeholder="Ngày Hết Hạn">
-                                        <label for="cvvCode">Mã CVV</label>
-                                        <input type="text" class="form-control" id="cvvCode" placeholder="Mã CVV">
+                                        
                                         <button onclick="closePopup()">Xác Nhận</button>
                                     </div>
                                     <div id="popup-overlay" onclick="closePopup()"></div>
@@ -630,11 +610,11 @@ $conn->close();
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
