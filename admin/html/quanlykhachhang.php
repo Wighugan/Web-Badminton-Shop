@@ -191,7 +191,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
                 <td>{$row['id']}</td>
-                <td><img src='{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'></td>
+                <td>  <img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
                 <td>{$row['email']}</td>

@@ -16,7 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Xử lý upload ảnh
-    $avatar = "uploads/default.jpg"; // Ảnh mặc định
+    $target_dir = dirname(__DIR__, 2) . "/uploads/";
+    $avatar_path = "uploads/" . basename($_FILES["avatar"]["name"]);    
+    
     if (!empty($_FILES["avatar"]["name"])) {
         $target_dir = "uploads/"; // Thư mục lưu ảnh
         if (!is_dir($target_dir)) {
