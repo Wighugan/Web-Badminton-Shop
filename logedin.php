@@ -26,74 +26,86 @@ if ($conn->connect_error) {
 
 <?php include 'header.php'; ?>
 
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.php" class="text-decoration-none d-block d-lg-none">
-                        <div style="display: flex; align-items: center; position: relative;">
-                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                        </div> 
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="" class="nav-item nav-link active">Trang Chủ</a>
-                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm
-                            </a>
-                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
-                        </div>
+<div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
+    <div class="row border-top px-xl-5">
+        <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
+                <a href="" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
+                    </h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                        <div class="navbar-nav ml-auto py-0">
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown">
+                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
+                    <!-- Menu bên trái -->
+                    <div class="navbar-nav py-0">
+                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
+                    </div>
+
+                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
+                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">
                                 <?php 
-                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?>
-                                </a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-                        </div>
-                    </div>
-                </nav>
-
-
-                <div id="header-carousel" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" style="height: 410px;">
-                            <img class="img-fluid" src="img/carousel-1.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm giá 10%</h4>
-                                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Áo và Quần cầu lông</h3>
-                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item" style="height: 410px;">
-                            <img class="img-fluid" src="img/carousel-2.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm 20%</h4>
-                                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Cho đơn hàng đầu tiên</h3>
-                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item" style="height: 410px;">
-                            <img class="img-fluid" src="img/carousel-3.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Ưu đãi</h4>
-                                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Bảo hành trong 12 tháng</h3>
-                                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
-                                </div>
+                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                                ?>
+                            </a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                             </div>
                         </div>
                     </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+
+
+                <div id="header-carousel" class="carousel slide" data-ride="carousel" style="width: 100vw; overflow: hidden;">
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-1.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm giá 10%</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Áo và Quần cầu lông</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-2.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700px;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm 20%</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Cho đơn hàng đầu tiên</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-3.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700px;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Ưu đãi</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Bảo hành trong 12 tháng</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
                     
                     <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
                         <div class="btn btn-dark" style="width: 45px; height: 45px;">
@@ -144,66 +156,7 @@ if ($conn->connect_error) {
     <!-- Featured End -->
 
 
-     <!-- Categories Start -->
-     <div class="container-fluid pt-5">
-        <div class="row px-xl-5 pb-3">
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="vot_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-1.jpg" alt="">
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">Vợt</h5>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="ao_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-2.jpg" alt="">
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">Áo Cầu Lông</h5>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="vay_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-3.jpg" alt="">
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">Váy Cầu Lông</h5>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="quan_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-4.jpg" alt="">
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">Quần Cầu Lông</h5>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="tui_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-5.jpg" alt="">
-                    </a> 
-                    <h5 class="font-weight-semi-bold m-0">Túi Cầu Lông</h5>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 70px;">
-                    <p class="text-right">15 Products</p>
-                    <a href="giay_login.html" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="img/cat-6.jpg" alt="">
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">Giày Cầu Lông</h5>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Categories End -->
+     
 
 
     <!-- Offer Start -->

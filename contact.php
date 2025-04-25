@@ -24,50 +24,48 @@ if ($conn->connect_error) {
 }
 ?>
 <?php include 'header.php'; ?>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="index.php" class="text-decoration-none d-block d-lg-none">
-                        <div style="display: flex; align-items: center; position: relative;">
-                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                        </div> 
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.php" class="nav-item nav-link">Trang chủ</a>
-                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
-                        </div>
-                    
-
-<nav class="navbar">
-    <div class="navbar-nav ml-auto py-0">
-        <?php if (isset($_SESSION['username'])): ?>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link" data-toggle="dropdown">
-                    <?php echo htmlspecialchars($_SESSION['username']); ?>
+<div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
+    <div class="row border-top px-xl-5">
+        <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
+                <a href="" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
+                    </h1>
                 </a>
-                <div class="dropdown-menu rounded-0 m-0">
-                    <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-                </div>
-            </div>
-        <?php else: ?>
-            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
-            <a href="Signup.php" class="nav-item nav-link">Đăng Kí</a>
-        <?php endif; ?>
-    </div>
-</nav>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
+                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
+                    <!-- Menu bên trái -->
+                    <div class="navbar-nav py-0">
+                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                     </div>
-                </nav>
-            </div>
+
+                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
+                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">
+                                <?php 
+                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                                ?>
+                            </a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
     </div>
+</div>
+
     <!-- Navbar End -->
 
 

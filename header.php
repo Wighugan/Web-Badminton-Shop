@@ -96,7 +96,7 @@
     
 
     <!-- Navbar Start -->
-    <div class="container-fluid mb-5">
+    <!-- <div class="container-fluid mb-5">
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
@@ -112,8 +112,8 @@
                         <a href="ao.html" class="nav-item nav-link">VNB</a>
                         <a href="vay.html" class="nav-item nav-link">Apacs</a>
                     </div>
-                </nav>
-            </div>
+                </nav> 
+            </div> -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
             <script>
