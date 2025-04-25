@@ -217,9 +217,16 @@ button:hover {
                     <label for="username"></label>
                     <input type="text" id="fullname" name="fullname" placeholder="Họ và tên">
                 </div>
+
+                <div class="form-group">
+                    <label for="name"></label>
+                    <input type="text" id="numberphone" name="numberphone" placeholder="Số di động ">
+                    
+                </div>
+
                 <div class="form-group">
                     <label for="password"></label>
-                    <input type="text" id="email" name="email" placeholder="Số di động hoặc email">
+                    <input type="text" id="email" name="email" placeholder="email">
                     
                 </div>
 
@@ -259,6 +266,12 @@ function previewImage(event) {
                     <label for="username"></label>
                     <input type="text" id="address" name="address" placeholder="Địa chỉ liên hệ">
                 </div>
+
+                <div class="form-group">
+                    <label for="text"></label>
+                    <input type="text" id="city" name="city" placeholder="Thành Phố">
+                </div>
+
                 <div class="form-group">
                     <label for="username"></label>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu">

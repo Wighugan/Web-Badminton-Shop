@@ -163,7 +163,7 @@ $conn->close();
                         <div class="navbar-nav mr-auto py-0">
                             <a href="logedin.php" class="nav-item nav-link">Trang chủ</a>
                             <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="contactlogin.php" class="nav-item nav-link">Liên Hệ</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <div class="nav-item dropdown">
@@ -176,7 +176,7 @@ $conn->close();
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="index.php" class="dropdown-item">Đăng Xuất</a>
                                     <a href="suathongtinuser.php" class="dropdown-item">Sửa thông tin</a>
-                                    <a href="history.html" class="dropdown-item">Lịch sử mua hàng</a>
+                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
                         </div>
                     </div>
                 </nav>
@@ -285,6 +285,17 @@ button:hover {
 
                             <p class="help-block text-danger"></p>
                         </div>
+
+                        
+                        <div class="control-group">
+                            <label>Thành Phố</label>
+
+                           
+                                <input  class="form-control"  type="text" id="city" name="city" value="<?= $user['city'] ?>" required>
+
+                            <p class="help-block text-danger"></p>
+                        </div>
+
                         <div class="control-group">
                             <label>Đổi Mật khẩu:</label>
         

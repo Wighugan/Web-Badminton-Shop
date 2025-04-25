@@ -12,6 +12,8 @@ $username = $_POST['username'];
 $fullname = $_POST['fullname'];
 $email = $_POST['email'];
 $address = $_POST['address'];
+$city = $_POST['city'];
+
 $birthday = $_POST['birthday'];
 $numberphone = $_POST['numberphone'];
 
@@ -30,13 +32,13 @@ if (!empty($_FILES["avatar"]["name"])) {
 
 // Cập nhật dữ liệu
 if ($avatar) {
-    $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?, birthday=?, avatar=?, numberphone=? WHERE id=?";
+    $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?,city=?, birthday=?, avatar=?, numberphone=? WHERE id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssi", $username, $fullname, $email, $address, $birthday, $avatar, $numberphone, $id);
+    $stmt->bind_param("ssssssssi", $username, $fullname, $email, $address,$city, $birthday, $avatar, $numberphone, $id);
 } else {
-    $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?, birthday=?, numberphone=? WHERE id=?";
+    $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?,city=?, birthday=?, numberphone=? WHERE id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi", $username, $fullname, $email, $address, $birthday, $numberphone, $id);
+    $stmt->bind_param("sssssssi", $username, $fullname, $email, $address,$city, $birthday, $numberphone, $id);
 }
 
 if ($stmt->execute()) {
