@@ -17,21 +17,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Xử lý upload ảnh
     $avatar = "uploads/default.jpg"; // Ảnh mặc định
-    if (!empty($_FILES["avatar"]["name"])) {
-        $target_dir = "uploads/"; // Thư mục lưu ảnh
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true); // Tạo thư mục nếu chưa có
-        }
 
-        $target_file = $target_dir . basename($_FILES["avatar"]["name"]);
+if (!empty($_FILES["avatar"]["name"])) {
+    $relative_upload_path = "../uploads/"; // Thư mục uploads nằm ngoài thư mục admin
+    $public_upload_path = "uploads/";      // Đường dẫn hiển thị ảnh trên web
 
-        if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
-            $avatar = $target_file; // Gán đúng đường dẫn ảnh
-        } else {
-            echo "Lỗi tải ảnh lên!";
-            exit();
-        }
+    if (!is_dir($relative_upload_path)) {
+        mkdir($relative_upload_path, 0777, true); // Tạo thư mục nếu chưa có
     }
+
+    $filename = basename($_FILES["avatar"]["name"]);
+    $target_file = $relative_upload_path . $filename;
+
+    if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
+        $avatar = $public_upload_path . $filename; // Gán đúng đường dẫn ảnh để lưu vào DB / hiển thị
+    } else {
+        echo "Lỗi tải ảnh lên!";
+        exit();
+    }
+}
+
 
     // Lấy dữ liệu từ form
     $username = $_POST['username'];

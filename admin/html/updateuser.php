@@ -16,17 +16,27 @@ $birthday = $_POST['birthday'];
 $numberphone = $_POST['numberphone'];
 
 // Xử lý ảnh đại diện
-$avatar = "";
+$avatar = ""; // Nếu không có ảnh mới thì giữ nguyên ảnh cũ
+
 if (!empty($_FILES["avatar"]["name"])) {
-    $target_dir = "uploads/";
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
+    $relative_upload_path = "../uploads/"; // Thư mục lưu thật (ra ngoài admin)
+    $public_upload_path = "uploads/";      // Đường dẫn ảnh để lưu vào DB/hiển thị web
+
+    if (!is_dir($relative_upload_path)) {
+        mkdir($relative_upload_path, 0777, true);
     }
-    $target_file = $target_dir . basename($_FILES["avatar"]["name"]);
+
+    $filename = basename($_FILES["avatar"]["name"]);
+    $target_file = $relative_upload_path . $filename;
+
     if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
-        $avatar = $target_file;
+        $avatar = $public_upload_path . $filename;
+    } else {
+        echo "Lỗi tải ảnh lên!";
+        exit();
     }
 }
+
 
 // Cập nhật dữ liệu
 if ($avatar) {

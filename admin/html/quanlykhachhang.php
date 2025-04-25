@@ -128,29 +128,17 @@ if (!$conn) {
                     
                    
 
-                    <select id="option">
-                        <option>Tháng 1</option>
-                        <option>Tháng 2</option>
-                        <option>Tháng 3</option>
-                        <option>Tháng 4</option>
-                        <option>Tháng 6</option>
-                        <option>Tháng 7</option>
-                        <option>Tháng 8</option>
-                        <option>Tháng 9</option>
-                        <option>Tháng 10</option>
-                        <option>Tháng 11</option>
-                        <option>Tháng 12</option>
-                    </select>
-                    <select id="option">
-                        <option>Mới nhất</option>
-                        <option>Cũ nhất</option>
-                    </select>
+                   
+
+
                     <form action="">
                     <input id="timnguoidung" type="text" placeholder="Tên người dùng ...">   
                     <a href ="" id="timnguoidung1" >
                         <i class="fa fa-search"></i> 
                     </a>  
                 </form>
+
+                
                 </div>
                 <div class="chartsBx">
                     <h2></h2>
@@ -191,7 +179,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
                 <td>{$row['id']}</td>
-                <td>  <img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
+                <td>  <img src='../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
                 <td>{$row['email']}</td>
