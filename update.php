@@ -40,7 +40,7 @@ if ($avatar) {
 }
 
 if ($stmt->execute()) {
-    header("Location: quanlykhachhang.php");
+    header("Location: suathongtinuser.php");
     exit();
 } else {
     echo "Lỗi: " . $stmt->error;
