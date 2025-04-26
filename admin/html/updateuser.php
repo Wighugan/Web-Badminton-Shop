@@ -19,7 +19,7 @@ $numberphone = $_POST['numberphone'];
 $avatar = ""; // Nếu không có ảnh mới thì giữ nguyên ảnh cũ
 
 if (!empty($_FILES["avatar"]["name"])) {
-    $relative_upload_path = "../uploads/"; // Thư mục lưu thật (ra ngoài admin)
+    $relative_upload_path = "../../uploads/"; // Thư mục lưu thật (ra ngoài admin)
     $public_upload_path = "uploads/";      // Đường dẫn ảnh để lưu vào DB/hiển thị web
 
     if (!is_dir($relative_upload_path)) {

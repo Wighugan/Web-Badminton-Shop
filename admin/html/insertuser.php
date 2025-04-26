@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $avatar = "uploads/default.jpg"; // Ảnh mặc định
 
 if (!empty($_FILES["avatar"]["name"])) {
-    $relative_upload_path = "../uploads/"; // Thư mục uploads nằm ngoài thư mục admin
+    $relative_upload_path = "../../uploads/"; // Thư mục uploads nằm ngoài thư mục admin
     $public_upload_path = "uploads/";      // Đường dẫn hiển thị ảnh trên web
 
     if (!is_dir($relative_upload_path)) {

@@ -1,20 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-// Thông tin kết nối database
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "mydp";
 
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
 }
+
+$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$limit = 5;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+if (!empty($raw_search)) {
+    $search_param = "%$raw_search%";
+
+    // Đếm tổng số kết quả
+    $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM users WHERE fullname LIKE ?");
+    $stmt_total->bind_param("s", $search_param);
+    $stmt_total->execute();
+    $total_row = $stmt_total->get_result()->fetch_assoc();
+    $total_users = $total_row['total'];
+    $stmt_total->close();
+
+    // Lấy dữ liệu có tìm kiếm
+    $stmt = $conn->prepare("SELECT * FROM users WHERE fullname LIKE ? LIMIT ? OFFSET ?");
+    $stmt->bind_param("sii", $search_param, $limit, $offset);
+} else {
+    // Đếm tất cả
+    $total_query = $conn->query("SELECT COUNT(*) AS total FROM users");
+    $total_row = $total_query->fetch_assoc();
+    $total_users = $total_row['total'];
+
+    // Lấy dữ liệu thường
+    $stmt = $conn->prepare("SELECT * FROM users LIMIT ? OFFSET ?");
+    $stmt->bind_param("ii", $limit, $offset);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+$total_pages = ceil($total_users / $limit);
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -113,12 +145,7 @@ if (!$conn) {
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+               
             </div>
 
             <!-- ================ LÀM QUẢN LÝ KHÁCH HÀNG Ở ĐÂY ================= -->
@@ -130,26 +157,20 @@ if (!$conn) {
 
                    
 
+                    <form method="GET" action="">
+                    <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên người dùng ...">   
+                    <button type="submit" id="timnguoidung1">
+        <i class="fa fa-search"></i> 
+    </button>  
+</form>
 
-                    <form action="">
-                    <input id="timnguoidung" type="text" placeholder="Tên người dùng ...">   
-                    <a href ="" id="timnguoidung1" >
-                        <i class="fa fa-search"></i> 
-                    </a>  
-                </form>
 
                 
                 </div>
                 <div class="chartsBx">
                     <h2></h2>
                 </div>
-                <?php
-				// Câu lệnh SQL để lấy dữ liệu từ bảng user
-				$sql = "SELECT * FROM users";
-				$result = mysqli_query($conn, $sql);
-
-				// Kiểm tra xem có dữ liệu hay không
-			?>
+                
 
                 <div class="details">
                     <div class="recentOrders">
@@ -179,7 +200,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
                 <td>{$row['id']}</td>
-                <td>  <img src='../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
+                <td>  <img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
                 <td>{$row['email']}</td>
@@ -220,12 +241,22 @@ $conn->close();
     </script>
                         </tbody>
                     </table>
+
                     <div class="pagination1">
-                        <li class="hientai1">1</li>
-                        <li><a href="quanlykhachhang.html" style="color: black;">2</a></li></a>
-                        <li><a href="quanlykhachhang.html" style="color: black;">NEXT</a></li>
-                    </div>
-               
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <?php if ($i == $page): ?>
+            <li class="hientai1"><?= $i ?></li>
+        <?php else: ?>
+            <li>
+                <a href="?page=<?= $i ?>&search=<?= urlencode($raw_search) ?>" style="color: black;">
+                    <?= $i ?>
+                </a>
+            </li>
+        <?php endif; ?>
+    <?php endfor; ?>
+</div>
+
+
             <!-- ================ Add Charts JS ================= -->
             </div>
         </div>
