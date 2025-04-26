@@ -61,7 +61,41 @@ $total_pages = ceil($total_users / $limit);
 
    
       
-   
+    <style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px; /* giảm cỡ chữ */
+}
+
+.pagination a, .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px; /* giảm padding cho gọn */
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color:rgb(103, 104, 106);
+    color: white;
+    border-color:rgb(117, 119, 121);
+}
+
+.pagination .current {
+    font-weight: bold;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    border-color:rgb(0, 0, 0);
+    cursor: default;
+}
+</style> 
     
 
 </head>
@@ -154,7 +188,17 @@ $total_pages = ceil($total_users / $limit);
                     <button id="adduser"><a href="themnguoidung.php">+ Thêm người dùng</a></button>
                     
                    
+                    <div class="date1">
+    <label for="start">Từ ngày: </label>
+    <input type="date" id="start" name="start" value="2024-11-24" min="2018-01-01" max="2024-12-31">
+    
+    <label for="end">đến</label>
+    <input type="date" id="end" name="end" value="2024-11-30" min="2018-01-01" max="2024-12-31">
 
+    <a href="" id="timnguoidung2" class="search-btn">
+        <i class="fa fa-search"></i> 
+    </a>
+</div>
                    
 
                     <form method="GET" action="">
@@ -242,18 +286,27 @@ $conn->close();
                         </tbody>
                     </table>
 
-                    <div class="pagination1">
-    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-        <?php if ($i == $page): ?>
-            <li class="hientai1"><?= $i ?></li>
-        <?php else: ?>
-            <li>
-                <a href="?page=<?= $i ?>&search=<?= urlencode($raw_search) ?>" style="color: black;">
-                    <?= $i ?>
-                </a>
-            </li>
-        <?php endif; ?>
-    <?php endfor; ?>
+                    <div class="pagination">
+    <?php
+    // Nút Trước
+    if ($page > 1) {
+        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($raw_search) . "'>Trước</a>";
+    }
+
+    // Các số trang
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
+        } else {
+            echo "<a href='?page=$i&search=" . urlencode($raw_search) . "'>$i</a>";  // Trang khác
+        }
+    }
+
+    // Nút Sau
+    if ($page < $total_pages) {
+        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($raw_search) . "'>Sau</a>";
+    }
+    ?>
 </div>
 
 

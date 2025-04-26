@@ -9,6 +9,11 @@ $dbname = "mydp";
 // Kết nối đến MySQL
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
+$limit = 10;
+
+// Lấy số trang hiện tại từ query string, nếu không có thì mặc định là 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 // Kiểm tra kết nối
 if (!$conn) {
 	die("Kết nối thất bại: " . mysqli_connect_error());
@@ -16,10 +21,17 @@ if (!$conn) {
 $sql = "SELECT orders.*, users.fullname, users.numberphone  , users.address ,users.id AS makh
         FROM orders 
         JOIN users ON orders.user_id = users.id 
-        ORDER BY orders.created_at ASC";
+        ORDER BY orders.created_at DESC
+        LIMIT $offset, $limit";
 
 $result = mysqli_query($conn, $sql);
 $stt = 1;
+
+$sql_total = "SELECT COUNT(*) as total FROM orders";
+$result_total = $conn->query($sql_total);
+$row_total = $result_total->fetch_assoc();
+$total_orders = $row_total['total'];
+$total_pages = ceil($total_orders / $limit);
 ?>
 <head>
     <meta charset="UTF-8">
@@ -201,12 +213,63 @@ if ($status == 'Thành công') {
 
                         </tbody>
                     </table>
-                    <div class="pagination">
-                        <li class="hientai">1</li>
-                        <li><a href="xemhoadon.html" style="color: black;">2</a></li></a>
-                        <li><a href="xemhoadon.html" style="color: black;">NEXT</a></li>
-                    </div>
-                </div>
+                    <style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px; /* giảm cỡ chữ */
+}
+
+.pagination a, .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px; /* giảm padding cho gọn */
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color:rgb(103, 104, 106);
+    color: white;
+    border-color:rgb(117, 119, 121);
+}
+
+.pagination .current {
+    font-weight: bold;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    border-color:rgb(0, 0, 0);
+    cursor: default;
+}
+</style>
+        <!-- Phân trang -->
+        <div class="pagination">
+            <?php
+            // Hiển thị liên kết phân trang
+            if ($page > 1) {
+                echo "<a href='xemhoadon.php?page=" . ($page - 1) . "'>Trước</a>";
+            }
+
+            for ($i = 1; $i <= $total_pages; $i++) {
+                if ($i == $page) {
+                    echo "<span class='current'>$i</span>";
+                } else {
+                    echo "<a href='xemhoadon.php?page=$i'>$i</a>";
+                }
+            }
+
+            if ($page < $total_pages) {
+                echo "<a href='xemhoadon.php?page=" . ($page + 1) . "'>Sau</a>";
+            }
+            ?>
+        </div>
+
 
 
 

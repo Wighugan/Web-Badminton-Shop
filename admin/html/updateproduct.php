@@ -19,25 +19,36 @@ $weight = $_POST['weight'];
 $description = $_POST['description'];
 
 // Xử lý ảnh
-$image = "";
+
+
+$image = ""; // Nếu không có ảnh mới thì giữ nguyên ảnh cũ
+
 if (!empty($_FILES["image"]["name"])) {
-    $target_dir = "img/";
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
+    $relative_upload_path = "../../uploads/"; // Thư mục lưu thật (ra ngoài admin)
+    $public_upload_path = "uploads/";      // Đường dẫn ảnh để lưu vào DB/hiển thị web
+
+    if (!is_dir($relative_upload_path)) {
+        mkdir($relative_upload_path, 0777, true);
     }
-    $target_file = $target_dir . basename($_FILES["image"]["name"]);
+
+    $filename = basename($_FILES["image"]["name"]);
+    $target_file = $relative_upload_path . $filename;
+
     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-        $image = $target_file;
+        $image = $public_upload_path . $filename;
+    } else {
+        echo "Lỗi tải ảnh lên!";
+        exit();
     }
 }
 
 // Cập nhật dữ liệu
 if ($image) {
-    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?, image=? WHERE id=?";
+    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?, image=?, updated_at=NOW() WHERE id=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssssi", $category, $color, $productcode, $name, $price, $flex, $length, $weight,  $description, $image, $id);
 } else {
-    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=? WHERE id=?";
+    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?,updated_at=NOW() WHERE id=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssssssssi", $category, $color, $productcode, $name, $price, $flex, $length, $weight, $description, $id);
 }

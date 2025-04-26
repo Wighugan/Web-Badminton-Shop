@@ -12,9 +12,67 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
 if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
+    die("Kết nối thất bại: " . mysqli_connect_error());
 }
+
+// Lấy dữ liệu tìm kiếm và ngày tháng
+$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start = isset($_GET['start']) ? $_GET['start'] : '';
+$end = isset($_GET['end']) ? $_GET['end'] : '';
+
+$limit = 5;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+// Xây dựng điều kiện WHERE
+$where = "1"; // mặc định luôn đúng
+
+$params = []; // tham số bind
+$types = "";  // chuỗi loại dữ liệu cho bind_param
+
+if (!empty($raw_search)) {
+    $where .= " AND name LIKE ?";
+    $params[] = "%$raw_search%";
+    $types .= "s";
+}
+
+if (!empty($start) && !empty($end)) {
+    $where .= " AND updated_at BETWEEN ? AND ?";
+    $params[] = $start . " 00:00:00";
+    $params[] = $end . " 23:59:59";
+    $types .= "ss";
+}
+
+// Đếm tổng số sản phẩm
+$sql_count = "SELECT COUNT(*) AS total FROM product WHERE $where";
+$stmt_total = $conn->prepare($sql_count);
+if (!empty($params)) {
+    $stmt_total->bind_param($types, ...$params);
+}
+$stmt_total->execute();
+$total_row = $stmt_total->get_result()->fetch_assoc();
+$total_users = $total_row['total'];
+$stmt_total->close();
+
+// Lấy dữ liệu sản phẩm
+$sql_data = "SELECT * FROM product WHERE $where LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql_data);
+
+// Thêm limit và offset vào params
+$params_with_limit = $params;
+$params_with_limit[] = $limit;
+$params_with_limit[] = $offset;
+$types_with_limit = $types . "ii";
+
+$stmt->bind_param($types_with_limit, ...$params_with_limit);
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+$total_pages = ceil($total_users / $limit);
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +84,42 @@ if (!$conn) {
     <link rel="stylesheet" href="../css/quanlysanpham.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px; /* giảm cỡ chữ */
+}
 
+.pagination a, .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px; /* giảm padding cho gọn */
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color:rgb(103, 104, 106);
+    color: white;
+    border-color:rgb(117, 119, 121);
+}
+
+.pagination .current {
+    font-weight: bold;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    border-color:rgb(0, 0, 0);
+    cursor: default;
+}
+</style> 
+    
 <body>
     <div class="container">
         <!-- =============== Navigation ================ -->
@@ -115,12 +208,7 @@ if (!$conn) {
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+                
             </div>
             <!-- ================ LÀM QUẢN LÝ SẢN PHẨM Ở ĐÂY ================= -->
             <div class="user">
@@ -130,39 +218,27 @@ if (!$conn) {
                
                     <button id="adduser"><a href="themsanpham.php">+ Thêm sản phẩm</a></button>
                     
-                    <div class="date1">
-    <label for="start">Từ ngày: </label>
-    <input type="date" id="start" name="start" value="2024-11-24" min="2018-01-01" max="2024-12-31">
-    
-    <label for="end">đến</label>
-    <input type="date" id="end" name="end" value="2024-11-30" min="2018-01-01" max="2024-12-31">
+                    <form method="GET" action="">
+    <div class="date1">
+        <label for="start">Từ ngày: </label>
+        <input type="date" id="start" name="start" value="<?= isset($_GET['start']) ? $_GET['start'] : '' ?>" min="2023-01-01" max="2025-12-31">
 
-    <a href="" id="timnguoidung2" class="search-btn">
+        <label for="end">đến</label>
+        <input type="date" id="end" name="end" value="<?= isset($_GET['end']) ? $_GET['end'] : '' ?>" min="2023-01-01" max="2025-12-31">
+
+        <button type="submit" class="search-btn">
+            <i class="fa fa-search"></i> 
+        </button>
+    </div>
+</form>
+
+                  
+                    <form method="GET" action="">
+                    <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên sản phẩm ...">   
+                    <button type="submit" id="timnguoidung1">
         <i class="fa fa-search"></i> 
-    </a>
-</div>
-
-                    <select id="option">
-                        <option>Lọc theo danh mục</option>
-                        <option>Lọc theo thương hiệu</option>
-                        
-                    </select>
-                   
-
-                
-                    <form action="">
-                        <input id="timnguoidung" type="text" placeholder="Tên sản phẩm cần tìm">
-    
-                        
-                           
-                      
-                           
-                        <a href ="" id="timnguoidung1" >
-    
-                            <i class="fa fa-search"></i> 
-    
-                        </a>  
-                    </form>
+    </button>  
+</form>
                 </div>
                 <!-- ================ Add Charts JS ================= -->
                 <div class="chartsBx">
@@ -170,14 +246,7 @@ if (!$conn) {
                    
                 </div>
 
-                <?php
-				// Câu lệnh SQL để lấy dữ liệu từ bảng user
-				$sql = "SELECT * FROM product";
-				$result = mysqli_query($conn, $sql);
-
-				// Kiểm tra xem có dữ liệu hay không
-				if (mysqli_num_rows($result) > 0) {
-			?>
+                
 
                 
                 <div class="details">
@@ -191,7 +260,6 @@ if (!$conn) {
                                 <td>Tên SP </td>
                                 <td>Danh mục</td>
                                 <td>Giá</td>
-                                <td>Tồn kho</td>
                                 <td>Ngày cập nhật</td>
                                 <td>Thao tác</td>
                             </tr>
@@ -201,19 +269,19 @@ if (!$conn) {
 
                         <?php
 // Duyệt qua từng sản phẩm và hiển thị
-$stt = 1; // Biến đếm số thứ tự
+ // Biến đếm số thứ tự
 while ($row = mysqli_fetch_assoc($result)) {  
     $formatted_price = number_format($row['price'], 0, ',', '.') . " VND"; // Định dạng giá
 ?>          
     <tr>
-        <td><?= $stt++ ?></td> <!-- Số thứ tự -->
-        <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
+    <td><?= htmlspecialchars($row['id']) ?></td> <!-- Tên sản phẩm -->
+    <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
 
-        <td><img src="<?= htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
+        <td><img src="<?= '../../' . htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
         <td><?= htmlspecialchars($row['name']) ?></td> <!-- Tên sản phẩm -->
         <td><?= htmlspecialchars($row['category']) ?></td> <!-- Danh mục (Cố định, bạn có thể sửa thành dynamic nếu cần) -->
         <td><?= $formatted_price ?></td> <!-- Giá -->
-        <td><?= htmlspecialchars($row['stock']) ?></td> <!-- Số lượng tồn kho -->
+
         <td><?= date("d/m/Y H:i", strtotime($row['updated_at'])) ?></td>
 <td>
             <a href="suasanpham.php?id=<?= $row['id']?>" id="suanguoidung" style="display: block;">
@@ -240,19 +308,37 @@ while ($row = mysqli_fetch_assoc($result)) {
 ?>
 
 <?php				
-} else {
-    echo "<p>Không có sản phẩm nào.</p>";
-}
+
 ?>
    </table>                         
                    
                 
-                <div class="pagination">
-                    <li class="hientai">1</li>
-                    <li><a href="quanlysanpham.php" style="color: black;">2</a></li></a>
-                    <li><a href="quanlysanpham.php" style="color: black;">NEXT</a></li>
-                </div>
-           
+   <div class="pagination">
+    <?php
+    // Build base URL giữ lại search, start, end
+    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
+
+    // Nút Trước
+    if ($page > 1) {
+        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
+    }
+
+    // Các số trang
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
+        } else {
+            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
+        }
+    }
+
+    // Nút Sau
+    if ($page < $total_pages) {
+        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
+    }
+    ?>
+</div>
+   
             </div>
 
             </div>
