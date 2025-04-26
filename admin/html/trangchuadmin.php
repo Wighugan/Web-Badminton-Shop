@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+// Kết nối cơ sở dữ liệu
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "mydp";
 
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
-$sql = "SELECT orders.*, users.fullname, users.numberphone 
+
+// Số đơn hàng mỗi trang
+$limit = 10;
+
+// Lấy số trang hiện tại từ query string, nếu không có thì mặc định là 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Truy vấn để lấy danh sách đơn hàng (kèm fullname người đặt)
+$sql = "SELECT orders.*, users.fullname 
         FROM orders 
         JOIN users ON orders.user_id = users.id 
-        ORDER BY orders.created_at ASC";
+        ORDER BY orders.created_at DESC 
+        LIMIT $offset, $limit";
+$result = $conn->query($sql);
 
-$result = mysqli_query($conn, $sql);
-$stt = 1;
+
+
+// Truy vấn để lấy tổng số đơn hàng
+$sql_total = "SELECT COUNT(*) as total FROM orders";
+$result_total = $conn->query($sql_total);
+$row_total = $result_total->fetch_assoc();
+$total_orders = $row_total['total'];
+$total_pages = ceil($total_orders / $limit);
 ?>
 <head>
     <meta charset="UTF-8">
@@ -45,6 +61,10 @@ $stt = 1;
     }
     .cancelled {
         color: gray;
+        font-weight: bold;
+    }
+    .shipping {
+        color: blue;
         font-weight: bold;
     }
 </style>
@@ -167,60 +187,113 @@ $stt = 1;
            
         </div>
 
-            <div class="details">
-                <div class="recentOrders">
-                    <div class="cardHeader">
-                        <h2>Đơn hàng gần đây</h2>
-                        <a href="quanlydonhang.html" class="btn">Xem chi tiết</a>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>STT</td>
-                                <td>Mã Đơn hàng</td>
-                                <td>Người đặt</td>
-                                <td>SĐT</td>
-                                <td>Tình trạng</td>
-                                <td>Tổng tiền</td>
-                                <td>Ngày</td>
-                                <td></td>
-                            </tr>
-                        </thead>
+        <div class="details">
+    <div class="recentOrders">
+        <div class="cardHeader">
+            <h2>Đơn hàng gần đây</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <td>STT</td>
+                    <td>Mã Đơn hàng</td>
+                    <td>Người đặt</td>
+                    <td>Tình trạng</td>
+                    <td>Tổng tiền</td>
+                    <td>Ngày</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $stt = ($page - 1) * $limit + 1;
+                while($row = mysqli_fetch_assoc($result)) {
+                ?>
+                    <tr>
+                        <td><?= $stt++ ?></td>
+                        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
+                        <td><?= htmlspecialchars($row['fullname']) ?></td>
+                        <?php
+                        $status = $row['status'];
+                        $class = '';
 
-                        <tbody>
-                        <?php while($row = mysqli_fetch_assoc($result)) { ?>
-    <tr>
-        <td><?= $stt++ ?></td>
-        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
-        <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <?php
-$status = $row['status'];
-$class = '';
-
-if ($status == 'Thành công') {
-    $class = 'success';
-} elseif ($status == 'Chờ xác nhận') {
-    $class = 'pending';
-} elseif ($status == 'Đã hủy') {
-    $class = 'cancelled';
+                        if ($status == 'Thành công') {
+                            $class = 'success';
+                        } elseif ($status == 'Chờ xác nhận') {
+                            $class = 'pending';
+                        } elseif ($status == 'Đã hủy') {
+                            $class = 'cancelled';
+                        } elseif ($status == 'Đang giao') {
+                            $class = 'shipping';
+                        }
+                        ?>
+                        <td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
+                        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
+                        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px; /* giảm cỡ chữ */
 }
-?>
 
-<td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
+.pagination a, .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px; /* giảm padding cho gọn */
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-    </tr>
-<?php } ?>
+.pagination a:hover {
+    background-color:rgb(103, 104, 106);
+    color: white;
+    border-color:rgb(117, 119, 121);
+}
 
-                        </tbody>
-                    </table>
-                    <div class="pagination">
-                        <li class="hientai">1</li>
-                        <li><a href="trangchuadmin.html" style="color: black;">2</a></li></a> 
-                        <li><a href="trangchuadmin.html" style="color: black;" >NEXT</a></li>
-                    </div>
-                </div>
+.pagination .current {
+    font-weight: bold;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    border-color:rgb(0, 0, 0);
+    cursor: default;
+}
+</style>
+        <!-- Phân trang -->
+        <div class="pagination">
+            <?php
+            // Hiển thị liên kết phân trang
+            if ($page > 1) {
+                echo "<a href='trangchuadmin.php?page=" . ($page - 1) . "'>Trước</a>";
+            }
+
+            for ($i = 1; $i <= $total_pages; $i++) {
+                if ($i == $page) {
+                    echo "<span class='current'>$i</span>";
+                } else {
+                    echo "<a href='trangchuadmin.php?page=$i'>$i</a>";
+                }
+            }
+
+            if ($page < $total_pages) {
+                echo "<a href='trangchuadmin.php?page=" . ($page + 1) . "'>Sau</a>";
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<?php $conn->close(); ?>
            
                 
                
