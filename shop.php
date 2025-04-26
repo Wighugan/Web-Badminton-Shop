@@ -230,114 +230,164 @@ $result = $conn->query($sql);
     </div>
     <!-- Page Header End -->
 
+    <?php
+require_once 'connect.php'; // File kết nối CSDL của bạn
 
+// Lấy filter từ GET
+$sort = $_GET['sort'] ?? '';
+$price = $_GET['price'] ?? '';
+$brands = $_GET['brand'] ?? [];
+
+// Bắt đầu query
+$sql = "SELECT * FROM product WHERE 1";
+
+// Lọc theo giá
+if ($price == '0500') {
+    $sql .= " AND price < 500000";
+} elseif ($price == '5001') {
+    $sql .= " AND price BETWEEN 500000 AND 1000000";
+} elseif ($price == '12') {
+    $sql .= " AND price BETWEEN 1000000 AND 2000000";
+} elseif ($price == '23') {
+    $sql .= " AND price BETWEEN 2000000 AND 3000000";
+} elseif ($price == 'over3') {
+    $sql .= " AND price > 3000000";
+}
+
+// Lọc theo thương hiệu
+if (!empty($brands)) {
+    $escapedBrands = array_map(function($b) use ($conn) {
+        return "'" . mysqli_real_escape_string($conn, $b) . "'";
+    }, $brands);
+    $sql .= " AND brand IN (" . implode(",", $escapedBrands) . ")";
+}
+
+// Sắp xếp
+if ($sort == 'az') {
+    $sql .= " ORDER BY name ASC";
+} elseif ($sort == 'za') {
+    $sql .= " ORDER BY name DESC";
+} elseif ($sort == 'price-asc') {
+    $sql .= " ORDER BY price ASC";
+} elseif ($sort == 'price-desc') {
+    $sql .= " ORDER BY price DESC";
+} else {
+    $sql .= " ORDER BY id DESC";
+}
+
+// Thực thi truy vấn
+$result = mysqli_query($conn, $sql);
+?>   
     <!-- Shop Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <!-- Shop Sidebar Start -->
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
-                <div class="mb-5">
-                    <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
-                    <form>
-                       
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-1">
-                            <label class="custom-control-label" for="size-1">Từ A → Z </label>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-2">
-                            <label class="custom-control-label" for="size-2">Từ Z → A </label>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-3">
-                            <label class="custom-control-label" for="size-3">Giá tăng dần</label>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-4">
-                            <label class="custom-control-label" for="size-4">Giá giảm dần</label>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                            <input type="checkbox" class="custom-control-input" id="size-5">
-                            <label class="custom-control-label" for="size-5">Hàng mới nhất</label>
-                        </div>
-                    </form>
-                </div>
-                <div class="border-bottom mb-4 pb-4">
-                    <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
-                    <form>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" checked id="price-all">
-                            <label class="custom-control-label" for="price-all">Tất cả giá</label>
-                            <span class="badge border font-weight-normal"></span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-1">
-                            <label class="custom-control-label" for="price-1">Giá dưới 500.000đ</label>
-                            <span class="badge border font-weight-normal">150</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-2">
-                            <label class="custom-control-label" for="price-2">500.000đ - 1 triệu</label>
-                            <span class="badge border font-weight-normal">295</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-3">
-                            <label class="custom-control-label" for="price-3">1 - 2 triệu</label>
-                            <span class="badge border font-weight-normal">246</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-4">
-                            <label class="custom-control-label" for="price-4">2 - 3 triệu</label>
-                            <span class="badge border font-weight-normal">145</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                            <input type="checkbox" class="custom-control-input" id="price-5">
-                            <label class="custom-control-label" for="price-5">Giá trên 3 triệu</label>
-                            <span class="badge border font-weight-normal">168</span>
-                        </div>
-                    </form>
-                </div>
-                <!-- Price End -->
-                
-                
+                <form id="filter-form" method="GET" action="shop.php" >
+    <!-- Sắp xếp -->
+    <div class="mb-5">
+        <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="sort" value="az" id="sort-az">
+            <label class="custom-control-label" for="sort-az">Từ A → Z</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="sort" value="za" id="sort-za">
+            <label class="custom-control-label" for="sort-za">Từ Z → A</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="sort" value="price-asc" id="sort-price-asc" >
+            <label class="custom-control-label" for="sort-price-asc">Giá tăng dần</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="sort" value="price-desc" id="sort-price-desc">
+            <label class="custom-control-label" for="sort-price-desc">Giá giảm dần</label>
+        </div>
+    </div>
 
-                <!-- Size Start -->
-                <div class="mb-5">
-                    <h5 class="font-weight-semi-bold mb-4">Thương hiệu</h5>
-                    <form>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" checked id="size-all">
-                            <label class="custom-control-label" for="size-all">Tất cả</label>
-                            <span class="badge border font-weight-normal">1000</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-1">
-                            <label class="custom-control-label" for="size-1">VNB</label>
-                            <span class="badge border font-weight-normal">150</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-2">
-                            <label class="custom-control-label" for="size-2">Yonex</label>
-                            <span class="badge border font-weight-normal">295</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-3">
-                            <label class="custom-control-label" for="size-3">Lining</label>
-                            <span class="badge border font-weight-normal">246</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="size-4">
-                            <label class="custom-control-label" for="size-4">Victor</label>
-                            <span class="badge border font-weight-normal">145</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                            <input type="checkbox" class="custom-control-input" id="size-5">
-                            <label class="custom-control-label" for="size-5">Hãng khác</label>
-                            <span class="badge border font-weight-normal">168</span>
-                        </div>
-                    </form>
-                </div>
+    <!-- Giá -->
+    <div class="border-bottom mb-4 pb-4">
+        <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="price" value="all" id="price-all">
+            <label class="custom-control-label" for="price-all">Tất cả giá</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="price" value="0500" id="price-1">
+            <label class="custom-control-label" for="price-1">Dưới 500.000đ</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="price" value="5001" id="price-2">
+            <label class="custom-control-label" for="price-2">500.000đ - 1 triệu</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="price" value="12" id="price-3">
+            <label class="custom-control-label" for="price-3">1 - 2 triệu</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-3">
+            <input type="radio" class="custom-control-input" name="price" value="23" id="price-4">
+            <label class="custom-control-label" for="price-4">2 - 3 triệu</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square">
+            <input type="radio" class="custom-control-input" name="price" value="over3" id="price-5">
+            <label class="custom-control-label" for="price-5">Trên 3 triệu</label>
+        </div>
+    </div>
+
+    <!-- Thương hiệu -->
+    <div class="mb-5">
+        <h5 class="font-weight-semi-bold mb-4">Thương hiệu</h5>
+        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+            <input type="checkbox" class="custom-control-input" name="brand[]" value="VNB" id="brand-1">
+            <label class="custom-control-label" for="brand-1">VNB</label>
+        </div>
+        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+            <input type="checkbox" class="custom-control-input" name="brand[]" value="Yonex" id="brand-2">
+            <label class="custom-control-label" for="brand-2">Yonex</label>
+        </div>
+        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+            <input type="checkbox" class="custom-control-input" name="brand[]" value="Lining" id="brand-3">
+            <label class="custom-control-label" for="brand-3">Lining</label>
+        </div>
+        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+            <input type="checkbox" class="custom-control-input" name="brand[]" value="Victor" id="brand-4">
+            <label class="custom-control-label" for="brand-4">Victor</label>
+        </div>
+    </div>
+</form>
+<script>
+document.querySelectorAll('#filter-form input').forEach((input) => {
+    input.addEventListener('change', () => {
+        document.getElementById('filter-form').submit();
+    });
+});
+</script>
+<style>
+/* Bo góc vuông cho radio */
+.custom-radio-square .custom-control-input ~ .custom-control-label::before {
+    border-radius: 0 !important;  /* ô vuông */
+}
+
+/* Tick dấu ✓ giống checkbox */
+.custom-radio-square .custom-control-input:checked ~ .custom-control-label::before {
+    background-color:rgb(0, 0, 0); /* màu tick nền xanh */
+    border-color:rgb(0, 0, 0);
+}
+
+/* Thêm dấu tick như checkbox */
+.custom-radio-square .custom-control-input:checked ~ .custom-control-label::after {
+    content: "";
+    position: absolute;
+    left: -1.15rem;
+    top: 0.35rem;
+    width: 0.3rem;
+    height: 0.6rem;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+</style>
                 <!-- Size End -->
   
                 
