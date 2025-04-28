@@ -13,17 +13,70 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 if (!$conn) {
 	die("Kết nối thất bại: " . mysqli_connect_error());
 }
+// Lấy dữ liệu tìm kiếm và ngày tháng
+$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start = isset($_GET['start']) ? $_GET['start'] : '';
+$end = isset($_GET['end']) ? $_GET['end'] : '';
 
+$limit = 5;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
 
+// Xây dựng điều kiện WHERE
+$where = "1"; // mặc định luôn đúng
 
+$params = []; // tham số bind
+$types = "";  // chuỗi loại dữ liệu cho bind_param
 
-$sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, SUM(orders.total) AS tongtien 
-        FROM users 
-        LEFT JOIN orders ON users.id = orders.user_id 
-        GROUP BY users.id, users.fullname";
+if (!empty($raw_search)) {
+    $where .= " AND users.fullname LIKE ?";
+    $params[] = "%$raw_search%";
+    $types .= "s";
+}
 
-$result = $conn->query($sql);
+if (!empty($start) && !empty($end)) {
+    $where .= " AND orders.created_at BETWEEN ? AND ?";
+    $params[] = $start . " 00:00:00";
+    $params[] = $end . " 23:59:59";
+    $types .= "ss";
+}
 
+// Đếm tổng số khách hàng
+$sql_count = "SELECT COUNT(DISTINCT users.id) AS total FROM users 
+              LEFT JOIN orders ON users.id = orders.user_id 
+              WHERE $where";
+$stmt_total = $conn->prepare($sql_count);
+if (!empty($params)) {
+    $stmt_total->bind_param($types, ...$params);
+}
+$stmt_total->execute();
+$total_row = $stmt_total->get_result()->fetch_assoc();
+$total_users = $total_row['total'];
+$stmt_total->close();
+
+// Lấy dữ liệu khách hàng
+$sql_data = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, 
+                    SUM(orders.total) AS tongtien 
+             FROM users 
+             LEFT JOIN orders ON users.id = orders.user_id 
+             WHERE $where 
+             GROUP BY users.id, users.fullname 
+             LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql_data);
+
+// Thêm limit và offset vào params
+$params_with_limit = $params;
+$params_with_limit[] = $limit;
+$params_with_limit[] = $offset;
+$types_with_limit = $types . "ii";
+
+$stmt->bind_param($types_with_limit, ...$params_with_limit);
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+$total_pages = ceil($total_users / $limit);
 
 ?>
 
@@ -41,6 +94,41 @@ $result = $conn->query($sql);
 </head>
 
 <body>
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px; /* giảm cỡ chữ */
+}
+
+.pagination a, .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px; /* giảm padding cho gọn */
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color:rgb(103, 104, 106);
+    color: white;
+    border-color:rgb(117, 119, 121);
+}
+
+.pagination .current {
+    font-weight: bold;
+    background-color:rgb(0, 0, 0);
+    color: white;
+    border-color:rgb(0, 0, 0);
+    cursor: default;
+}
+</style>
     <!-- =============== Navigation ================ -->
     <div class="container">
         <div class="navigation">
@@ -117,13 +205,8 @@ $result = $conn->query($sql);
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
-            </div>
+                  </div> 
+         
    
    
 
@@ -131,48 +214,31 @@ $result = $conn->query($sql);
    
     <div class="banner">
 
-        <div class="date">
-            <label for="start">Từ ngày: </label>
-            <input type="date" id="start" name="start" value="2024-11-24" min="2018-01-01" max="2024-12-31">
-            <label for="start">đến </label>
-            <input type="date" id="end" name="end" value="2024-11-30" min="2018-01-01" max="2024-12-31">
-            <a href ="" id="timnguoidung2" >
+    <form method="GET" action="">
+    <div class="date1">
+        <label for="start">Từ ngày: </label>
+        <input type="date" id="start" name="start" value="<?= isset($_GET['start']) ? $_GET['start'] : '' ?>" min="2023-01-01" max="2025-12-31">
 
-                <i class="fa fa-search"></i> 
-    
-            </a>  
-        </div>
+        <label for="end">đến</label>
+        <input type="date" id="end" name="end" value="<?= isset($_GET['end']) ? $_GET['end'] : '' ?>" min="2023-01-01" max="2025-12-31">
+
+        <button type="submit" class="search-btn">
+            <i class="fa fa-search"></i> 
+        </button>
+    </div>
+</form>
       
-    
+<form method="GET" action="">
+                    <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên sản phẩm ...">   
+                    <button type="submit" id="timnguoidung1">
+        <i class="fa fa-search"></i> 
+    </button>  
+</form>
         
-    
-        <select id="option">
-            <option>Yonex</option>
-            <option>Lining</option>
-            <option >Victor</option>
-            <option >Mizuno</option>
-            <option>VNB</option>
-            <option>Apacs</option>
-
-
-           
-
-        </select>
+  
+        
 
     
-        <form action="">
-            <input id="timnguoidung" type="text" placeholder="Tên sản phẩm cần tìm">
-
-            
-               
-          
-               
-            <a href ="" id="timnguoidung1" >
-
-                <i class="fa fa-search"></i> 
-
-            </a>  
-        </form>
     </div>
             
 
@@ -274,121 +340,137 @@ $result = $conn->query($sql);
           
   </script>
   <div class="pagination">
-    <li class="hientai">1</li>
-    <li><a href="thongke.php" style="color: black;">2</a></li></a> 
-    <li><a href="thongke.php" style="color: black;" >NEXT</a></li>
-  </div>
-  
-  </div>
-  </div>
+    <?php
+    // Build base URL giữ lại search, start, end
+    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
 
-  <div class="details">
+    // Nút Trước
+    if ($page > 1) {
+        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
+    }
+
+    // Các số trang
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
+        } else {
+            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
+        }
+    }
+
+    // Nút Sau
+    if ($page < $total_pages) {
+        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
+    }
+    ?>
+</div>
+   
+            </div>
+
+            </div>
+
+            <div class="details">
     <div class="recentOrders">
         <div class="cardHeader">
             <h2>Thống kê theo khách hàng</h2>
         </div>
-    <table>
-        <thead>
-            <tr>
-                <td>Mã khách hàng</td>
-                <td>Tên khách hàng</td>
-                <td>Tổng số hóa đơn</td>
-                <td>Tổng tiền</td>
-                <td>Xem hóa đơn</td>
-                <td></td>
-            </tr>
-        </thead>
-  
-        <tbody>
-        <?php while($row = $result->fetch_assoc()) { ?>
-<tr>
-    <td><?= 'KH00'.$row['makh'] ?></td>
-    <td><?= $row['tenkh'] ?></td>
-    <td><?= $row['sohoadon'] ?></td>
-    <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
-    <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
-</tr>
-<?php } ?>
-            
-           
-        </tbody>
-  
-    </table>
-   
-  
-  
-  <script>
-  
-        ten = document.getElementById("ten");
-        loai = document.getElementById("loai");
-        tenSp = document.getElementById("tenSp");
-        loaiSp = document.getElementById("loaiSp");
-        function checkTen(){
-            tenSp.style.display="block";
-            loaiSp.style.display="none";
-        }
-  
-        function checkLoai(){
-            tenSp.style.display="none";
-            loaiSp.style.display="block";
-        }
-          
-  </script>
-  <div class="pagination">
-    <li class="hientai">1</li>
-    <li><a href="thongke.html" style="color: black;">2</a></li></a> 
-    <li><a href="thongke.html" style="color: black;" >NEXT</a></li>
-  </div>
-  
-  </div>
-  </div>
+        <table>
+            <thead>
+                <tr>
+                    <td>Mã khách hàng</td>
+                    <td>Tên khách hàng</td>
+                    <td>Tổng số hóa đơn</td>
+                    <td>Tổng tiền</td>
+                    <td>Xem hóa đơn</td>
+                    <td></td>
+                </tr>
+            </thead>
 
-  <div class="details">
+            <tbody>
+                <?php while($row = $result->fetch_assoc()) { ?>
+                    <tr>
+                        <td><?= 'KH00'.$row['makh'] ?></td>
+                        <td><?= $row['tenkh'] ?></td>
+                        <td><?= $row['sohoadon'] ?></td>
+                        <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+                        <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+
+
+<div class="pagination">
+    <?php
+    // Build base URL giữ lại search, start, end
+    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
+
+    // Nút Trước
+    if ($page > 1) {
+        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
+    }
+
+    // Các số trang
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
+        } else {
+            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
+        }
+    }
+
+    // Nút Sau
+    if ($page < $total_pages) {
+        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
+    }
+    ?>
+</div>
+    </div>
+        </div>
+
+        <div class="details">
     <div class="recentOrders">
         <div class="cardHeader">
             <h2>Top 5 Khách Hàng Mua Nhiều Nhất</h2>
         </div>
-            <table>
-                <thead>
+        <table>
+            <thead>
+                <tr>
+                    <td>STT</td>
+                    <td>Tên khách hàng</td>
+                    <td>Số đơn hàng</td>
+                    <td>Tổng tiền</td>
+                    <td>Xem hóa đơn</td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    // Lấy 5 khách hàng mua nhiều nhất
+                    $sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, 
+                                    SUM(orders.total) AS tongtien
+                            FROM users
+                            LEFT JOIN orders ON users.id = orders.user_id
+                            GROUP BY users.id, users.fullname
+                            ORDER BY sohoadon DESC 
+                            LIMIT 5";
+
+                    $result = $conn->query($sql);
+                    $stt = 1; // Khởi tạo số thứ tự
+                ?>
+                <?php while ($row = $result->fetch_assoc()) { ?>
                     <tr>
-                        <td>STT</td>
-                        <td>Tên khách hàng</td>
-                        <td>Số đơn hàng</td>
-                        <td>Mã đơn hàng</td>
-                        <td>Tổng tiền</td>
-                        <td> Xem hóa đơn</td>
-
+                        <td><?= $stt++ ?></td> <!-- Hiển thị số thứ tự -->
+                        <td><?= $row['tenkh'] ?></td>
+                        <td><?= $row['sohoadon'] ?></td>
+                        <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+                        <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php
-                $sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, SUM(orders.total) AS tongtien 
-        FROM users 
-        LEFT JOIN orders ON users.id = orders.user_id 
-        GROUP BY users.id, users.fullname 
-        ORDER BY sohoadon DESC 
-        LIMIT 5";
-
-$result = $conn->query($sql);
-?>
-                   <tbody>
-<?php while($row = $result->fetch_assoc()) { ?>
-<tr>
-    <td><?= 'KH00'.$row['makh'] ?></td>
-    <td><?= $row['tenkh'] ?></td>
-    
-    <td><?= $row['sohoadon'] ?></td>
-    <td>  </td>
-    <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
-    <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
-</tr>
-<?php } ?>
-</tbody>
-
-                </tbody>
-            </table>
-        </div>
+                <?php } ?>
+            </tbody>
+        </table>
     </div>
+</div>
 
     <div class="details">
         <div class="recentOrders">
