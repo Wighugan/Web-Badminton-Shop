@@ -259,7 +259,7 @@ if (!empty($brands)) {
     $escapedBrands = array_map(function($b) use ($conn) {
         return "'" . mysqli_real_escape_string($conn, $b) . "'";
     }, $brands);
-    $sql .= " AND brand IN (" . implode(",", $escapedBrands) . ")";
+    $sql .= " AND category IN (" . implode(",", $escapedBrands) . ")";
 }
 
 // Sắp xếp
@@ -284,18 +284,10 @@ $result = mysqli_query($conn, $sql);
             <!-- Shop Sidebar Start -->
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
-                <form id="filter-form" method="GET" action="shop.php" >
+                <form id="filter-form" method="GET" >
     <!-- Sắp xếp -->
     <div class="mb-5">
         <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
-        <div class="custom-control custom-radio custom-radio-square mb-3">
-            <input type="radio" class="custom-control-input" name="sort" value="az" id="sort-az">
-            <label class="custom-control-label" for="sort-az">Từ A → Z</label>
-        </div>
-        <div class="custom-control custom-radio custom-radio-square mb-3">
-            <input type="radio" class="custom-control-input" name="sort" value="za" id="sort-za">
-            <label class="custom-control-label" for="sort-za">Từ Z → A</label>
-        </div>
         <div class="custom-control custom-radio custom-radio-square mb-3">
             <input type="radio" class="custom-control-input" name="sort" value="price-asc" id="sort-price-asc" >
             <label class="custom-control-label" for="sort-price-asc">Giá tăng dần</label>
@@ -355,14 +347,8 @@ $result = mysqli_query($conn, $sql);
             <label class="custom-control-label" for="brand-4">Victor</label>
         </div>
     </div>
+    <button type="submit" class="btn btn-primary mt-3">Lọc</button>
 </form>
-<script>
-document.querySelectorAll('#filter-form input').forEach((input) => {
-    input.addEventListener('change', () => {
-        document.getElementById('filter-form').submit();
-    });
-});
-</script>
 <style>
 /* Bo góc vuông cho radio */
 .custom-radio-square .custom-control-input ~ .custom-control-label::before {
