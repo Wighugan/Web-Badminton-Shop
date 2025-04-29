@@ -181,16 +181,24 @@ if (!$product) {
                 <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
                     <!-- Menu bên trái -->
                     <div class="navbar-nav py-0">
-                        <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
-                        <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
                         <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
-                    <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
-                        </div>
+                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">
+                                <?php 
+                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                                ?>
+                            </a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -306,7 +314,7 @@ if (!$product) {
                 </button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+        <button onclick="done()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
     </div>
 
     <script>

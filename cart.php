@@ -2,22 +2,27 @@
 <html lang="en">
 <?php
 include 'db.php';
-
 session_start();
 
 $total = 0;
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    header("Location: login.php");
     exit();
 }
 $user_id = $_SESSION['user_id'];
 
 // Lấy danh sách sản phẩm trong giỏ hàng
 $query = $conn->prepare("
-    SELECT cart.id, product.name, product.image, product.price, cart.quantity 
+    SELECT 
+        product.id AS product_id,       -- ✅ Đảm bảo cột này tồn tại
+        cart.id AS cart_id,             -- (tùy bạn có cần cart_id hay không)
+        product.name,
+        product.image,
+        product.price,
+        cart.quantity 
     FROM cart 
-    INNER JOIN product ON cart.product_id = product.id 
+    JOIN product ON cart.product_id = product.id 
     WHERE cart.user_id = ?
 ");
 $query->bind_param("i", $user_id);
@@ -29,6 +34,7 @@ while ($row = $result->fetch_assoc()) {
     $cart_items[] = $row;
 }
 ?>
+
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -225,7 +231,7 @@ while ($row = $result->fetch_assoc()) {
                             <td class="align-middle"><?= number_format($item['price'], 0, ',', '.') ?> VND</td>
                             <td class="align-middle"><?= $item['quantity'] ?></td>
                             <td class="align-middle"><?= number_format($subtotal, 0, ',', '.') ?> VND</td>
-                            <td class="align-middle"><a href="removecart.php?id=<?= $item['id'] ?>" class="btn btn-sm btn-danger">Xóa</a></td>
+                            <td class="align-middle"><a href="removecart.php?id=<?= $item['cart_id'] ?>" class="btn btn-sm btn-danger">Xóa</a></td>
                         </tr>
                     <?php endforeach; ?>
                     <tr>

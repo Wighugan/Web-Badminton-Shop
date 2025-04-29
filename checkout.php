@@ -2,70 +2,59 @@
 <html lang="en">
 <?php
 include 'db.php';
-
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    header("Location: login.php");
     exit();
 }
-$user_id = $_SESSION['user_id']; // Lấy ID user từ session
+
+$user_id = $_SESSION['user_id'];
 
 // Kết nối MySQL
 $conn = new mysqli("localhost", "root", "", "mydp");
-
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
-// Truy vấn thông tin user dựa vào session
+// Lấy thông tin user
 $sql = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user_result = $stmt->get_result();
+$user = $user_result->fetch_assoc();
 
 if (!$user) {
     die("Không tìm thấy người dùng!");
 }
 
-
-// Lấy danh sách sản phẩm trong giỏ hàng
-$sql = "SELECT p.name, p.price, c.quantity , p.image
+// Lấy sản phẩm trong giỏ hàng
+$sql = "SELECT p.id as product_id, p.name as product_name, p.price as product_price, p.image, c.quantity
         FROM cart c 
         JOIN product p ON c.product_id = p.id 
         WHERE c.user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$result = $stmt->get_result();
+$cart_result = $stmt->get_result();
 
+$cart_items = [];
 $total = 0;
+
+while ($row = $cart_result->fetch_assoc()) {
+    $cart_items[] = $row;
+}
+
+if (empty($cart_items)) {
+    die("Giỏ hàng trống, không thể đặt hàng!");
+}
+
+// Tạo mã đơn hàng ngẫu nhiên
 $shipping_fee = 50000;
 $insurance_fee = 30000;
+// 1. Tạo đơn hàng trong bảng orders
 
-
-
-
-
-
-// Xóa tất cả sản phẩm trong giỏ hàng của user đó
-$sql = "DELETE FROM cart WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-
-// Chuyển hướng về trang giỏ hàng với thông báo
-
-
-
-
-
-
-
-$stmt->close();
-$conn->close();
 ?>
 
 
@@ -346,17 +335,18 @@ $conn->close();
         <div class="card-header bg-secondary border-0">
             <h4 class="font-weight-semi-bold m-0">Tổng Đơn Hàng</h4>
         </div>
+        <form action="checkout_process.php" method="POST">
         <div class="card-body">
             <h5 class="font-weight-medium mb-3">Sản Phẩm</h5>
 
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($cart_items as $row): ?>
                 <div class="d-flex justify-content-between">
                     <p><img src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" width="50"> </p>
-                    <p><?= $row['name'] ?></p>
-                    <p><?= number_format($row['price'] * $row['quantity'], 0, ',', '.') ?>đ</p>
+                    <p><?= $row['product_name'] ?></p>
+                    <p><?= number_format($row['product_price'] * $row['quantity'], 0, ',', '.') ?>đ</p>
                 </div>
-                <?php $total += $row['price'] * $row['quantity']; ?>
-            <?php endwhile; ?>
+                <?php $total += $row['product_price'] * $row['quantity']; ?>
+                <?php endforeach; ?>
 
             <hr class="mt-0">
             <div class="d-flex justify-content-between mb-3 pt-1">
@@ -582,13 +572,16 @@ $conn->close();
                             }
                         </script>
                     </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <a href="logedin.php">
-                        <button onclick="done()" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Đặt Hàng</button>
-                        </a>
-                    </div>
+                   
 
-                    <script>
+                    <div class="card-footer border-secondary bg-transparent">
+                       
+                        <button onclick="done()" type="submit" name="place_order" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Đặt Hàng</button>
+                        
+                    </div>
+                        </form>
+
+                            <script>
                         function done() {
                           alert("Đã đặt hàng thành công!");
                         }
