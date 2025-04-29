@@ -11,41 +11,71 @@ if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
+// Lấy dữ liệu từ GET
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start = isset($_GET['start']) ? $_GET['start'] : '';
+$end = isset($_GET['end']) ? $_GET['end'] : '';
+
 $limit = 5;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
+// Xây dựng điều kiện WHERE
+$where = "1"; // mặc định luôn đúng
+$params = []; // tham số bind
+$types = "";  // loại dữ liệu cho bind_param
+
 if (!empty($raw_search)) {
-    $search_param = "%$raw_search%";
-
-    // Đếm tổng số kết quả
-    $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM users WHERE fullname LIKE ?");
-    $stmt_total->bind_param("s", $search_param);
-    $stmt_total->execute();
-    $total_row = $stmt_total->get_result()->fetch_assoc();
-    $total_users = $total_row['total'];
-    $stmt_total->close();
-
-    // Lấy dữ liệu có tìm kiếm
-    $stmt = $conn->prepare("SELECT * FROM users WHERE fullname LIKE ? LIMIT ? OFFSET ?");
-    $stmt->bind_param("sii", $search_param, $limit, $offset);
-} else {
-    // Đếm tất cả
-    $total_query = $conn->query("SELECT COUNT(*) AS total FROM users");
-    $total_row = $total_query->fetch_assoc();
-    $total_users = $total_row['total'];
-
-    // Lấy dữ liệu thường
-    $stmt = $conn->prepare("SELECT * FROM users LIMIT ? OFFSET ?");
-    $stmt->bind_param("ii", $limit, $offset);
+    $where .= " AND users.fullname LIKE ?";
+    $params[] = "%$raw_search%";
+    $types .= "s";
 }
+
+if (!empty($start) && !empty($end)) {
+    $where .= " AND orders.created_at BETWEEN ? AND ?";
+    $params[] = $start . " 00:00:00";
+    $params[] = $end . " 23:59:59";
+    $types .= "ss";
+}
+
+// Đếm tổng số khách hàng
+$sql_count = "SELECT COUNT(DISTINCT users.id) AS total 
+              FROM users 
+              LEFT JOIN orders ON users.id = orders.user_id 
+              WHERE $where";
+$stmt_total = $conn->prepare($sql_count);
+if (!empty($params)) {
+    $stmt_total->bind_param($types, ...$params);
+}
+$stmt_total->execute();
+$total_row = $stmt_total->get_result()->fetch_assoc();
+$total_users = $total_row['total'];
+$stmt_total->close();
+
+// Truy vấn danh sách users
+// Truy vấn danh sách users
+$sql = "SELECT users.* 
+        FROM users 
+        LEFT JOIN orders ON users.id = orders.user_id 
+        WHERE $where 
+        GROUP BY users.id 
+        LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql);
+
+// Gắn limit và offset vào
+$params[] = $limit;
+$params[] = $offset;
+$full_types = $types . "ii"; // bổ sung loại dữ liệu
+$stmt->bind_param($full_types, ...$params);
 
 $stmt->execute();
 $result = $stmt->get_result();
+
+
 $total_pages = ceil($total_users / $limit);
 ?>
+
 
 <head>
     <meta charset="UTF-8">
@@ -184,38 +214,29 @@ $total_pages = ceil($total_users / $limit);
 
             <!-- ================ LÀM QUẢN LÝ KHÁCH HÀNG Ở ĐÂY ================= -->
             <div class="user"  >         
-                      <div class="banner">
-                    <button id="adduser"><a href="themnguoidung.php">+ Thêm người dùng</a></button>
-                    
-                   
-                    <div class="date1">
+            <div class="banner">
+
+<form method="GET" action="">
+<div class="date1">
     <label for="start">Từ ngày: </label>
-    <input type="date" id="start" name="start" value="2024-11-24" min="2018-01-01" max="2024-12-31">
-    
+    <input type="date" id="start" name="start" value="<?= isset($_GET['start']) ? $_GET['start'] : '' ?>" min="2023-01-01" max="2025-12-31">
+
     <label for="end">đến</label>
-    <input type="date" id="end" name="end" value="2024-11-30" min="2018-01-01" max="2024-12-31">
+    <input type="date" id="end" name="end" value="<?= isset($_GET['end']) ? $_GET['end'] : '' ?>" min="2023-01-01" max="2025-12-31">
 
-    <a href="" id="timnguoidung2" class="search-btn">
+    <button type="submit" class="search-btn">
         <i class="fa fa-search"></i> 
-    </a>
+    </button>
 </div>
-                   
-
-                    <form method="GET" action="">
-                    <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên người dùng ...">   
-                    <button type="submit" id="timnguoidung1">
-        <i class="fa fa-search"></i> 
-    </button>  
 </form>
-
-
-                
-                </div>
-                <div class="chartsBx">
-                    <h2></h2>
-                </div>
-                
-
+  
+<form method="GET" action="">
+                <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên sản phẩm ...">   
+                <button type="submit" id="timnguoidung1">
+    <i class="fa fa-search"></i> 
+</button>  
+</form>
+</div>
                 <div class="details">
                     <div class="recentOrders">
                         <div class="cardHeader">

@@ -234,12 +234,7 @@ $total_pages = ceil($total_users / $limit);
         <i class="fa fa-search"></i> 
     </button>  
 </form>
-        
-  
-        
-
-    
-    </div>
+</div>
             
 
     
