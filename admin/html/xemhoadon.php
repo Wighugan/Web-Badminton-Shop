@@ -57,6 +57,11 @@ $total_pages = ceil($total_orders / $limit);
         color: gray;
         font-weight: bold;
     }
+    .shipping {
+        color: blue;
+        font-weight: bold;
+    }
+   
 </style>
 <body>
     <!-- =============== Navigation ================ -->
@@ -201,6 +206,9 @@ if ($status == 'Thành công') {
     $class = 'pending';
 } elseif ($status == 'Đã hủy') {
     $class = 'cancelled';
+}
+elseif ($status == 'Đang giao') {
+    $class = 'shipping';
 }
 ?>
 
