@@ -24,11 +24,11 @@
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="index.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shop.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
                             <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
                             <a class="text-dark mb-2" href="" onclick="showMessage()"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark" href="contact.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">

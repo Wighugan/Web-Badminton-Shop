@@ -125,7 +125,7 @@ $result = $conn->query($sql);
     
     <!-- Topbar End -->
 
-    <script>
+    <!-- <script>
         function showVot(event) {
             document.getElementById("output").innerText = "Vợt cầu lông";
         }
@@ -154,7 +154,7 @@ $result = $conn->query($sql);
             document.getElementById("output").innerText = "Ống cầu";
         }
     </script>
-    <!-- Navbar Start -->
+    Navbar Start 
     <div class="container-fluid">
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
@@ -172,7 +172,7 @@ $result = $conn->query($sql);
                         <a href="vay_login.html" class="nav-item nav-link">Apacs</a>
                        
                 </nav>
-            </div>
+            </div> -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
 $(document).ready(function() {
@@ -204,38 +204,47 @@ $(document).ready(function() {
 </script>
 
 
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
-                        <div style="display: flex; align-items: center; position: relative;">
-                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                        </div> 
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
-                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
-                        </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown"> <?php 
-                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?></a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.php" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+<div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
+    <div class="row border-top px-xl-5">
+        <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
+                <a href="" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
+                    </h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
+                    <!-- Menu bên trái -->
+                    <div class="navbar-nav py-0">
+                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
+                    </div>
+
+                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
+                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">
+                                <?php 
+                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                                ?>
+                            </a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                            </div>
                         </div>
                     </div>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </div>
     </div>
+</div>
     <!-- Navbar End -->
 
 
@@ -513,7 +522,7 @@ if ($conn->connect_error) {
 
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $search = $conn->real_escape_string($_GET['query']);
-    $sql = "SELECT * FROM products WHERE name LIKE '%$search%'";
+    $sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -628,11 +637,11 @@ $conn->close();
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">

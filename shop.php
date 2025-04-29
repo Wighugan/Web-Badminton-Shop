@@ -101,23 +101,23 @@ $result = $conn->query($sql);
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form onsubmit="showText(); return false;">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary" type="submit">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <form action="shop.php" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-append">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+</form>
+ </div>
             <div class="col-lg-3 col-6 text-right">
                 <a href="" class="btn border">
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -156,7 +156,7 @@ $result = $conn->query($sql);
         }
     </script>
     <!-- Navbar Start -->
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
@@ -173,49 +173,40 @@ $result = $conn->query($sql);
                         <a href="vay_login.html" class="nav-item nav-link">Váy Cầu Lông</a>
                        
                 </nav>
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="logedin.html" class="text-decoration-none d-block d-lg-none">
-                        <div style="display: flex; align-items: center; position: relative;">
-                            <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                        </div> 
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.php" class="nav-item nav-link">Trang Chủ</a>
-                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.html" class="nav-item nav-link">Liên Hệ</a>
+            </div> -->
+            <div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
+    <div class="row border-top px-xl-5">
+        <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
+                <a href="" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
+                    </h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
+                    <!-- Menu bên trái -->
+                    <div class="navbar-nav py-0">
+                        <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
+                    </div>
+
+                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
+                    <div class="navbar-nav ml-auto py-0">
+                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
                         </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <div class="nav-item dropdown">
-
-                                <a href="#" class="nav-link" data-toggle="dropdown"> 
-            <?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Tài Khoản"; ?>
-                    
-                </a>            
-                <div class="dropdown-menu rounded-0 m-0">
-            <?php if (isset($_SESSION['username'])): ?>
-                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-            <?php else: ?>
-                <a href="login.php" class="dropdown-item">Đăng Nhập</a>
-                <a href="signup.php" class="dropdown-item">Đăng Ký</a>
-            <?php endif; ?>
-
-
-
                         </div>
                     </div>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </div>
     </div>
+</div>
     <!-- Navbar End -->
 
 
@@ -555,7 +546,7 @@ $conn->close();
      <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="logedin.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative; top: -10px;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
@@ -571,11 +562,11 @@ $conn->close();
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
