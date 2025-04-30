@@ -6,88 +6,91 @@ $username = "root";
 $password = "";
 $dbname = "mydp";
 
-// Kết nối MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
 }
 
 $limit = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
 
-// Lấy dữ liệu từ GET
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $start_date = isset($_GET['start']) ? $_GET['start'] : '';
 $end_date = isset($_GET['end']) ? $_GET['end'] : '';
 
-// Base query
-$sql = "SELECT orders.*, users.fullname, users.numberphone, users.city 
-        FROM orders 
-        JOIN users ON orders.user_id = users.id ";
 $where = [];
 $params = [];
 $param_types = "";
 
-// Xử lý tìm kiếm
+// Tìm kiếm theo tên
 if (!empty($search)) {
     $where[] = "users.fullname LIKE ?";
     $params[] = "%$search%";
     $param_types .= "s";
 }
 
-// Xử lý lọc ngày
+// Lọc theo ngày
 if (!empty($start_date) && !empty($end_date)) {
     $where[] = "DATE(orders.created_at) BETWEEN ? AND ?";
     $params[] = $start_date;
     $params[] = $end_date;
     $param_types .= "ss";
 }
+$district = isset($_GET['district']) ? trim($_GET['district']) : '';
 
-// Ghép điều kiện WHERE nếu có
+// Lọc theo quận/huyện
+if (!empty($district)) {
+    $where[] = "users.address like ?";
+    $params[] = "%$district%";
+    $param_types .= "s";
+}
+
+$status = isset($_GET['status']) ? trim($_GET['status']) : '';
+
+// Lọc theo quận/huyện
+if (!empty($status)) {
+    $where[] = "orders.status like ?";
+    $params[] = "%$status%";
+    $param_types .= "s";
+}
+// Xây câu query chính
+$sql = "SELECT orders.*, users.fullname, users.numberphone, users.address 
+        FROM orders 
+        JOIN users ON orders.user_id = users.id";
+
 if (!empty($where)) {
     $sql .= " WHERE " . implode(' AND ', $where);
 }
-
-// Sắp xếp và phân trang
 $sql .= " ORDER BY orders.created_at DESC LIMIT ?, ?";
 $params[] = $offset;
 $params[] = $limit;
 $param_types .= "ii";
 
-// Chuẩn bị statement
 $stmt = $conn->prepare($sql);
-
-// Gắn giá trị vào statement
 if (!empty($params)) {
     $stmt->bind_param($param_types, ...$params);
 }
-
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Đếm tổng số đơn hàng để phân trang
+// Tổng số đơn hàng để phân trang
 $sql_count = "SELECT COUNT(*) as total FROM orders JOIN users ON orders.user_id = users.id";
 if (!empty($where)) {
     $sql_count .= " WHERE " . implode(' AND ', $where);
 }
 $stmt_count = $conn->prepare($sql_count);
 
-// Gắn tham số cho count
+// Chuẩn bị tham số cho count
 if (!empty($params)) {
-    // Bỏ LIMIT và OFFSET ra khỏi count
-    $params_count = array_slice($params, 0, count($params) - 2);
+    $params_count = array_slice($params, 0, count($params) - 2); // bỏ LIMIT
     $types_count = substr($param_types, 0, strlen($param_types) - 2);
     if (!empty($params_count)) {
         $stmt_count->bind_param($types_count, ...$params_count);
     }
 }
 $stmt_count->execute();
-$result_total = $stmt_count->get_result()->fetch_assoc();
-$total_orders = $result_total['total'];
+$total_orders = $stmt_count->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_orders / $limit);
 
 $stt = 1;
@@ -231,6 +234,64 @@ $stt = 1;
     </div>
 </form>
 
+<form method="GET" action="" >
+<div class="date1">
+
+    <select name="district" id="month">
+        <option value="">Chọn Quận/Huyện</option>
+        <option value="Quận 1">Quận 2</option>
+        <option value="Quận 3">Quận 3</option>
+        <option value="Quận 4">Quận 4</option>
+<option value="Quận 5">Quận 5</option>
+<option value="Quận 6">Quận 6</option>
+<option value="Quận 7">Quận 7</option>
+<option value="Quận 8">Quận 8</option>
+<option value="Quận 9">Quận 9</option>
+<option value="Quận 10">Quận 10</option>
+<option value="Quận 11">Quận 11</option>
+<option value="Quận 12">Quận 12</option>
+<option value="Bình Thạnh">Bình Thạnh</option>
+<option value="Gò Vấp">Gò Vấp</option>
+<option value="Phú Nhuận">Phú Nhuận</option>
+<option value="Tân Bình">Tân Bình</option>
+<option value="Tân Phú">Tân Phú</option>
+<option value="Bình Tân">Bình Tân</option>
+<option value="Thủ Đức">Thủ Đức</option>
+<option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+<option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
+<option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
+<option value="Huyện Củ Chi">Huyện Củ Chi</option>
+<option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
+
+        <!-- ... thêm các quận huyện khác -->
+    </select>
+    <button type="submit" class="search-btn">
+            <i class="fa fa-search"></i> 
+        </button>
+
+</div>
+</form>
+
+<form method="GET" action="" >
+
+<div class="date1">
+
+    <select name="status" id="month">
+        <option value="">Tình Trạng</option>
+        <option value="Thành công">Thành công</option>
+        <option value="Chờ xác nhận">Chờ xác nhận</option>
+        <option value="Đã hủy">Đã hủy</option>
+<option value="Đang giao">Đang giao</option>
+
+
+        <!-- ... thêm các quận huyện khác -->
+    </select>
+    <button type="submit" class="search-btn">
+            <i class="fa fa-search"></i> 
+        </button>
+</div>
+</form>
+
 
                   
 <form method="GET" action="">
@@ -271,7 +332,7 @@ $stt = 1;
         <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
         <td><?= htmlspecialchars($row['fullname']) ?></td>
         <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td><?= htmlspecialchars($row['city']) ?></td>
+        <td><?= htmlspecialchars($row['address']) ?></td>
 
         <?php
 $status = $row['status'];
