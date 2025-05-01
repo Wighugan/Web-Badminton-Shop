@@ -17,54 +17,42 @@ if (!$conn) {
 	die("Kết nối thất bại: " . mysqli_connect_error());
 }
 
-$limit = 10; // số đơn hàng mỗi trang
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
-$offset = ($page - 1) * $limit;
-
-if (!isset($_SESSION['user_id'])) {
-    die("Bạn chưa đăng nhập!");
+$order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
+    $new_status = $_POST['status'];
+    $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
+    $stmt_update = $conn->prepare($update_sql);
+    $stmt_update->bind_param("si", $new_status, $order_id);
+    if ($stmt_update->execute()) {
+        // Load lại trang để hiển thị trạng thái mới
+        echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
+        exit;
+    } else {
+        echo "<script>alert('Cập nhật trạng thái thất bại!');</script>";
+    }
 }
 
-$user_id = $_SESSION['user_id'];  // Lấy ID từ session
-// Lấy thông tin người dùng
-$stmt = $conn->prepare("SELECT fullname, numberphone FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user_result = $stmt->get_result();
-$user = $user_result->fetch_assoc();
+// Lấy thông tin đơn hàng + khách hàng
+$sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
+              JOIN users ON orders.user_id = users.id 
+              WHERE orders.id = ?";
 
-if (!$user) {
-    die("Người dùng không tồn tại!");
-}
+              
+$stmt_order = $conn->prepare($sql_order);
+$stmt_order->bind_param("i", $order_id);
+$stmt_order->execute();
+$result_order = $stmt_order->get_result();
+$order = $result_order->fetch_assoc();
 
-
-// Lấy các đơn hàng của người dùng
-$stmt = $conn->prepare("SELECT orders.*, users.fullname, users.numberphone 
-                        FROM orders 
-                        JOIN users ON orders.user_id = users.id 
-                        WHERE orders.user_id = ? 
-                        ORDER BY orders.created_at DESC");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$stmt_count = $conn->prepare("SELECT COUNT(*) as total FROM orders WHERE user_id = ?");
-$stmt_count->bind_param("i", $user_id);
-$stmt_count->execute();
-$count_result = $stmt_count->get_result()->fetch_assoc();
-$total_orders = $count_result['total'];
-
-$stmt = $conn->prepare("SELECT orders.*, users.fullname, users.numberphone
-                         FROM orders 
-                          JOIN users ON orders.user_id = users.id 
-                         WHERE orders.user_id = ? 
-                         ORDER BY created_at DESC LIMIT ?, ?");
-$stmt->bind_param("iii", $user_id, $offset, $limit);
-$stmt->execute();
-$result = $stmt->get_result();
-$total_pages = ceil($total_orders / $limit);
-
+// Lấy danh sách sản phẩm trong đơn hàng
+$sql_detail = "SELECT order_details.*, product.image 
+               FROM order_details 
+             left JOIN product ON order_details.product_id = product.id 
+               WHERE order_details.order_id = ?";
+$stmt_detail = $conn->prepare($sql_detail);
+$stmt_detail->bind_param("i", $order_id);
+$stmt_detail->execute();
+$result_detail = $stmt_detail->get_result();
 ?>
 
 <?php include 'header.php'; ?>
@@ -115,11 +103,11 @@ $total_pages = ceil($total_orders / $limit);
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3">Lịch Sử Mua Hàng</h1>
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Chi tiết đơn Hàng</h1>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="logedin.php">Trang chủ</a></p>
                 <p class="m-0 px-2">-</p>
-                <p class="m-0">Lịch Sử Mua Hàng</p>
+                <p class="m-0">Chi tiết đơn hàng</p>
             </div>
         </div>
     </div>
@@ -133,63 +121,80 @@ $total_pages = ceil($total_orders / $limit);
                 <table class="table table-bordered text-center mb-0">
                     <thead class="bg-secondary text-dark">
                         <tr>
-                            <th>Mã đơn hàng</th>
-                            <th>Khách Hàng</th>
-                            <th>Số điện thoại</th>
-                            <th>Tổng tiền hàng</th>
-                            <th>Giảm giá</th>
-                            <th>Ngày Đặt Hàng</th>
-                            <th>Trạng Thái</th>
-                           
+                        <td>id</td>
+                                <td>Ảnh</td>
+                                 <td>Tên SP</td>
+                                 <td>Số lượng</td>
+                                <td>Giá tiền </td>
                         </tr>
                     </thead>
+                    <?php 
+        $i = 1;
+        $total = 0;
+        while($row = $result_detail->fetch_assoc()) { 
+            $thanhtien = $row['quantity'] * $row['product_price'];
+            $total += $thanhtien;
+        ?>
+        <tr>
+            <td><?= $i++ ?></td>
 
-                    <tbody class="align-middle">
-                        <?php while($row = mysqli_fetch_assoc($result)) { ?>
-    <tr>
-        <td><a href="chitiet.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
-        <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
-                            <td>0đ </td>
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-        <td id="premium"><?= htmlspecialchars($row['status']) ?></td>
-
-    </tr>
-<?php } ?>
+            <td><img src="<?=  htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
+            <td><?= $row['product_name'] ?></td>
+            <td><?= $row['quantity'] ?></td>
+            <td><?= number_format($row['product_price'], 0, ',', '.') ?> VND</td>
+        </tr>
+        <?php } ?>
 
                     </tbody>
-                </table>
+        </table>        
+                
+                <div class="thanhtoan">
+            <table>
+        <tbody>
+         
+
+            <tr>
+            
+                <td>Tổng tiền hàng:</td>
+                <td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td>
+            </tr>
+            <tr>
+                <td>Phí vận chuyển:</td>
+                <td>50.000 VND</td>
+            </tr>
+            <tr>
+                <td>Giảm giá phí vận chuyển:</td>
+                <td>-50.000 VND</td>
+            </tr>
+            <tr>
+                <td>Phí Bảo Đảm:</td>
+                <td>30.000 VND</td>
+            </tr>
+            <tr>
+                <td><b>Thành tiền:</b></td>
+                <td>
+                    <b>
+                        <?php 
+                        $total_final = $total + 30000; // phí bảo đảm, miễn phí vận chuyển
+                        echo number_format($total_final, 0, ',', '.'); 
+                        ?> VND
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td>Phương thức thanh toán:</td>
+                <td>COD</td>
+                            </tr>
+
+        </table>
+
+
+
             </div>
            
                     </div>
 
-                    <div class="col-12 pb-1">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-3">
-            <!-- Nút Previous -->
-            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                <a class="page-link" href="?user_id=<?= $user_id ?>&page=<?= max(1, $page - 1) ?>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-
-            <!-- Các trang -->
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                    <a class="page-link" href="?user_id=<?= $user_id ?>&page=<?= $i ?>"><?= $i ?></a>
-                </li>
-            <?php endfor; ?>
-
-            <!-- Nút Next -->
-            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                <a class="page-link" href="?user_id=<?= $user_id ?>&page=<?= min($total_pages, $page + 1) ?>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
+                    
 
 
 
