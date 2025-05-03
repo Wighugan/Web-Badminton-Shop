@@ -264,12 +264,12 @@ function previewImage(event) {
 
                 <div class="form-group">
                     <label for="username"></label>
-                    <input type="text" id="address" name="address" placeholder="Địa chỉ liên hệ">
+                    <input type="text" id="address1" name="address1" placeholder="Địa chỉ liên hệ">
                 </div>
 
                 <div class="form-group">
                     <label for="text"></label>
-                    <input type="text" id="city" name="city" placeholder="Thành Phố">
+                    <input type="text" id="address" name="address" placeholder="Thành Phố">
                 </div>
 
                 <div class="form-group">

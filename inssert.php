@@ -38,9 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);
     $email = trim($_POST['email']);
-    $address = trim($_POST['address']);
+    $address1 = trim($_POST['address1']);
     $birthday = trim($_POST['birthday']);
     $password = trim($_POST['password']); // ❌ Lưu mật khẩu dạng text (không bảo mật)
+    $numberphone = trim($_POST['numberphone']);
+    $address = trim($_POST['address']);
+
 
     // Kiểm tra username/email đã tồn tại chưa
     $checkUser = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
@@ -56,10 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkUser->close();
 
     // Thêm tài khoản vào database
-    $sql = "INSERT INTO users (avatar, username, fullname, email, address, birthday, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (avatar, username, fullname, email, address1, birthday, password, numberphone, address) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssss", $avatar, $username, $fullname, $email, $address, $birthday, $password);
+    $stmt->bind_param("sssssssss", $avatar, $username, $fullname, $email, $address1, $birthday, $password, $numberphone, $address);
 
     if ($stmt->execute()) {
         $_SESSION["success"] = "Đăng ký thành công!";
