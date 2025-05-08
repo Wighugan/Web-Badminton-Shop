@@ -534,7 +534,7 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
             echo '<div class="card mb-4">';
             // Bọc ảnh bằng thẻ <a> để click vào ảnh => đi đến chi tiết
             echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
-            echo '<img src="img/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
+            echo '<img src="' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
             echo '</a>';
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
