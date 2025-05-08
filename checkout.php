@@ -261,7 +261,7 @@ $insurance_fee = 30000;
                       
                         <div class="col-md-6 form-group">
                             <label>Thành Phố:</label>
-                            <input class="form-control" type="text" id="city" name="city" value="<?= $user['city'] ?>" required>
+                            <input class="form-control" type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
                         </div>
 </form>
                         <!--<div class="col-md-12 form-group">
