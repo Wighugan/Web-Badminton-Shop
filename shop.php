@@ -93,7 +93,7 @@ $result = $conn->query($sql);
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="logedin.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -215,7 +215,7 @@ $result = $conn->query($sql);
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>

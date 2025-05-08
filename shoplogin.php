@@ -90,7 +90,7 @@ $result = $conn->query($sql);
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="logedin.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -114,7 +114,7 @@ $result = $conn->query($sql);
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="cart.html" class="btn border">
+                <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
@@ -253,7 +253,7 @@ $(document).ready(function() {
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.html">Trang Chủ</a></p>
+                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -627,7 +627,7 @@ $conn->close();
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
                     </div>
                 </a>
-                <p>Mọi mắc mắt xin liên hệ về.</p>
+                <p>Mọi thắc mắt xin liên hệ về.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
