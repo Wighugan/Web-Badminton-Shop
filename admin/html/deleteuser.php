@@ -1,5 +1,5 @@
 <?php
-// Kết nối MySQL
+// Kết nối đến MySQL
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -7,58 +7,55 @@ $database = "mydp";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
+// Kiểm tra kết nối
 if (!$conn) {
     die("Kết nối thất bại: " . mysqli_connect_error());
 }
 
-// Kiểm tra nếu có ID user hợp lệ
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = $_GET['id'];
+if (isset($_GET['id'])) {
+    $user_id = intval($_GET['id']);
 
-    // Lấy đường dẫn avatar
-    $sql = "SELECT avatar FROM users WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
+    // B1: Lấy tất cả đơn hàng của người dùng
+    $sql_get_orders = "SELECT id FROM orders WHERE user_id = ?";
+    $stmt_get_orders = $conn->prepare($sql_get_orders);
+    $stmt_get_orders->bind_param("i", $user_id);
+    $stmt_get_orders->execute();
+    $result = $stmt_get_orders->get_result();
 
-    // Xóa ảnh nếu tồn tại và không phải ảnh mặc định
-    if ($row && $row['avatar'] != "uploads/default.jpg" && file_exists($row['avatar'])) {
-        unlink($row['avatar']);
+    while ($order = $result->fetch_assoc()) {
+        $order_id = $order['id'];
+
+        // B2: Xóa chi tiết đơn hàng liên quan
+        $sql_delete_order_details = "DELETE FROM order_details WHERE order_id = ?";
+        $stmt_delete_details = $conn->prepare($sql_delete_order_details);
+        $stmt_delete_details->bind_param("i", $order_id);
+        $stmt_delete_details->execute();
+        $stmt_delete_details->close();
     }
 
-    // Xóa orders của user trước
-    $sql = "DELETE FROM orders WHERE user_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
-    mysqli_stmt_execute($stmt);
+    $stmt_get_orders->close();
 
-    // Xóa user
-    $sql = "DELETE FROM users WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
+    // B3: Xóa đơn hàng
+    $sql_delete_orders = "DELETE FROM orders WHERE user_id = ?";
+    $stmt_delete_orders = $conn->prepare($sql_delete_orders);
+    $stmt_delete_orders->bind_param("i", $user_id);
+    $stmt_delete_orders->execute();
+    $stmt_delete_orders->close();
 
-    if (mysqli_stmt_execute($stmt)) {
-        $result_max = mysqli_query($conn, "SELECT MAX(id) AS max_id FROM users");
-    $row_max = mysqli_fetch_assoc($result_max);
-    $next_id = $row_max['max_id'] + 1;
+    // B4: Xóa người dùng
+    $sql_delete_user = "DELETE FROM users WHERE id = ?";
+    $stmt_delete_user = $conn->prepare($sql_delete_user);
+    $stmt_delete_user->bind_param("i", $user_id);
 
-    // Reset lại AUTO_INCREMENT đúng số tiếp theo
-    $reset_sql = "ALTER TABLE users AUTO_INCREMENT = $next_id";
-    mysqli_query($conn, $reset_sql);
-
-        echo "<script>alert('Người dùng đã bị khóa thành công!'); window.location.href = 'quanlykhachhang.php';</script>";
-
-        header("refresh:1;url=quanlykhachhang.php");
+    if ($stmt_delete_user->execute()) {
+        echo "<script>alert('Đã xóa người dùng và các dữ liệu liên quan.'); window.location.href = 'quanlykhachhang.php';</script>";
         exit();
     } else {
-        echo "Lỗi: " . mysqli_error($conn);
+        echo "Lỗi khi xóa người dùng: " . $stmt_delete_user->error;
     }
 
-    mysqli_stmt_close($stmt);
+    $stmt_delete_user->close();
 }
 
-// Đóng kết nối
-mysqli_close($conn);
+$conn->close();
 ?>

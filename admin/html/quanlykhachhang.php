@@ -11,39 +11,61 @@ if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
+
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$district = isset($_GET['district']) ? trim($_GET['district']) : ''; // Lấy giá trị quận/huyện
+
 $limit = 5;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
+$where = [];
+$params = [];
+$param_types = "";
+
+// Tìm kiếm theo tên
 if (!empty($raw_search)) {
-    $search_param = "%$raw_search%";
-
-    // Đếm tổng số kết quả
-    $stmt_total = $conn->prepare("SELECT COUNT(*) AS total FROM users WHERE fullname LIKE ?");
-    $stmt_total->bind_param("s", $search_param);
-    $stmt_total->execute();
-    $total_row = $stmt_total->get_result()->fetch_assoc();
-    $total_users = $total_row['total'];
-    $stmt_total->close();
-
-    // Lấy dữ liệu có tìm kiếm
-    $stmt = $conn->prepare("SELECT * FROM users WHERE fullname LIKE ? LIMIT ? OFFSET ?");
-    $stmt->bind_param("sii", $search_param, $limit, $offset);
-} else {
-    // Đếm tất cả
-    $total_query = $conn->query("SELECT COUNT(*) AS total FROM users");
-    $total_row = $total_query->fetch_assoc();
-    $total_users = $total_row['total'];
-
-    // Lấy dữ liệu thường
-    $stmt = $conn->prepare("SELECT * FROM users LIMIT ? OFFSET ?");
-    $stmt->bind_param("ii", $limit, $offset);
+    $where[] = "fullname LIKE ?";
+    $params[] = "%$raw_search%";
+    $param_types .= "s";
 }
 
+// Lọc theo quận/huyện
+if (!empty($district)) {
+    $where[] = "address LIKE ?";
+    $params[] = "%$district%";
+    $param_types .= "s";
+}
+
+$where_sql = "";
+if (!empty($where)) {
+    $where_sql = "WHERE " . implode(" AND ", $where);
+}
+
+// Đếm tổng số kết quả
+$sql_total = "SELECT COUNT(*) AS total FROM users $where_sql";
+$stmt_total = $conn->prepare($sql_total);
+if (!empty($params)) {
+    $stmt_total->bind_param($param_types, ...$params);
+}
+$stmt_total->execute();
+$total_users = $stmt_total->get_result()->fetch_assoc()['total'];
+$stmt_total->close();
+
+// Lấy dữ liệu người dùng
+$sql_data = "SELECT * FROM users $where_sql LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql_data);
+
+// Gộp lại tất cả params + thêm limit, offset
+$params[] = $limit;
+$params[] = $offset;
+$param_types .= "ii";
+
+$stmt->bind_param($param_types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
+
 $total_pages = ceil($total_users / $limit);
 ?>
 
@@ -188,17 +210,43 @@ $total_pages = ceil($total_users / $limit);
                     <button id="adduser"><a href="themnguoidung.php">+ Thêm người dùng</a></button>
                     
                    
-                    <div class="date1">
-    <label for="start">Từ ngày: </label>
-    <input type="date" id="start" name="start" value="2024-11-24" min="2018-01-01" max="2024-12-31">
-    
-    <label for="end">đến</label>
-    <input type="date" id="end" name="end" value="2024-11-30" min="2018-01-01" max="2024-12-31">
+                    <form method="GET" action="" >
+<div class="date1">
 
-    <a href="" id="timnguoidung2" class="search-btn">
-        <i class="fa fa-search"></i> 
-    </a>
+    <select name="district" id="month">
+        <option value="">Chọn Quận/Huyện</option>
+        <option value="Quận 1">Quận 2</option>
+        <option value="Quận 3">Quận 3</option>
+        <option value="Quận 4">Quận 4</option>
+<option value="Quận 5">Quận 5</option>
+<option value="Quận 6">Quận 6</option>
+<option value="Quận 7">Quận 7</option>
+<option value="Quận 8">Quận 8</option>
+<option value="Quận 9">Quận 9</option>
+<option value="Quận 10">Quận 10</option>
+<option value="Quận 11">Quận 11</option>
+<option value="Quận 12">Quận 12</option>
+<option value="Bình Thạnh">Bình Thạnh</option>
+<option value="Gò Vấp">Gò Vấp</option>
+<option value="Phú Nhuận">Phú Nhuận</option>
+<option value="Tân Bình">Tân Bình</option>
+<option value="Tân Phú">Tân Phú</option>
+<option value="Bình Tân">Bình Tân</option>
+<option value="Thủ Đức">Thủ Đức</option>
+<option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
+<option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
+<option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
+<option value="Huyện Củ Chi">Huyện Củ Chi</option>
+<option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
+
+        <!-- ... thêm các quận huyện khác -->
+    </select>
+    <button type="submit" class="search-btn">
+            <i class="fa fa-search"></i> 
+        </button>
+
 </div>
+</form>
                    
 
                     <form method="GET" action="">
@@ -256,7 +304,7 @@ if ($result->num_rows > 0) {
                         <i class='fas fa-edit'></i> Sửa
                     </a>
                     <a href='#' onclick='deleteuser({$row['id']})' style='color: red;'>
-                        <i class='fa-solid fa-trash'></i> Xóa
+                        <i class='fa-solid fa-lock'></i> khóa
                     </a>
                 </td>
               </tr>";
@@ -267,16 +315,10 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
         <script>
-        function lockUser(userId) {
-            const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này?");
-            if (confirmation) {
-                alert("Khóa người dùng thành công!");
-                window.location.href = 'quanlykhachhang.php?id=' + userId;
-            }
-        }
+        
 
         function deleteuser(userId) {
-        const confirmation = confirm("Bạn có chắc chắn muốn xóa người dùng này?");
+        const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này?");
         if (confirmation) {
             window.location.href = 'deleteuser.php?id=' + userId;
 
