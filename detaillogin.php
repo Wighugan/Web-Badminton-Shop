@@ -2,7 +2,7 @@
 <html lang="en">
 <?php
 session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
-
+$isLoggedIn = isset($_SESSION['user_id']) ? 1 : 0;
 
 include "db.php"; // Kết nối database
 
@@ -195,9 +195,15 @@ if (!$product) {
                                 ?>
                             </a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+
+                                <?php if (isset($_SESSION['username'])): ?>
+            <a href="logout.php" class="dropdown-item">Đăng xuất</a>
+            <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+            <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                    <?php else: ?>
+            <a href="login.php" class="dropdown-item">Đăng nhập</a>
+            <a href="signup.php" class="dropdown-item">Đăng ký</a>
+        <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -314,16 +320,26 @@ if (!$product) {
                 </button>
             </div>
         </div>
-        <button onclick="done()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
-    </div>
+        <button onclick="addToCart()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+        </div>
 
-    <script>
-                function done() {
-                  alert("Đã thêm vào giỏ hàng!");
-                }
-              </script>
+        <script>
+    const isLoggedIn = <?= $isLoggedIn ?>;
+
+    function addToCart() {
+        if (!isLoggedIn) {
+            alert("Bạn chưa đăng nhập!");
+            window.location.href = "login.php";
+        } else {
+            alert("Đã thêm vào giỏ hàng!");
+        }
+    }
+</script>
 
 </form>
+
+
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
