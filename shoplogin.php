@@ -24,7 +24,7 @@ $total_products = $total_row['total'];
 $total_pages = ceil($total_products / $limit);
 
 // Lấy sản phẩm cho trang hiện tại
-$sql = "SELECT * FROM product ORDER BY id ASC LIMIT $limit OFFSET $offset";
+$sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
 ?>
 
@@ -261,27 +261,30 @@ $(document).ready(function() {
 
 
     <?php
-require_once 'connect.php'; // File kết nối CSDL của bạn
+require_once 'db.php';
 
-// Lấy filter từ GET
 $sort = $_GET['sort'] ?? '';
 $price = $_GET['price'] ?? '';
-$brands = $_GET['brand'] ?? [];
+$brands = isset($_GET['brand']) ? (array)$_GET['brand'] : [];
 
-// Bắt đầu query
-$sql = "SELECT * FROM product WHERE 1";
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 6;
+$offset = ($page - 1) * $limit;
+
+// Bắt đầu điều kiện WHERE
+$where = "WHERE 1";
 
 // Lọc theo giá
 if ($price == '0500') {
-    $sql .= " AND price < 500000";
+    $where .= " AND price < 500000";
 } elseif ($price == '5001') {
-    $sql .= " AND price BETWEEN 500000 AND 1000000";
+    $where .= " AND price BETWEEN 500000 AND 1000000";
 } elseif ($price == '12') {
-    $sql .= " AND price BETWEEN 1000000 AND 2000000";
+    $where .= " AND price BETWEEN 1000000 AND 2000000";
 } elseif ($price == '23') {
-    $sql .= " AND price BETWEEN 2000000 AND 3000000";
+    $where .= " AND price BETWEEN 2000000 AND 3000000";
 } elseif ($price == 'over3') {
-    $sql .= " AND price > 3000000";
+    $where .= " AND price > 3000000";
 }
 
 // Lọc theo thương hiệu
@@ -289,25 +292,33 @@ if (!empty($brands)) {
     $escapedBrands = array_map(function($b) use ($conn) {
         return "'" . mysqli_real_escape_string($conn, $b) . "'";
     }, $brands);
-    $sql .= " AND category IN (" . implode(",", $escapedBrands) . ")";
+    $where .= " AND category IN (" . implode(",", $escapedBrands) . ")";
 }
 
-// Sắp xếp
+// Tính tổng số dòng sau khi lọc
+$count_sql = "SELECT COUNT(*) AS total FROM product $where";
+$count_result = mysqli_query($conn, $count_sql);
+$total_row = mysqli_fetch_assoc($count_result);
+$total_products = $total_row['total'];
+$total_pages = ceil($total_products / $limit);
+
+// Thêm sắp xếp
+$order = "ORDER BY id DESC";
 if ($sort == 'az') {
-    $sql .= " ORDER BY name ASC";
+    $order = "ORDER BY name ASC";
 } elseif ($sort == 'za') {
-    $sql .= " ORDER BY name DESC";
+    $order = "ORDER BY name DESC";
 } elseif ($sort == 'price-asc') {
-    $sql .= " ORDER BY price ASC";
+    $order = "ORDER BY price ASC";
 } elseif ($sort == 'price-desc') {
-    $sql .= " ORDER BY price DESC";
-} else {
-    $sql .= " ORDER BY id DESC";
+    $order = "ORDER BY price DESC";
 }
 
-// Thực thi truy vấn
+// Câu query chính thức với LIMIT
+$sql = "SELECT * FROM product $where $order LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn, $sql);
-?>   
+?>
+
     <!-- Shop Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
