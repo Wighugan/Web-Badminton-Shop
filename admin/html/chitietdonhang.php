@@ -268,16 +268,23 @@ $result_detail = $stmt_detail->get_result();
                             </tr>
 
                             <tr>
-                                <td>Trạng thái:</td>
-                                <td>   
-                                    <select id="month1" name="status" required>
-                                    <option value="Chờ xác nhận" <?= ($order['status'] == 'Chờ xác nhận') ? 'selected' : '' ?>>Chờ xác nhận</option>
-                <option value="Thành công" <?= ($order['status'] == 'Thành công') ? 'selected' : '' ?>>Thành công</option>
-                <option value="Đang giao" <?= ($order['status'] == 'Đang giao') ? 'selected' : '' ?>>Đang giao</option>
-                <option value="Đã hủy" <?= ($order['status'] == 'Đã hủy') ? 'selected' : '' ?>>Đã hủy</option>
-                                </select>
-                            </td>
-                            </tr>
+                            <td>Trạng thái:</td>
+<td>   
+    <select id="month1" name="status" required>
+        <?php
+        $current_status = $order['status'];
+        $statuses = ['Chờ xác nhận', 'Đang giao', 'Thành công', 'Đã hủy'];
+        $status_order = array_flip($statuses); // dùng để so sánh thứ tự
+
+        foreach ($statuses as $status) {
+            // Nếu trạng thái đang duyệt có thứ tự nhỏ hơn trạng thái hiện tại thì disable
+            $disabled = ($status_order[$status] < $status_order[$current_status]) ? 'disabled' : '';
+            $selected = ($status == $current_status) ? 'selected' : '';
+            echo "<option value=\"$status\" $selected $disabled>$status</option>";
+        }
+        ?>
+    </select>
+</td>
 
                     
 

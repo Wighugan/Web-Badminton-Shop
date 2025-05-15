@@ -141,15 +141,7 @@ if (!$conn) {
             <img id="preview" src="https://bizweb.dktcdn.net/100/485/982/collections/248f25eb211faf87af29dfe6be4b3b0b.jpg?v=1695029604207" alt="Xem trước ảnh" width="150" height="150" style="display: block; margin-top: 10px;">
         </div>
 
-        <div class="form-group">
-            <label for="color">Màu sắc:</label>
-            <select id="color" name="color" required>
-                <option value="Không có">Không có</option>
-                <option value="Đỏ đen">Đỏ đen</option>
-                <option value="Xanh đen">Xanh đen</option>
-                <option value="Trắng">Trắng</option>
-            </select>
-        </div>
+        
 
         <div class="form-group">
             <label for="productcode">Mã sản phẩm:</label>

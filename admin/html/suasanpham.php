@@ -175,23 +175,12 @@ $conn->close();
 <div>
                         <input class="form-group" type="file" id="image" name="image" accept="image/*"  onchange="previewImage(event)">
 </div>
-                        <img src="<?=   $product['image'] ?>" width="50" id="preview"  height="80" padding="20">
+                        <img src="<?=  '../../'. $product['image'] ?>" width="50" id="preview"  height="80" padding="20">
 
                     </div>
                  
                    
-                    <div class="form-group">
-                        <label for="color">Màu sắc:</label>
-                        <select id="color" name="color" required>
-                        <?php
-    $color = ["Không có", "Đỏ đen", "Xanh đen", "Trắng"];
-    foreach ($color as $cat) {
-        $selected = (trim($product['color']) == trim($cat)) ? "selected" : "";
-        echo "<option value='$cat' $selected>$cat</option>";
-    }
-    ?>
-                        </select>
-                    </div>
+                  
 
                     <div class="form-group">
                         <label for="name">Mã sản phẩm:</label>
