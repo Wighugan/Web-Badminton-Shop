@@ -295,12 +295,20 @@ document.getElementById('imageInput').addEventListener('change', function(event)
                             <p class="help-block text-danger"></p>
                         </div>
 
-                        
+                         <div class="control-group">
+                            <label>Quận</label>
+
+                           
+                                <input  class="form-control"  type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
+
+                            <p class="help-block text-danger"></p>
+                        </div>
+
                         <div class="control-group">
                             <label>Thành Phố</label>
 
                            
-                                <input  class="form-control"  type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
+                                <input  class="form-control"  type="text" id="city" name="city" value="<?= $user['city'] ?>" required>
 
                             <p class="help-block text-danger"></p>
                         </div>

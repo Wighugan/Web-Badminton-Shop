@@ -269,7 +269,12 @@ function previewImage(event) {
 
                 <div class="form-group">
                     <label for="text"></label>
-                    <input type="text" id="address" name="address" placeholder="Thành Phố">
+                    <input type="text" id="city" name="city" placeholder="Thành Phố">
+                </div>
+
+                  <div class="form-group">
+                    <label for="text"></label>
+                    <input type="text" id="address" name="address" placeholder="Quận">
                 </div>
 
                 <div class="form-group">
