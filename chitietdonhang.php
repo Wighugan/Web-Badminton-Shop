@@ -10,6 +10,19 @@ if ($conn->connect_error) {
 }
 
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
+    $new_status = $_POST['status'];
+    $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
+    $stmt_update = $conn->prepare($update_sql);
+    $stmt_update->bind_param("si", $new_status, $order_id);
+    if ($stmt_update->execute()) {
+        // Load lại trang để hiển thị trạng thái mới
+        echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
+        exit;
+    } else {
+        echo "<script>alert('Cập nhật trạng thái thất bại!');</script>";
+    }
+}
 
 // Lấy thông tin đơn hàng + khách hàng
 $sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
@@ -24,13 +37,16 @@ $result_order = $stmt_order->get_result();
 $order = $result_order->fetch_assoc();
 
 // Lấy danh sách sản phẩm trong đơn hàng
-$sql_detail = "SELECT order_details.*, product.name AS product_name, product.image 
+$sql_detail = "SELECT order_details.*, product.image 
                FROM order_details 
-               JOIN product ON order_details.id = product.id 
-               WHERE order_details.order_id = ?";$stmt_detail = $conn->prepare($sql_detail);
+             left JOIN product ON order_details.product_id = product.id 
+               WHERE order_details.order_id = ?";
+$stmt_detail = $conn->prepare($sql_detail);
 $stmt_detail->bind_param("i", $order_id);
 $stmt_detail->execute();
 $result_detail = $stmt_detail->get_result();
+
+
 ?>
 
 
@@ -178,10 +194,13 @@ $result_detail = $stmt_detail->get_result();
                
                
                
-                    
+
                        <div class="detail">
                         <div class="recentOrder">
                            
+                        <form  method="POST" enctype="multipart/form-data" id="suaUserForm">
+
+
                     <table>
                         <thead>
                             <tr>
@@ -204,7 +223,8 @@ $result_detail = $stmt_detail->get_result();
         ?>
         <tr>
             <td><?= $i++ ?></td>
-            <td><img src="<?= htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
+
+            <td><img src="<?= '../../' . htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
             <td><?= $row['product_name'] ?></td>
             <td><?= $row['quantity'] ?></td>
             <td><?= number_format($row['product_price'], 0, ',', '.') ?> VND</td>
@@ -246,32 +266,49 @@ $result_detail = $stmt_detail->get_result();
                 <td>Phương thức thanh toán:</td>
                 <td>COD</td>
                             </tr>
+
                             <tr>
-                                <td>Trạng thái:</td>
-                                <td>   <select id="month1">
-                                    <option>Chờ xác nhận</option>
-                                    <option>Đã giao</option>
-                                    <option>Đang giao</option>
-                                    <option>Bị hủy</option>
-                                </select></td>
-                            </tr>
+                            <td>Trạng thái:</td>
+<td>   
+    <select id="month1" name="status" required>
+        <?php
+        $current_status = $order['status'];
+        $statuses = ['Chờ xác nhận', 'Đang giao', 'Thành công', 'Đã hủy'];
+        $status_order = array_flip($statuses); // dùng để so sánh thứ tự
+
+        foreach ($statuses as $status) {
+            // Nếu trạng thái đang duyệt có thứ tự nhỏ hơn trạng thái hiện tại thì disable
+            $disabled = ($status_order[$status] < $status_order[$current_status]) ? 'disabled' : '';
+            $selected = ($status == $current_status) ? 'selected' : '';
+            echo "<option value=\"$status\" $selected $disabled>$status</option>";
+        }
+        ?>
+    </select>
+</td>
+
+                    
+
                         </tbody>
                     </table>
                     
                     <div class="chon">
-                        <button onclick="done()">Cập nhật trạng thái</button>
+                        <button type="submit" name="update_status" onclick="done()">Cập nhật trạng thái</button>
                         </div>
+
+        
+
                 </div>
             </div>
                 </div>
                 </div>
-
+                </form>
                
                     <script>
                         function done() {
                           alert("Đã cập nhật trạng thái thành công!");
                         }
                       </script>
+
                       <script>
                         function tra() {
                             const confirmation = confirm("Bạn có chắc chắn muốn thu hồi đơn hàng này?");
@@ -282,6 +319,9 @@ $result_detail = $stmt_detail->get_result();
                     </script>
             </div>
         </div>
+
+
+
     </div>
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
