@@ -130,12 +130,7 @@ $conn->close();
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+                
             </div>
 
 
@@ -185,8 +180,22 @@ $conn->close();
 
                     <div class="form-group">
                         <label for="email">Địa chỉ:</label>
+                        <input type="text" id="address1" name="address1" value="<?= $user['address1'] ?>" required>
+                        </div>
+
+  <div class="form-group">
+                        <label for="email">Quận:</label>
                         <input type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
                         </div>
+
+  <div class="form-group">
+                        <label for="email">Thành phố:</label>
+                        <input type="text" id="city" name="city" value="<?= $user['city'] ?>" required>
+                        </div>
+
+
+
+
                     <div class="form-group">
                         <label for="email">Ngày Sinh:</label>
                         <input type="date" id="birthday" name="birthday" value="<?= $user['birthday'] ?>" required>

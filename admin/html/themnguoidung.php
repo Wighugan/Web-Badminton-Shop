@@ -103,12 +103,7 @@ if (!$conn) {
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+               
             </div>
 
 
@@ -181,8 +176,20 @@ function previewImage(event) {
 
                     <div class="form-group">
                         <label for="email">Địa chỉ:</label>
+                        <input type="text" id="address1" name="address1">
+                    </div>
+ <div class="form-group">
+                        <label for="email">Quận:</label>
                         <input type="text" id="address" name="address">
                     </div>
+ <div class="form-group">
+                        <label for="email">Thành phố:</label>
+                        <input type="text" id="city" name="city">
+                    </div>
+
+
+
+
                     <div class="form-group">
                         <label for="email">Ngày Sinh:</label>
                         <input type="text" id="birthday" name="birthday" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >

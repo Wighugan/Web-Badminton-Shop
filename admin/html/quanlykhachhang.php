@@ -278,7 +278,7 @@ $total_pages = ceil($total_users / $limit);
                                 <td>Họ và tên</td>
                                 <td>Email</td>
                                 <td>Số điện thoại</td>
-                                <td>Địa chỉ</td>
+                                <td>Quận</td>
                                 <td>Ngày Sinh</td>
                                 <td>Ghi chú</td>
                             </tr>
