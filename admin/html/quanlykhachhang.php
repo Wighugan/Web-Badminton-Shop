@@ -299,32 +299,49 @@ if ($result->num_rows > 0) {
                 <td>{$row['numberphone']}</td>
                 <td>{$row['address']}</td>
                 <td>" . date("d/m/Y", strtotime($row['birthday'])) . "</td>
-                <td>
-                    <a href='suakhachhang.php?id={$row['id']}' id='suanguoidung'_{$row['id']}'>
-                        <i class='fas fa-edit'></i> Sửa
-                    </a>
-                    <a href='#' onclick='deleteuser({$row['id']})' style='color: red;'>
-                        <i class='fa-solid fa-lock'></i> khóa
-                    </a>
-                </td>
-              </tr>";
+<td>
+                <a href='suakhachhang.php?id={$row['id']}' id='suanguoidung_{$row['id']}'>
+                    <i class='fas fa-edit'></i> Sửa
+                </a> ";
+
+        if ($row['status'] == 1) {
+            echo "<a href='#' onclick='lock_user({$row['id']})' style='color: red;'>
+                    <i class='fa-solid fa-lock'></i> Khóa
+                </a>";
+        } else {
+            echo "<a href='#' onclick='unlock_user({$row['id']})' style='color: green;'>
+                    <i class='fa-solid fa-lock-open'></i> Mở khóa
+                </a>";
+        }
+
+        echo "</td></tr>";
     }
 } else {
     echo "<tr><td colspan='8'>Không có người dùng nào!</td></tr>";
 }
 $conn->close();
 ?>
-        <script>
-        
 
-        function deleteuser(userId) {
+<script>
+    function lock_user(userId) {
         const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này?");
         if (confirmation) {
-            window.location.href = 'deleteuser.php?id=' + userId;
-
+            window.location.href = 'lock_user.php?id=' + userId;
         }
     }
-    </script>
+
+    function unlock_user(userId) {
+        const confirmation = confirm("Bạn có chắc chắn muốn mở khóa người dùng này?");
+        if (confirmation) {
+            window.location.href = 'unlock_user.php?id=' + userId;
+        }
+    }
+</script>
+
+
+
+
+
                         </tbody>
                     </table>
 
