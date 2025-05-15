@@ -145,12 +145,7 @@ $total_pages = ceil($total_orders / $limit);
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+                
             </div>
 
             <!-- ================ LÀM QUẢN LÝ ĐƠN HÀNG Ở ĐÂY ================= -->

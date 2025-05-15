@@ -131,12 +131,7 @@ $conn->close();
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB !!!</p>
                 </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Tìm kiếm chức năng quản trị">
-                        <a href=" "><ion-icon name="search-outline"></ion-icon></a>
-                    </label>
-                </div>
+                
             </div>
 
 
