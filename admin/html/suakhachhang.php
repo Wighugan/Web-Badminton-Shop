@@ -79,7 +79,7 @@ $conn->close();
                 </li>
             </div>
                 <li>
-                    <a href="trangchuadmin.html"style="color: black;">
+                    <a href="trangchuadmin.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -88,7 +88,7 @@ $conn->close();
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html"style="color: black;">
+                    <a href="quanlydonhang.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -97,7 +97,7 @@ $conn->close();
                 </li>
 
                 <li>
-                    <a href="quanlysanpham.html" style="color: black;">
+                    <a href="quanlysanpham.php" style="color: black;">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -106,7 +106,7 @@ $conn->close();
                 </li>
 
                 <li>
-                    <a href="quanlykhachhang.html"style="color: black;" id="active">
+                    <a href="quanlykhachhang.php"style="color: black;" id="active">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -114,7 +114,7 @@ $conn->close();
                     </a>
                 </li>
                 <li>
-                    <a href="thongke.html"style="color: black;">
+                    <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
                         </span>
