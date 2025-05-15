@@ -162,7 +162,7 @@ $conn->close();
                     <div>
                     <input class="form-group" type="file" id="avatar" name="avatar" accept="image/*"  onchange="previewImage(event)">
 </div>
-                    <img src="<?= $user['avatar'] ?>" width="30" id="preview"  height="50" padding="20">
+                    <img src="<?= '../../' .$user['avatar'] ?>" width="30" id="preview"  height="50" padding="20">
                     
                  </div>
                     <div class="form-group">
