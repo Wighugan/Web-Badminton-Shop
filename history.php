@@ -139,7 +139,6 @@ $total_pages = ceil($total_orders / $limit);
                             <th>Tổng tiền hàng</th>
                             <th>Giảm giá</th>
                             <th>Ngày Đặt Hàng</th>
-                            <th>Trạng Thái</th>
                            
                         </tr>
                     </thead>
@@ -153,7 +152,7 @@ $total_pages = ceil($total_orders / $limit);
         <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
                             <td>0đ </td>
         <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-        <td id="premium"><?= htmlspecialchars($row['status']) ?></td>
+
 
     </tr>
 <?php } ?>

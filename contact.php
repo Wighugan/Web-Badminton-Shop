@@ -28,7 +28,7 @@ if ($conn->connect_error) {
     <div class="row border-top px-xl-5">
         <div class="col-lg-12">
             <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
-                <a href="" class="text-decoration-none d-block d-lg-none">
+                <a href="index.php" class="text-decoration-none d-block d-lg-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold">
                         <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
                     </h1>
