@@ -288,10 +288,12 @@ $total_pages = ceil($total_users / $limit);
                            
             
                         <?php
+$stt = ($page - 1) * $limit + 1;
+
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
-                <td>{$row['id']}</td>
+                <td>{$stt}</td>
                 <td>  <img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
@@ -313,6 +315,7 @@ if ($result->num_rows > 0) {
                     <i class='fa-solid fa-lock-open'></i> Mở khóa
                 </a>";
         }
+        $stt++; // Tăng số thứ tự
 
         echo "</td></tr>";
     }
