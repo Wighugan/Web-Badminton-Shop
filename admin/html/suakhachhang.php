@@ -203,7 +203,7 @@ $conn->close();
 
                     <div class="form-group">
                         <input type="submit" value="Lưu vào Database" onclick="myFunction()">
-                        <button class="return"><a href="quanlykhachhang.html">Quay lại</a></button>
+                        <button class="return"><a href="quanlykhachhang.php">Quay lại</a></button>
                     </div>
                 </form>
                 <script>
