@@ -9,7 +9,6 @@ if ($conn->connect_error) {
 // Nhận dữ liệu từ form
 $id = $_POST['id'];
 $category = $_POST['category'];
-$color = $_POST['color'];
 $productcode = $_POST['productcode'];
 $name = $_POST['name'];
 $price = $_POST['price'];
@@ -44,13 +43,13 @@ if (!empty($_FILES["image"]["name"])) {
 
 // Cập nhật dữ liệu
 if ($image) {
-    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?, image=?, updated_at=NOW() WHERE id=?";
+    $sql = "UPDATE product SET category=?,  productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?, image=?, updated_at=NOW() WHERE id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssssi", $category, $color, $productcode, $name, $price, $flex, $length, $weight,  $description, $image, $id);
+    $stmt->bind_param("sssssssssi", $category,  $productcode, $name, $price, $flex, $length, $weight,  $description, $image, $id);
 } else {
-    $sql = "UPDATE product SET category=?, color=?, productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?,updated_at=NOW() WHERE id=?";
+    $sql = "UPDATE product SET category=?,  productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?,updated_at=NOW() WHERE id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssssi", $category, $color, $productcode, $name, $price, $flex, $length, $weight, $description, $id);
+    $stmt->bind_param("ssssssssi", $category,  $productcode, $name, $price, $flex, $length, $weight, $description, $id);
 }
 
 if ($stmt->execute()) {

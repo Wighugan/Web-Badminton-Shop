@@ -270,11 +270,13 @@ $total_pages = ceil($total_users / $limit);
                         <?php
 // Duyệt qua từng sản phẩm và hiển thị
  // Biến đếm số thứ tự
+ $stt = ($page - 1) * $limit + 1;
+
 while ($row = mysqli_fetch_assoc($result)) {  
     $formatted_price = number_format($row['price'], 0, ',', '.') . " VND"; // Định dạng giá
 ?>          
     <tr>
-    <td><?= htmlspecialchars($row['id']) ?></td> <!-- Tên sản phẩm -->
+        <td><?= $stt ?></td> <!-- Số thứ tự tự tăng -->
     <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
 
         <td><img src="<?= '../../' . htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
@@ -303,7 +305,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         </td>
     </tr>
+    
 <?php
+    $stt++; // Tăng STT cho dòng tiếp theo
+
 }
 ?>
 

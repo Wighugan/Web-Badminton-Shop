@@ -7,7 +7,6 @@ if ($conn->connect_error) {
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category = $_POST['category'];
-    $color = $_POST['color'];
     $productcode = $_POST['productcode'];
     $name = $_POST['name'];
     $price = $_POST['price'];
@@ -40,10 +39,10 @@ if (!empty($_FILES["image"]["name"])) {
 
 
     // Thêm sản phẩm vào database
-    $sql = "INSERT INTO product (category, color, productcode, name, price, flex, length, weight, image, description,updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW());";
+    $sql = "INSERT INTO product (category,  productcode, name, price, flex, length, weight, image, description,updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?,  ?, ?,NOW());";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssss", $category, $color, $productcode, $name, $price, $flex, $length, $weight, $image, $description);
+    $stmt->bind_param("sssssssss", $category,  $productcode, $name, $price, $flex, $length, $weight, $image, $description);
     
     if ($stmt->execute()) {
         echo "<script>alert('Sản phẩm đã được thêm thành công!'); window.location.href='quanlysanpham.php';</script>";
