@@ -61,7 +61,7 @@
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.php" class="text-decoration-none">
+                <a href="index.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -69,7 +69,7 @@
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-            <form action="shoplogin.php" method="GET">
+            <form action="shop.php" method="GET">
     <div class="input-group">
         <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
         <div class="input-group-append">

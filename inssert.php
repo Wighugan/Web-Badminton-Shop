@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($checkUser->num_rows > 0) {
         $_SESSION["error"] = "Tên đăng nhập hoặc email đã tồn tại!";
-        header("Location: register.php");
+        header("Location: signup.php");
         exit();
     }
     $checkUser->close();

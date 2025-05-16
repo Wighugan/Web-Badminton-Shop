@@ -2,8 +2,7 @@
 <html lang="en">
 <?php
 session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
-$isLoggedIn = isset($_SESSION['user_id']) ? 1 : 0;
-
+$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 include "db.php"; // Kết nối database
 
 
@@ -110,7 +109,7 @@ if (!$product) {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.php" class="text-decoration-none">
+                <a href="index.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -118,7 +117,7 @@ if (!$product) {
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="shoplogin.php">
+                <form action="shop.php">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
@@ -178,35 +177,33 @@ if (!$product) {
                 <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
                     <!-- Menu bên trái -->
                     <div class="navbar-nav py-0">
-                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
-                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
                         <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
-                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link" data-toggle="dropdown">
-                                <?php 
-                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                                ?>
-                            </a>
-                            <div class="dropdown-menu rounded-0 m-0">
+                    <div class="navbar-nav ml-auto py-0">
+    <?php if ($isLoggedIn): ?>
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                👤 <?php echo $_SESSION['username']; ?>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                  <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
+                                  <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
 
-                                <?php if (isset($_SESSION['username'])): ?>
-            <a href="logout.php" class="dropdown-item">Đăng xuất</a>
-            <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
-            <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-                    <?php else: ?>
-            <a href="login.php" class="dropdown-item">Đăng nhập</a>
-            <a href="signup.php" class="dropdown-item">Đăng ký</a>
-        <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+              
+            </div>
         </div>
+    <?php else: ?>
+        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
+    <?php endif; ?>
+</div>
+
+        
     </div>
 </div>
 
@@ -276,15 +273,12 @@ if (!$product) {
                     <h3 class="font-weight-semi-bold mb-4"><?= number_format($product['price'], 0, ',', '.') ?> VND</h3>
 
                 <div class="d-flex mb-4">
-                    <p class="text-dark font-weight-medium mb-0 mr-3">Màu Sắc:</p>
                     <form>
                         <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="color-1" name="color">
-                            <label class="custom-control-label" for="color-1">Đỏ Đen</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="color-2" name="color">
-                            <label class="custom-control-label" for="color-2">Xanh Đen</label>
                         </div>
                         <!--<div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="color-3" name="color">
@@ -320,18 +314,19 @@ if (!$product) {
         <button onclick="addToCart()" type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
         </div>
 
-        <script>
-    const isLoggedIn = <?= $isLoggedIn ?>;
+       <script>
+    const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
 
     function addToCart() {
         if (!isLoggedIn) {
-            alert("Bạn chưa đăng nhập!");
+            alert("⚠ Bạn chưa đăng nhập!");
             window.location.href = "login.php";
         } else {
-            alert("Đã thêm vào giỏ hàng!");
+            alert("✅ Đã thêm vào giỏ hàng!");
         }
     }
 </script>
+
 
 </form>
 

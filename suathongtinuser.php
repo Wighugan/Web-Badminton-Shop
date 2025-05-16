@@ -4,6 +4,7 @@
 <?php
 
 session_start();
+$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 
 // Kiểm tra nếu user chưa đăng nhập
 if (!isset($_SESSION['user_id'])) {
@@ -103,7 +104,7 @@ $conn->close();
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="shoplogin.php">
+                <form action="shop.php">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
                         <div class="input-group-append">
@@ -142,26 +143,33 @@ $conn->close();
 
                 <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="logedin.php" class="nav-item nav-link">Trang chủ</a>
-                            <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
-                            <a href="contactlogin.php" class="nav-item nav-link">Liên Hệ</a>
+                            <a href="index.php" class="nav-item nav-link">Trang chủ</a>
+                            <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                         </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-toggle="dropdown">
-                                    
-                                <?php 
-                    echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
-                ?>
-                                </a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.php" class="dropdown-item">Đăng Xuất</a>
-                                    <a href="suathongtinuser.php" class="dropdown-item">Sửa thông tin</a>
-                                    <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-                        </div>
-                    </div>
-                </nav>
+
+
+                      <div class="navbar-nav ml-auto py-0">
+    <?php if ($isLoggedIn): ?>
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                👤 <?php echo $_SESSION['username']; ?>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                  <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
+                                  <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+
+              
             </div>
+        </div>
+    <?php else: ?>
+        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
+    <?php endif; ?>
+</div>
+
+
         </div>
     </div>
     <!-- Navbar End -->
@@ -172,7 +180,7 @@ $conn->close();
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông Tin Cá Nhân </h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="">Trang Chủ</a></p>
+                <p class="m-0"><a href="index.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>

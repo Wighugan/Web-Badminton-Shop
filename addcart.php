@@ -3,9 +3,9 @@ session_start();
 include 'db.php'; // Kết nối CSDL
 
 if (!isset($_SESSION['user_id'])) {
-    die("Vui lòng đăng nhập để thực hiện hành động này.");
+    header("Location: login.php");
+    exit();
 }
-
 if (!isset($_POST['id']) || !isset($_POST['quantity'])) {
     die("Lỗi: Không có sản phẩm nào được chọn để thêm vào giỏ hàng.");
 }

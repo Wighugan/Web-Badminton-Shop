@@ -3,6 +3,7 @@
 session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
 
 // Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
+$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 
 
 $servername = "localhost"; // Thay đổi nếu cần
@@ -17,6 +18,9 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -188,10 +192,30 @@ $(document).ready(function() {
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
-                    <div class="navbar-nav ml-auto py-0">
-                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
-                            <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
-                        </div>
+  <div class="navbar-nav ml-auto py-0">
+    <?php if ($isLoggedIn): ?>
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                👤 <?php echo $_SESSION['username']; ?>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                  <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
+                                  <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+
+              
+            </div>
+        </div>
+    <?php else: ?>
+        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
+    <?php endif; ?>
+</div>
+
+
+
+
+
                         </div>
                     </div>
                 </div>

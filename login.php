@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($password === $db_password) {
             $_SESSION['user_id'] = $id;
             $_SESSION['username'] = $username;
-            header("Location: logedin.php");
+header("Location: index.php");
             exit();
         } else {
             $error = "⚠  Sai mật khẩu!";
