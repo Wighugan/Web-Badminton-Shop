@@ -5,28 +5,67 @@
 <?php
 include 'db.php';
 session_start();
-$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
+$query = $_GET['query'] ?? '';
+$sort = $_GET['sort'] ?? '';
+$price = $_GET['price'] ?? '';
+$brands = $_GET['brand'] ?? []; // Mảng checkbox (VD: ["Yonex", "VNB"])
+
+$sql = "SELECT * FROM products WHERE 1";
+
+// Lọc theo từ khóa
+if (!empty($query)) {
+    $sql .= " AND product_name LIKE '%" . mysqli_real_escape_string($conn, $query) . "%'";
+}
+
+// Lọc theo giá
+if ($price === "0500") {
+    $sql .= " AND price <= 500000";
+} elseif ($price === "5001") {
+    $sql .= " AND price BETWEEN 500000 AND 1000000";
+} elseif ($price === "12") {
+    $sql .= " AND price BETWEEN 1000000 AND 2000000";
+}
+// ... các khoảng giá khác
+
+// Lọc theo thương hiệu
+if (!empty($brands)) {
+    $brandList = "'" . implode("','", array_map('mysqli_real_escape_string', array_fill(0, count($brands), $conn), $brands)) . "'";
+    $sql .= " AND brand IN ($brandList)";
+}
+
+// Sắp xếp
+if ($sort === "price-asc") {
+    $sql .= " ORDER BY price ASC";
+} elseif ($sort === "price-desc") {
+    $sql .= " ORDER BY price DESC";
+}
+
+
+$isLoggedIn = isset($_SESSION['user_id']); // Kiểm tra đăng nhập
 
 $limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
+// Khởi tạo điều kiện WHERE nếu có tìm kiếm
+$where = "";
+$search = "";
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-    // Xử lý tìm kiếm
-    $search = $conn->real_escape_string($_GET['query']);
-    $search_sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
-    $search_result = $conn->query($search_sql);
-} else {
-    // Lấy tổng số sản phẩm
-    $total_result = $conn->query("SELECT COUNT(*) AS total FROM product");
-    $total_row = $total_result->fetch_assoc();
-    $total_product = $total_row['total'];
-    $total_pages = ceil($total_product / $limit);
-
-    // Lấy sản phẩm theo trang
-    $product_sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
-    $result = $conn->query($product_sql);
+    $search = $conn->real_escape_string(trim($_GET['query']));
+    $where = "WHERE name LIKE '%$search%'";
 }
+
+// Lấy tổng số sản phẩm theo điều kiện
+$sql_total = "SELECT COUNT(*) AS total FROM product $where";
+$total_result = $conn->query($sql_total);
+$total_row = $total_result->fetch_assoc();
+$total_product = $total_row['total'];
+$total_pages = ceil($total_product / $limit);
+
+// Lấy dữ liệu sản phẩm theo trang
+$sql_data = "SELECT * FROM product $where ORDER BY id DESC LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql_data);
 ?>
 
 <head>
@@ -425,16 +464,67 @@ function searchProduct() {
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                     <div class="col-lg-6 col-6 text-left">
-            <form action="shop.php" method="GET">
-    <div class="input-group">
-        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+            <form id="filter-form" method="GET">
+    <!-- SEARCH -->
+    <div class="input-group mb-4">
+        <input type="text" id="searchInput" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" value="<?= htmlspecialchars($_GET['query'] ?? '') ?>">
         <div class="input-group-append">
             <button type="submit" class="input-group-text bg-transparent text-primary">
                 <i class="fa fa-search"></i>
             </button>
         </div>
     </div>
+
+    <!-- SORT -->
+    <div class="mb-4">
+        <h5>Sắp xếp</h5>
+        <div class="custom-control custom-radio custom-radio-square mb-2">
+            <input type="radio" name="sort" value="price-asc" id="sort-price-asc" class="custom-control-input" <?= (isset($_GET['sort']) && $_GET['sort'] == 'price-asc') ? 'checked' : '' ?>>
+            <label class="custom-control-label" for="sort-price-asc">Giá tăng dần</label>
+        </div>
+        <div class="custom-control custom-radio custom-radio-square mb-2">
+            <input type="radio" name="sort" value="price-desc" id="sort-price-desc" class="custom-control-input" <?= (isset($_GET['sort']) && $_GET['sort'] == 'price-desc') ? 'checked' : '' ?>>
+            <label class="custom-control-label" for="sort-price-desc">Giá giảm dần</label>
+        </div>
+    </div>
+
+    <!-- PRICE -->
+    <div class="mb-4">
+        <h5>Chọn mức giá</h5>
+        <?php
+        $prices = [
+            'all' => 'Tất cả giá',
+            '0500' => 'Dưới 500.000đ',
+            '5001' => '500.000đ - 1 triệu',
+            '12' => '1 - 2 triệu',
+            '23' => '2 - 3 triệu',
+            'over3' => 'Trên 3 triệu'
+        ];
+        foreach ($prices as $val => $label): ?>
+            <div class="custom-control custom-radio custom-radio-square mb-2">
+                <input type="radio" name="price" value="<?= $val ?>" id="price-<?= $val ?>" class="custom-control-input" <?= (isset($_GET['price']) && $_GET['price'] == $val) ? 'checked' : '' ?>>
+                <label class="custom-control-label" for="price-<?= $val ?>"><?= $label ?></label>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- BRANDS -->
+    <div class="mb-4">
+        <h5>Thương hiệu</h5>
+        <?php
+        $brands = ['VNB', 'Yonex', 'Lining', 'Victor'];
+        foreach ($brands as $brand): ?>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" name="brand[]" value="<?= $brand ?>" id="brand-<?= $brand ?>" class="custom-control-input"
+                    <?= (isset($_GET['brand']) && in_array($brand, $_GET['brand'])) ? 'checked' : '' ?>>
+                <label class="custom-control-label" for="brand-<?= $brand ?>"><?= $brand ?></label>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Lọc & Tìm kiếm</button>
 </form>
+
  </div>
                         <p id="output"></p>
                     </div>
@@ -522,34 +612,36 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         <?php } ?>
     </div>
 
-    <div class="col-12 pb-1">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-3">
+    <?php if ($total_product > 1 && $total_pages > 1): ?>
+    <nav>
+        <ul class="pagination justify-content-center">
             <!-- Nút Previous -->
-            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                <a class="page-link" href="?page=<?= ($page > 1) ? ($page - 1) : 1 ?>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                </a>
-            </li>
-
-            <!-- Hiển thị số trang -->
-            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+            <?php if ($page > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>">&laquo;</a>
                 </li>
-            <?php } ?>
+            <?php endif; ?>
+
+            <!-- Số trang -->
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>"><?= $i ?></a>
+                </li>
+            <?php endfor; ?>
 
             <!-- Nút Next -->
-            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                <a class="page-link" href="?page=<?= ($page < $total_pages) ? ($page + 1) : $total_pages ?>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
+            <?php if ($page < $total_pages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>">&raquo;</a>
+                </li>
+            <?php endif; ?>
         </ul>
     </nav>
-</div>
+<?php endif; ?>
+
+
+
+
 
 </div>
 
