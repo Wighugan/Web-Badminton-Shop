@@ -5,67 +5,27 @@
 <?php
 include 'db.php';
 session_start();
-$query = $_GET['query'] ?? '';
-$sort = $_GET['sort'] ?? '';
-$price = $_GET['price'] ?? '';
-$brands = $_GET['brand'] ?? []; // Mảng checkbox (VD: ["Yonex", "VNB"])
-
-$sql = "SELECT * FROM products WHERE 1";
-
-// Lọc theo từ khóa
-if (!empty($query)) {
-    $sql .= " AND product_name LIKE '%" . mysqli_real_escape_string($conn, $query) . "%'";
-}
-
-// Lọc theo giá
-if ($price === "0500") {
-    $sql .= " AND price <= 500000";
-} elseif ($price === "5001") {
-    $sql .= " AND price BETWEEN 500000 AND 1000000";
-} elseif ($price === "12") {
-    $sql .= " AND price BETWEEN 1000000 AND 2000000";
-}
-// ... các khoảng giá khác
-
-// Lọc theo thương hiệu
-if (!empty($brands)) {
-    $brandList = "'" . implode("','", array_map('mysqli_real_escape_string', array_fill(0, count($brands), $conn), $brands)) . "'";
-    $sql .= " AND brand IN ($brandList)";
-}
-
-// Sắp xếp
-if ($sort === "price-asc") {
-    $sql .= " ORDER BY price ASC";
-} elseif ($sort === "price-desc") {
-    $sql .= " ORDER BY price DESC";
-}
-
-
-$isLoggedIn = isset($_SESSION['user_id']); // Kiểm tra đăng nhập
 
 $limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
-// Khởi tạo điều kiện WHERE nếu có tìm kiếm
-$where = "";
-$search = "";
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-    $search = $conn->real_escape_string(trim($_GET['query']));
-    $where = "WHERE name LIKE '%$search%'";
+    // Xử lý tìm kiếm
+    $search = $conn->real_escape_string($_GET['query']);
+    $search_sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
+    $search_result = $conn->query($search_sql);
+} else {
+    // Lấy tổng số sản phẩm
+    $total_result = $conn->query("SELECT COUNT(*) AS total FROM product");
+    $total_row = $total_result->fetch_assoc();
+    $total_product = $total_row['total'];
+    $total_pages = ceil($total_product / $limit);
+
+    // Lấy sản phẩm theo trang
+    $product_sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
+    $result = $conn->query($product_sql);
 }
-
-// Lấy tổng số sản phẩm theo điều kiện
-$sql_total = "SELECT COUNT(*) AS total FROM product $where";
-$total_result = $conn->query($sql_total);
-$total_row = $total_result->fetch_assoc();
-$total_product = $total_row['total'];
-$total_pages = ceil($total_product / $limit);
-
-// Lấy dữ liệu sản phẩm theo trang
-$sql_data = "SELECT * FROM product $where ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$result = $conn->query($sql_data);
 ?>
 
 <head>
@@ -230,25 +190,10 @@ $result = $conn->query($sql_data);
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
-                     <div class="navbar-nav ml-auto py-0">
-    <?php if ($isLoggedIn): ?>
-        <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                👤 <?php echo $_SESSION['username']; ?>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                  <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
-                                  <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-
-              
-            </div>
-        </div>
-    <?php else: ?>
-        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
-        <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
-    <?php endif; ?>
-</div>
+                    <div class="navbar-nav ml-auto py-0">
+                            <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+                            <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -271,18 +216,30 @@ $result = $conn->query($sql_data);
     <!-- Page Header End -->
 
     <?php
-require_once 'db.php';
+include 'db.php';
 
-$sort = $_GET['sort'] ?? '';
+
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$limit = 6;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Lấy các giá trị lọc
+$search = isset($_GET['query']) ? trim($_GET['query']) : '';
 $price = $_GET['price'] ?? '';
 $brands = isset($_GET['brand']) ? (array)$_GET['brand'] : [];
 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 6;
-$offset = ($page - 1) * $limit;
-
-// Bắt đầu điều kiện WHERE
 $where = "WHERE 1";
+
+// Tìm kiếm theo tên
+if (!empty($search)) {
+    $search_safe = $conn->real_escape_string($search);
+    $where .= " AND name LIKE '%$search_safe%'";
+}
 
 // Lọc theo giá
 if ($price == '0500') {
@@ -300,35 +257,53 @@ if ($price == '0500') {
 // Lọc theo thương hiệu
 if (!empty($brands)) {
     $escapedBrands = array_map(function($b) use ($conn) {
-        return "'" . mysqli_real_escape_string($conn, $b) . "'";
+        return "'" . $conn->real_escape_string($b) . "'";
     }, $brands);
     $where .= " AND category IN (" . implode(",", $escapedBrands) . ")";
 }
 
-// Tính tổng số dòng sau khi lọc
+// Đếm tổng sản phẩm sau lọc
 $count_sql = "SELECT COUNT(*) AS total FROM product $where";
-$count_result = mysqli_query($conn, $count_sql);
-$total_row = mysqli_fetch_assoc($count_result);
+$count_result = $conn->query($count_sql);
+$total_row = $count_result->fetch_assoc();
 $total_products = $total_row['total'];
 $total_pages = ceil($total_products / $limit);
 
-// Thêm sắp xếp
-$order = "ORDER BY id DESC";
-if ($sort == 'az') {
-    $order = "ORDER BY name ASC";
-} elseif ($sort == 'za') {
-    $order = "ORDER BY name DESC";
-} elseif ($sort == 'price-asc') {
-    $order = "ORDER BY price ASC";
-} elseif ($sort == 'price-desc') {
-    $order = "ORDER BY price DESC";
-}
-
-// Câu query chính thức với LIMIT
-$sql = "SELECT * FROM product $where $order LIMIT $limit OFFSET $offset";
-$result = mysqli_query($conn, $sql);
+// Truy vấn sản phẩm với LIMIT
+$sql = "SELECT * FROM product $where ORDER BY id DESC LIMIT $limit OFFSET $offset";
+$result = $conn->query($sql);
 ?>
-  
+<style>
+.input-group.search-bar {
+    margin-bottom: 20px; /* hoặc 1.5rem */
+    display: block;
+    max-width: 250px;
+  height: calc(1.5em + 0.75rem + 10px);
+  padding: 0.1rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  margin-bottom: 20px;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 0.5px solid #EDF1FF;
+  border-radius: 0;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+}
+.input-group-icon{
+height: calc(1.5em + 0.75rem + 10px); /* giống input */
+    padding: 0.1rem 0.1rem;
+
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: none; /* nếu bạn muốn dính liền */
+
+}
+</style>
     <!-- Shop Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
@@ -336,6 +311,16 @@ $result = mysqli_query($conn, $sql);
             <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
                 <form id="filter-form" method="GET" >
+
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="input-group search-bar " placeholder="Nhập nội dung bạn muốn tìm kiếm">
+        <div class="input-group-icon">
+            <button type="submit" class="input-group-text bg-transparent text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Sắp xếp -->
     <div class="mb-5">
         <h5 class="font-weight-semi-bold mb-4">Sắp xếp</h5>
@@ -382,8 +367,8 @@ $result = mysqli_query($conn, $sql);
     <div class="mb-5">
         <h5 class="font-weight-semi-bold mb-4">Thương hiệu</h5>
         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-            <input type="checkbox" class="custom-control-input" name="brand[]" value="VNB" id="brand-1">
-            <label class="custom-control-label" for="brand-1">VNB</label>
+            <input type="checkbox" class="custom-control-input" name="brand[]" value="Mizuno" id="brand-1">
+            <label class="custom-control-label" for="brand-1">Mizuno</label>
         </div>
         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
             <input type="checkbox" class="custom-control-input" name="brand[]" value="Yonex" id="brand-2">
@@ -401,18 +386,18 @@ $result = mysqli_query($conn, $sql);
     <button type="submit" class="btn btn-primary mt-3">Lọc</button>
 </form>
 <style>
-/* Bo góc vuông cho radio */
+/* Bo góc vuông radio */
 .custom-radio-square .custom-control-input ~ .custom-control-label::before {
     border-radius: 0 !important;  /* ô vuông */
 }
 
-/* Tick dấu ✓ giống checkbox */
+/* Tick dấu */
 .custom-radio-square .custom-control-input:checked ~ .custom-control-label::before {
     background-color:rgb(0, 0, 0); /* màu tick nền xanh */
     border-color:rgb(0, 0, 0);
 }
 
-/* Thêm dấu tick như checkbox */
+/*  tick checkbox */
 .custom-radio-square .custom-control-input:checked ~ .custom-control-label::after {
     content: "";
     position: absolute;
@@ -464,67 +449,16 @@ function searchProduct() {
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                     <div class="col-lg-6 col-6 text-left">
-            <form id="filter-form" method="GET">
-    <!-- SEARCH -->
-    <div class="input-group mb-4">
-        <input type="text" id="searchInput" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm" value="<?= htmlspecialchars($_GET['query'] ?? '') ?>">
+            <!-- <form id="filter-form" method="GET">
+    <div class="input-group">
+        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
         <div class="input-group-append">
             <button type="submit" class="input-group-text bg-transparent text-primary">
                 <i class="fa fa-search"></i>
             </button>
         </div>
     </div>
-
-    <!-- SORT -->
-    <div class="mb-4">
-        <h5>Sắp xếp</h5>
-        <div class="custom-control custom-radio custom-radio-square mb-2">
-            <input type="radio" name="sort" value="price-asc" id="sort-price-asc" class="custom-control-input" <?= (isset($_GET['sort']) && $_GET['sort'] == 'price-asc') ? 'checked' : '' ?>>
-            <label class="custom-control-label" for="sort-price-asc">Giá tăng dần</label>
-        </div>
-        <div class="custom-control custom-radio custom-radio-square mb-2">
-            <input type="radio" name="sort" value="price-desc" id="sort-price-desc" class="custom-control-input" <?= (isset($_GET['sort']) && $_GET['sort'] == 'price-desc') ? 'checked' : '' ?>>
-            <label class="custom-control-label" for="sort-price-desc">Giá giảm dần</label>
-        </div>
-    </div>
-
-    <!-- PRICE -->
-    <div class="mb-4">
-        <h5>Chọn mức giá</h5>
-        <?php
-        $prices = [
-            'all' => 'Tất cả giá',
-            '0500' => 'Dưới 500.000đ',
-            '5001' => '500.000đ - 1 triệu',
-            '12' => '1 - 2 triệu',
-            '23' => '2 - 3 triệu',
-            'over3' => 'Trên 3 triệu'
-        ];
-        foreach ($prices as $val => $label): ?>
-            <div class="custom-control custom-radio custom-radio-square mb-2">
-                <input type="radio" name="price" value="<?= $val ?>" id="price-<?= $val ?>" class="custom-control-input" <?= (isset($_GET['price']) && $_GET['price'] == $val) ? 'checked' : '' ?>>
-                <label class="custom-control-label" for="price-<?= $val ?>"><?= $label ?></label>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <!-- BRANDS -->
-    <div class="mb-4">
-        <h5>Thương hiệu</h5>
-        <?php
-        $brands = ['VNB', 'Yonex', 'Lining', 'Victor'];
-        foreach ($brands as $brand): ?>
-            <div class="custom-control custom-checkbox mb-2">
-                <input type="checkbox" name="brand[]" value="<?= $brand ?>" id="brand-<?= $brand ?>" class="custom-control-input"
-                    <?= (isset($_GET['brand']) && in_array($brand, $_GET['brand'])) ? 'checked' : '' ?>>
-                <label class="custom-control-label" for="brand-<?= $brand ?>"><?= $brand ?></label>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Lọc & Tìm kiếm</button>
-</form>
-
+</form> -->
  </div>
                         <p id="output"></p>
                     </div>
@@ -535,12 +469,48 @@ function searchProduct() {
 }
 
 /* Giữ đúng lưới Bootstrap, chỉ cách đều bằng margin */
+.card {
+    height: 97%;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 /* Ảnh sản phẩm */
+.card-img-top {
+    height: 450px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+/* Zoom ảnh khi hover */
+.card-img-top:hover {
+    transform: scale(0.5);
+}
 
 /* Nội dung sản phẩm */
+.card-body {
+    text-align: center;
+}
 
+/* Tên sản phẩm */
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Giá sản phẩm */
+.card-text {
+    font-weight: bold;
+    color:rgb(0, 0, 0);
+    font-size: 1.1rem;
+}
 </style>
 
 
@@ -612,36 +582,34 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         <?php } ?>
     </div>
 
-    <?php if ($total_product > 1 && $total_pages > 1): ?>
-    <nav>
-        <ul class="pagination justify-content-center">
+    <div class="col-12 pb-1">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-3">
             <!-- Nút Previous -->
-            <?php if ($page > 1): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>">&laquo;</a>
-                </li>
-            <?php endif; ?>
+            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page > 1) ? ($page - 1) : 1 ?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
 
-            <!-- Số trang -->
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <!-- Hiển thị số trang -->
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                 <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>"><?= $i ?></a>
+                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
                 </li>
-            <?php endfor; ?>
+            <?php } ?>
 
             <!-- Nút Next -->
-            <?php if ($page < $total_pages): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($search) ? '&query=' . urlencode($search) : '' ?>">&raquo;</a>
-                </li>
-            <?php endif; ?>
+            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= ($page < $total_pages) ? ($page + 1) : $total_pages ?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
         </ul>
     </nav>
-<?php endif; ?>
-
-
-
-
+</div>
 
 </div>
 
