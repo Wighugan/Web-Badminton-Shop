@@ -4,28 +4,27 @@
 <?php
 session_start();
 
-$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
+$isLoggedIn = isset($_SESSION['user_id']);
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "mydp";
 
-// Kết nối đến MySQL
+// Kết nối MySQL
 $conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
 if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
+    die("Kết nối thất bại: " . mysqli_connect_error());
 }
 
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Cập nhật trạng thái đơn hàng nếu có POST
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $new_status = $_POST['status'];
     $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
     $stmt_update = $conn->prepare($update_sql);
     $stmt_update->bind_param("si", $new_status, $order_id);
     if ($stmt_update->execute()) {
-        // Load lại trang để hiển thị trạng thái mới
         echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
         exit;
     } else {
@@ -34,27 +33,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
 }
 
 // Lấy thông tin đơn hàng + khách hàng
-$sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
+$sql_order = "SELECT orders.*, users.fullname, users.numberphone, users.address1 
+              FROM orders 
               JOIN users ON orders.user_id = users.id 
               WHERE orders.id = ?";
-
-              
 $stmt_order = $conn->prepare($sql_order);
 $stmt_order->bind_param("i", $order_id);
 $stmt_order->execute();
 $result_order = $stmt_order->get_result();
 $order = $result_order->fetch_assoc();
 
-// Lấy danh sách sản phẩm trong đơn hàng
-$sql_detail = "SELECT order_details.*, product.image 
-               FROM order_details 
-             left JOIN product ON order_details.product_id = product.id 
-               WHERE order_details.order_id = ?";
+// ✅ Lấy danh sách sản phẩm trong đơn hàng từ chính bảng order_details
+$sql_detail = "
+    SELECT od.*, p.name AS product_name, p.image, p.price AS product_price
+FROM order_details od
+JOIN product p ON od.product_id = p.id
+WHERE od.order_id = ?
+";
+
+
 $stmt_detail = $conn->prepare($sql_detail);
 $stmt_detail->bind_param("i", $order_id);
 $stmt_detail->execute();
 $result_detail = $stmt_detail->get_result();
+
 ?>
+
 
 <?php include 'header.php'; ?>
             <div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
@@ -120,93 +124,92 @@ $result_detail = $stmt_detail->get_result();
 
     <!-- Cart Start -->
     <div class="container-fluid pt-5">
-        <div class="row1 px-xl-6">
-            <div class="col-lg-8 table-responsive mb-5">
-                <table class="table table-bordered text-center mb-0">
-                    <thead class="bg-secondary text-dark">
-                        <tr>
-                        <td>id</td>
-                                <td>Ảnh</td>
-                                 <td>Tên SP</td>
-                                 <td>Số lượng</td>
-                                <td>Giá tiền </td>
-                        </tr>
-                    </thead>
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>STT</th>
+                        <th>Ảnh</th>
+                        <th>Tên SP</th>
+                        <th>Số lượng</th>
+                        <th>Giá tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <?php 
-        $i = 1;
-        $total = 0;
-        while($row = $result_detail->fetch_assoc()) { 
-            $thanhtien = $row['quantity'] * $row['product_price'];
-            $total += $thanhtien;
-        ?>
-        <tr>
-            <td><?= $i++ ?></td>
+                    $i = 1;
+                    $total = 0;
+                    while($row = $result_detail->fetch_assoc()) { 
+                        $quantity = (int)$row['quantity'];
+                        $product_price = (float)$row['product_price'];
+                        $thanhtien = $quantity * $product_price;
+                        $total += $thanhtien;
 
-            <td><img src="<?=  htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
-            <td><?= $row['product_name'] ?></td>
-            <td><?= $row['quantity'] ?></td>
-            <td><?= number_format($row['product_price'], 0, ',', '.') ?> VND</td>
-        </tr>
-        <?php } ?>
+                        // Xử lý đường dẫn ảnh
+                        $imageFile = htmlspecialchars($row['image']);
+                        $serverImagePath = __DIR__ . '/img/' . $imageFile;
+                        $urlImagePath = 'img/' . $imageFile;
 
+                        if (!empty($imageFile) && file_exists($serverImagePath)) {
+                            $imagePath = $urlImagePath;
+                        } else {
+                            $imagePath = 'img/no-image.png';
+                        }
+                    ?>
+                    <tr>
+                        <td><?= $i++ ?></td>
+                        <td><img src="<?= $imagePath ?>" width="80" alt="Ảnh sản phẩm"></td>
+                        <td><?= htmlspecialchars($row['product_name']) ?></td>
+                        <td><?= $quantity ?></td>
+                        <td><?= number_format($product_price, 0, ',', '.') ?> VND</td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+
+            <div class="thanhtoan mt-4">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Tổng tiền hàng:</td>
+                            <td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td>
+                        </tr>
+                        <tr>
+                            <td>Phí vận chuyển:</td>
+                            <td>50.000 VND</td>
+                        </tr>
+                        <tr>
+                            <td>Giảm giá phí vận chuyển:</td>
+                            <td>-50.000 VND</td>
+                        </tr>
+                        <tr>
+                            <td>Phí Bảo Đảm:</td>
+                            <td>30.000 VND</td>
+                        </tr>
+                        <tr>
+                            <td><b>Thành tiền:</b></td>
+                            <td>
+                                <b>
+                                    <?php 
+                                    $total_final = $total + 30000;
+                                    echo number_format($total_final, 0, ',', '.'); 
+                                    ?> VND
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Phương thức thanh toán:</td>
+                            <td>COD</td>
+                        </tr>
                     </tbody>
-        </table>        
-                
-                <div class="thanhtoan">
-            <table>
-        <tbody>
-         
-
-            <tr>
-            
-                <td>Tổng tiền hàng:</td>
-                <td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td>
-            </tr>
-            <tr>
-                <td>Phí vận chuyển:</td>
-                <td>50.000 VND</td>
-            </tr>
-            <tr>
-                <td>Giảm giá phí vận chuyển:</td>
-                <td>-50.000 VND</td>
-            </tr>
-            <tr>
-                <td>Phí Bảo Đảm:</td>
-                <td>30.000 VND</td>
-            </tr>
-            <tr>
-                <td><b>Thành tiền:</b></td>
-                <td>
-                    <b>
-                        <?php 
-                        $total_final = $total + 30000; // phí bảo đảm, miễn phí vận chuyển
-                        echo number_format($total_final, 0, ',', '.'); 
-                        ?> VND
-                    </b>
-                </td>
-            </tr>
-            <tr>
-                <td>Phương thức thanh toán:</td>
-                <td>COD</td>
-                            </tr>
-
-        </table>
-
-
-
+                </table>
             </div>
-           
-                    </div>
 
-                    
-
-
-
-
-                </div>
-            </div>
         </div>
     </div>
+</div>
+
     <!-- Cart End -->
 
 
