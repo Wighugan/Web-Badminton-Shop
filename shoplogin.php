@@ -3,10 +3,9 @@
 <html lang="vi">
     
 <?php
-include 'db.php';
-
 session_start();
-
+include 'database/connect.php';
+$data = new database();
 if (!isset($_SESSION['username'])) {
     header("Location: index.php"); // Chuyển hướng nếu chưa đăng nhập
     exit();
@@ -18,14 +17,15 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Lấy tổng số sản phẩm
-$total_result = $conn->query("SELECT COUNT(*) AS total FROM product");
-$total_row = $total_result->fetch_assoc();
+$total_result = "SELECT COUNT(*) AS total FROM product";
+$data->select($total_result);
+$total_row = $data->fetch();
 $total_products = $total_row['total'];
 $total_pages = ceil($total_products / $limit);
 
 // Lấy sản phẩm cho trang hiện tại
 $sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$result = $conn->query($sql);
+$data->select($sql);
 ?>
 
 <head>
@@ -90,7 +90,7 @@ $result = $conn->query($sql);
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="logedin.php" class="text-decoration-none">
+                <a href="login.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -217,7 +217,7 @@ $(document).ready(function() {
                 <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
                     <!-- Menu bên trái -->
                     <div class="navbar-nav py-0">
-                        <a href="logedin.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="login.php" class="nav-item nav-link active">Trang Chủ</a>
                         <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
                         <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
                     </div>
@@ -243,24 +243,17 @@ $(document).ready(function() {
     </div>
 </div>
     <!-- Navbar End -->
-
-
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.php">Trang Chủ</a></p>
+                <p class="m-0"><a href="login.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
-
-
 <?php
-include 'db.php';
-
-
 if (!isset($_SESSION['username'])) {
     header("Location: index.php");
     exit();
@@ -270,50 +263,74 @@ $limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Lấy các giá trị lọc
 $search = isset($_GET['query']) ? trim($_GET['query']) : '';
 $price = $_GET['price'] ?? '';
 $brands = isset($_GET['brand']) ? (array)$_GET['brand'] : [];
 
-$where = "WHERE 1";
+$where = "WHERE 1=1";
+$params = [];
+$types = "";
 
 // Tìm kiếm theo tên
 if (!empty($search)) {
-    $search_safe = $conn->real_escape_string($search);
-    $where .= " AND name LIKE '%$search_safe%'";
+    $where .= " AND name LIKE ?";
+    $params[] = "%$search%";
+    $types .= "s";
 }
 
 // Lọc theo giá
-if ($price == '0500') {
-    $where .= " AND price < 500000";
-} elseif ($price == '5001') {
-    $where .= " AND price BETWEEN 500000 AND 1000000";
-} elseif ($price == '12') {
-    $where .= " AND price BETWEEN 1000000 AND 2000000";
-} elseif ($price == '23') {
-    $where .= " AND price BETWEEN 2000000 AND 3000000";
-} elseif ($price == 'over3') {
-    $where .= " AND price > 3000000";
+switch ($price) {
+    case '0500':
+        $where .= " AND price < ?";
+        $params[] = 500000;
+        $types .= "i";
+        break;
+    case '5001':
+        $where .= " AND price BETWEEN ? AND ?";
+        $params[] = 500000;
+        $params[] = 1000000;
+        $types .= "ii";
+        break;
+    case '12':
+        $where .= " AND price BETWEEN ? AND ?";
+        $params[] = 1000000;
+        $params[] = 2000000;
+        $types .= "ii";
+        break;
+    case '23':
+        $where .= " AND price BETWEEN ? AND ?";
+        $params[] = 2000000;
+        $params[] = 3000000;
+        $types .= "ii";
+        break;
+    case 'over3':
+        $where .= " AND price > ?";
+        $params[] = 3000000;
+        $types .= "i";
+        break;
 }
 
 // Lọc theo thương hiệu
 if (!empty($brands)) {
-    $escapedBrands = array_map(function($b) use ($conn) {
-        return "'" . $conn->real_escape_string($b) . "'";
-    }, $brands);
-    $where .= " AND category IN (" . implode(",", $escapedBrands) . ")";
+    $placeholder = implode(',', array_fill(0, count($brands), '?'));
+    $where .= " AND category IN ($placeholder)";
+    foreach ($brands as $brand) {
+        $params[] = $brand;
+        $types .= "s";
+    }
 }
-
 // Đếm tổng sản phẩm sau lọc
 $count_sql = "SELECT COUNT(*) AS total FROM product $where";
-$count_result = $conn->query($count_sql);
-$total_row = $count_result->fetch_assoc();
+$data->select_prepare($count_sql, $types, ...$params);
+$total_row = $data->fetch();
 $total_products = $total_row['total'];
 $total_pages = ceil($total_products / $limit);
-
 // Truy vấn sản phẩm với LIMIT
-$sql = "SELECT * FROM product $where ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$result = $conn->query($sql);
+$sql = "SELECT * FROM product $where ORDER BY id DESC LIMIT ? OFFSET ?";
+$params[] = $limit;
+$params[] = $offset;
+$types .= "ii";
+$data->select_prepare($sql, $types, ...$params);
 ?>
 <style>
 .input-group.search-bar {
@@ -557,27 +574,16 @@ function searchProduct() {
 
 
 
-                    <?php
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$database = "mydp"; 
-
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+<?php
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-    $search = $conn->real_escape_string($_GET['query']);
+    $search = trim($_GET['query']);
     $sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
+    $data->select($sql);
+    if ($data->numRows() > 0) {
         echo '<div class="container">';
         echo '<h2>Kết quả tìm kiếm:</h2>';
         echo '<div class="row">';
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $data->fetch()) {
             echo '<div class="col-md-4">';
             echo '<div class="card mb-4">';
             // Bọc ảnh bằng thẻ <a> để click vào ảnh => đi đến chi tiết
@@ -600,7 +606,7 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
       
                     <div class="container">
     <div class="row">
-        <?php while ($row = $result->fetch_assoc()) { ?>
+        <?php while ($row = $data->fetch()) { ?>
             <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
                     <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -652,15 +658,11 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         </ul>
     </nav>
 </div>
-
 </div>
-
-
-
 <?php
-$conn->close();
+$data->close();
 ?>
-            <!-- Shop Product End -->
+<!-- Shop Product End -->
         </div>
     </div>
     <!-- Shop End -->
@@ -669,7 +671,7 @@ $conn->close();
      <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <a href="logedin.html" class="text-decoration-none">
+                <a href="login.html" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative; top: -10px;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
@@ -685,7 +687,7 @@ $conn->close();
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="login.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
                             <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
                             <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
                             <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>

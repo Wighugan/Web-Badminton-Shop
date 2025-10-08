@@ -2,30 +2,12 @@
 <html lang="en">
 <?php
 // Thông tin kết nối database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
-}
-$id = $_GET['id'] ?? '';
-if (!$id) {
-    die("Không tìm thấy sản phẩm!");
-}
-
+include "database/connect.php";
+$data = new Database();
 // Lấy thông tin sản phẩm từ database
 $sql = "SELECT * FROM product WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$product = $result->fetch_assoc();
+$data->select_prepare($sql, "i", [$_GET['id']]);
+$product = $data->fetch();
 if (!$product) {
     die("Sản phẩm không tồn tại!");
 }

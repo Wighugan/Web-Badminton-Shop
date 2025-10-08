@@ -1,276 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <?php
 session_start();
-ob_start(); // Bắt đầu buffer
-
-require 'db.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $db_password);
-        $stmt->fetch();
-
-        if ($password === $db_password) {
-            $_SESSION['user_id'] = $id;
-            $_SESSION['username'] = $username;
-header("Location: index.php");
-            exit();
-        } else {
-            $error = "⚠  Sai mật khẩu!";
-        }
-    } else {
-        $error = "⚠  Sai tên đăng nhập!";
-    }
+include "database/connect.php";
+// Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
+if (!isset($_SESSION['user_id'])) {
+    header("Location: Signin.php");
+    exit();
 }
-ob_end_flush(); // Xuất buffer ra HTML
 ?>
+<?php include 'header.php'; ?>
 
-<head>
-    <meta charset="utf-8">
-    <title>MMB- Shop Bán Đồ Cầu Lông</title>
-    <link href='img/logo.png' rel='icon' type='image/x-icon' />
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
-
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
-</head>
-
-<body>
-    <!-- Topbar Start -->
-    <!DOCTYPE html>
-
-<html>
-
-<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phone Store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-        }
-        nav {
-            display:flex;
-            background-color: #444444;
-            padding: 10px;
-            justify-content: center;
-            align-items: center;
-            gap:20px;
-        }
-        nav a {
-            color: #fff;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-    
-
-.login-container {
-    background-color: white;
-    padding: 15px; /* Giảm padding để form gọn lại */
-    border-radius: 8px; /* Giữ độ bo viền nhẹ */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
-    width: 400px; /* Giảm chiều rộng của form */
-    margin: 150px auto; /* Canh giữa trang */
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 15px; /* Giảm khoảng cách giữa tiêu đề và form */
-    font-size: 1.2rem; /* Giảm kích thước tiêu đề */
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px; /* Giảm khoảng cách giữa các nhóm input */
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-size: 0.9rem; /* Giảm kích thước chữ của label */
-}
-
-input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 8px; /* Giảm padding trong các input */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 100%;
-    padding: 8px; /* Giảm padding của nút */
-    background-color: #000000;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem; /* Giảm kích thước chữ trên nút */
-}
-
-button:hover {
-    background-color: #969393;
-}
-.no-border-button {
-        border: none;      /* Loại bỏ viền */
-        outline: none;     /* Loại bỏ viền đen khi nhấn vào */
-        background: #000000;  /* Loại bỏ nền, nếu muốn */
-        cursor: pointer;   /* Hiển thị con trỏ tay khi di chuột */
-}
-
-.no-border-button:focus {
-        outline: none;     /* Đảm bảo không có viền khi lấy focus */
-}
-
-.no-border-button-rec{
-        border: 0px;      /* Loại bỏ viền */
-        border-radius: 0;
-        outline: none;     /* Loại bỏ viền đen khi nhấn vào */
-        background: #000000;  /* Loại bỏ nền, nếu muốn */
-        cursor: pointer;   /* Hiển thị con trỏ tay khi di chuột */
-}
-
-.no-border-button-rec:focus {
-        outline: none;     /* Đảm bảo không có viền khi lấy focus */
-}
-   
-
-.footer {
-    text-align: center;
-    margin-top: 12px; /* Giảm khoảng cách giữa nút và footer */
-    font-size: 0.85rem; /* Giảm kích thước chữ trong footer */
-    color: #777;
-}
-
-.error {
-            background: #fdecea;
-            color: #d32f2f;
-            border: 1px solid #d32f2f;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-</style>
-
-</head>
-<body>
- <!-- Topbar Start -->
- <div class="container-fluid">
-    <div class="row bg-secondary py-2 px-xl-5">
-        <div class="col-lg-6 d-none d-lg-block">
-            <div class="d-inline-flex align-items-center">
-                <a class="text-dark" href="">Câu Hỏi Thường Gặp</a>
-                <span class="text-muted px-2">|</span>
-                <a class="text-dark" href="">Trợ Giúp</a>
-                <span class="text-muted px-2">|</span>
-                <a class="text-dark" href="">Hỗ Trợ</a>
-            </div>
-        </div>
-        <div class="col-lg-6 text-center text-lg-right">
-            <div class="d-inline-flex align-items-center">
-                <a class="text-dark px-2" href="">
-                    <i class="fab fa-facebook-f"></i>
+<div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
+    <div class="row border-top px-xl-5">
+        <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
+                <a href="" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
+                    </h1>
                 </a>
-                <a class="text-dark px-2" href="">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a class="text-dark px-2" href="">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a class="text-dark px-2" href="">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a class="text-dark pl-2" href="">
-                    <i class="fab fa-youtube"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row align-items-center py-3 px-xl-5">
-        <div class="col-lg-3 d-none d-lg-block">
-            <a href="index.html" class="text-decoration-none">
-                <div style="display: flex; align-items: center; position: relative;">
-                    <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                    <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
+                    <!-- Menu bên trái -->
+                    <div class="navbar-nav py-0">
+                        <a href="login.php" class="nav-item nav-link active">Trang Chủ</a>
+                        <a href="shoplogin.php" class="nav-item nav-link">Sản Phẩm</a>
+                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
+                    </div>
+
+                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
+                    <div class="navbar-nav py-0" style="margin-right: 65px;"> <!-- thêm khoảng cách vào trái -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">
+                                <?php 
+                                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : "Khách"; 
+                                ?>
+                            </a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
+                                <a href="suathongtinuser.php" class="dropdown-item">Đổi Thông Tin</a>
+                                <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </a>
+            </nav>
         </div>
-      
-        
     </div>
 </div>
-<!-- Topbar End -->
 
 
-    <div class="login-container">
-   
-    <?php if (!empty($error)) { ?>
-    <div class="error"><?php echo $error; ?></div>
-<?php } ?>
 
-            <h2>Đăng Nhập</h2>
 
-            <form action="login.php" method="post">
-                <div class="form-group">
-                    <label for="username">Tên đăng nhập hoặc Email</label>
-                    <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
+                <div id="header-carousel" class="carousel slide" data-ride="carousel" style="width: 100vw; overflow: hidden;">
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-1.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm giá 10%</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Áo và Quần cầu lông</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
                 </div>
-                <div class="form-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" placeholder="Mật Khẩu" required>
-                    
-                </div>
-  
-                <button class="no-border-button" type="submit">Đăng Nhập</button>
-               
-            </form>
-            <div class="footer">
-                <p>Chưa có tài khoản? <a href="signup.php">Đăng Ký</a></p>
             </div>
         </div>
-        
-</html>
+        <div class="carousel-item" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-2.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700px;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm 20%</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Cho đơn hàng đầu tiên</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 410px;">
+            <img class="w-100" style="object-fit: cover; height: 100%;" src="img/carousel-3.jpg" alt="Image">
+            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                <div class="p-3" style="max-width: 700px;">
+                    <h4 class="text-light text-uppercase font-weight-medium mb-3">Ưu đãi</h4>
+                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Bảo hành trong 12 tháng</h3>
+                    <a href="shoplogin.php" class="btn btn-light py-2 px-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- Footer Start -->
+
+                    
+                    <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
+                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                            <span class="carousel-control-prev-icon mb-n2"></span>
+                        </div>
+                    </a>
+                    <a class="carousel-control-next" href="#header-carousel" data-slide="next">
+                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                            <span class="carousel-control-next-icon mb-n2"></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- Featured Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5 pb-3">
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
+                    <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">Cam Kết Chất Lượng</h5>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
+                    <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
+                    <h5 class="font-weight-semi-bold m-0">Free Ship</h5>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
+                    <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">Hoàn Trả Trong 14 Ngày</h5>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
+                    <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">Hỗ Trợ 24/7</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Featured End -->
+
+
+     
+
+
+    <!-- Offer Start -->
+    <div class="container-fluid offer pt-5">
+        <div class="row px-xl-5">
+            <div class="col-md-6 pb-4">
+                <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
+                    <img src="img/offer-1.png" alt="">
+                    <div class="position-relative" style="z-index: 1;">
+                        <h5 class="text-uppercase text-primary mb-3">Giảm 20% Bộ Sưu Tập</h5>
+                        <h1 class="mb-4 font-weight-semi-bold">Yonex Astrox</h1>
+                        <a href="shoplogin.php" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pb-4">
+                <div class="position-relative bg-secondary text-center text-md-left text-white mb-2 py-5 px-5">
+                    <img src="img/offer-2.png" alt="">
+                    <div class="position-relative" style="z-index: 1;">
+                        <h5 class="text-uppercase text-primary mb-3">Giảm 20% Bộ Sưu Tập</h5>
+                        <h1 class="mb-4 font-weight-semi-bold">Lining Tectonic</h1>
+                        <a href="shoplogin.php" class="btn btn-outline-primary py-md-2 px-md-3">Xem Ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Offer End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Nổi Bật</span></h2>
+        </div>
+
+        <div class="row px-xl-5 pb-3">
+
+        <?php
+
+// Lấy danh sách sản phẩm
+$data = new database();
+$sql = "SELECT * FROM product ORDER BY id ASC";
+$data->select($sql);
+
+if ($data->numRows() > 0) {
+    while ($row = $data->fetch()) { ?>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="card product-item border-0 mb-4">
+                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
+                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
+                    </a>
+                </div>
+                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
+                    <div class="d-flex justify-content-center">
+    <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        <?php if ($row['price'] > 0) { ?>
+                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
+                        <?php } ?>
+                    </div>
+                </div>
+               
+                <script>
+                function done() {
+                  alert("Đã thêm vào giỏ hàng!");
+                }
+              </script>
+            </div>
+        </div>
+    <?php }
+} else {
+    echo "<p>Không có sản phẩm nào!</p>";
+}
+?>
+    <!-- Products Start -->
+    <div class="container-fluid pt-5">
+        
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Mới</span></h2>
+        </div>
+
+        <div class="row px-xl-5 pb-3">
+            
+           
+        <?php
+
+// Lấy danh sách sản phẩm
+$sql = "SELECT * FROM product ORDER BY id ASC";
+$data->select($sql);
+
+if ($data->numRows() > 0) {
+    while ($row = $data->fetch()) { ?>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="card product-item border-0 mb-4">
+                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
+                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
+                    </a>
+                </div>
+                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
+                    <div class="d-flex justify-content-center">
+                        <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
+                        <?php if ($row['price'] > 0) { ?>
+                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
+                        <?php } ?>
+                    </div>
+                </div>
+               
+                <script>
+                function done() {
+                  alert("Đã thêm vào giỏ hàng!");
+                }
+              </script>
+            </div>
+        </div>
+    <?php }
+} else {
+    echo "<p>Không có sản phẩm nào!</p>";
+}
+$data->close();
+?>
+    <!-- Products End -->
+
+
+    
+
+    <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
         <div class="row px-xl-5 pt-5">
             <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <a href="index.html" class="text-decoration-none">
+                <a href="login.php" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative; top: -10px;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
@@ -286,12 +291,11 @@ button:hover {
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Chi Tiết Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
+                            <a class="text-dark mb-2" href="login.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
+                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
+                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
+                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
@@ -307,7 +311,7 @@ button:hover {
                                     required="required" />
                             </div>
                             <div>
-                                <button class="no-border-button-rec" type="submit">Đăng Kí Ngay</button>
+                                <button class="no-border-button-rec-c" type="submit">Đăng Kí Ngay</button>
                             </div>
                         </form>
                     </div>
@@ -318,7 +322,7 @@ button:hover {
             <div class="col-md-6 px-xl-0">
                 <p class="mb-md-0 text-center text-md-left text-dark">
                     &copy; <a class="text-dark font-weight-semi-bold" href="#">Trường Đại Học Sài Gòn</a>
-                    <a class="text-dark font-weight-semi-bold" href=""></a>
+                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com"></a>
                 </p>
             </div>
             <div class="col-md-6 px-xl-0 text-center text-md-right">
@@ -333,8 +337,18 @@ button:hover {
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
-  
-    
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
 </body>
 
 </html>

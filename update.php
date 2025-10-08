@@ -1,10 +1,7 @@
 <?php
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+include "database/connect.php";
+$data = new Database();
 
 // Nhận dữ liệu từ form
 $id = $_POST['id'];
@@ -33,21 +30,17 @@ if (!empty($_FILES["avatar"]["name"])) {
 // Cập nhật dữ liệu
 if ($avatar) {
     $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?,city=?, birthday=?, avatar=?, numberphone=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssi", $username, $fullname, $email, $address,$city, $birthday, $avatar, $numberphone, $id);
+    $data->select_prepare($sql, "ssssssssi", [$username, $fullname, $email, $address,$city, $birthday, $avatar, $numberphone, $id]);
 } else {
     $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?,city=?, birthday=?, numberphone=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssi", $username, $fullname, $email, $address,$city, $birthday, $numberphone, $id);
+    $data->select_prepare($sql, "sssssssi", [$username, $fullname, $email, $address,$city, $birthday, $numberphone, $id]);
 }
 
-if ($stmt->execute()) {
+if ($data->execute()) {
     header("Location: suathongtinuser.php");
     exit();
 } else {
-    echo "Lỗi: " . $stmt->error;
+    echo "Lỗi: ";
 }
-
-$stmt->close();
-$conn->close();
+$data->close();
 ?>

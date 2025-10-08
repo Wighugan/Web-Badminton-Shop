@@ -1,18 +1,12 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "mydp";
-
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+include 'database/connect.php';
+$data = new Database();
 
 if (isset($_GET['query'])) {
-    $search = $conn->real_escape_string($_GET['query']);
-    $sql = "SELECT * FROM products WHERE name LIKE '%$search%'";
-    $result = $conn->query($sql);
+    $search = trim($_GET['query']);
+    $sql = "SELECT * FROM products WHERE name LIKE ?";
+    $params = "%" . $search . "%";
+    $data->select_prepare($sql, "s", $params );
     ?>
     <!DOCTYPE html>
     <html lang="vi">
@@ -23,8 +17,8 @@ if (isset($_GET['query'])) {
     <body>
         <h1>Kết quả cho "<?php echo htmlspecialchars($search); ?>"</h1>
         <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
+        if ($data->execute()) {
+            while ($row = $data->fetch()) {
                 echo "<p>" . htmlspecialchars($row['name']) . "</p>";
             }
         } else {

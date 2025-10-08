@@ -4,17 +4,8 @@
 <?php
 session_start();
 
-$isLoggedIn = isset($_SESSION['user_id']);
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-// Kết nối MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
-}
+include "database/connect.php";
+$data = new Database();
 
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -22,27 +13,17 @@ $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $new_status = $_POST['status'];
     $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
-    $stmt_update = $conn->prepare($update_sql);
-    $stmt_update->bind_param("si", $new_status, $order_id);
-    if ($stmt_update->execute()) {
-        echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
-        exit;
-    } else {
-        echo "<script>alert('Cập nhật trạng thái thất bại!');</script>";
-    }
+    $data->command_prepare($update_sql, "si", $new_status, $order_id);
+    echo "<script>location.href='chitietdonhang.php?id=$order_id';
+</script>";
+    exit();
 }
 
 // Lấy thông tin đơn hàng + khách hàng
-$sql_order = "SELECT orders.*, users.fullname, users.numberphone, users.address1 
-              FROM orders 
-              JOIN users ON orders.user_id = users.id 
-              WHERE orders.id = ?";
-$stmt_order = $conn->prepare($sql_order);
-$stmt_order->bind_param("i", $order_id);
-$stmt_order->execute();
-$result_order = $stmt_order->get_result();
-$order = $result_order->fetch_assoc();
 
+$sql_order = "SELECT orders.*, users.fullname, users.numberphone, users.address1 FROM orders JOIN users ON orders.user_id = users.id WHERE orders.id = ?";
+$data->select_prepare($sql_order, "i", $order_id);
+$order = $data->fetch();
 // ✅ Lấy danh sách sản phẩm trong đơn hàng từ chính bảng order_details
 $sql_detail = "
     SELECT od.*, p.name AS product_name, p.image, p.price AS product_price
@@ -50,13 +31,8 @@ FROM order_details od
 JOIN product p ON od.product_id = p.id
 WHERE od.order_id = ?
 ";
-
-
-$stmt_detail = $conn->prepare($sql_detail);
-$stmt_detail->bind_param("i", $order_id);
-$stmt_detail->execute();
-$result_detail = $stmt_detail->get_result();
-
+$data->select_prepare($sql_detail, "i", $order_id);
+$result_detail = $data->execute() ? $data : null;
 ?>
 
 
@@ -94,11 +70,10 @@ $result_detail = $stmt_detail->get_result();
                 <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
                                   <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
 
-              
             </div>
         </div>
     <?php else: ?>
-        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signin.php" class="nav-item nav-link">Đăng Nhập</a>
         <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
     <?php endif; ?>
 </div>
@@ -140,7 +115,7 @@ $result_detail = $stmt_detail->get_result();
                     <?php 
                     $i = 1;
                     $total = 0;
-                    while($row = $result_detail->fetch_assoc()) { 
+                    while($row = $result_detail->fetch()) { 
                         $quantity = (int)$row['quantity'];
                         $product_price = (float)$row['product_price'];
                         $thanhtien = $quantity * $product_price;

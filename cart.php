@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include 'db.php';
+include 'database/connect.php';
 session_start();
-$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
+$data = new database();
+$isLoggedIn = isset($_SESSION['user_id']);
 $total = 0;
 
 if (!isset($_SESSION['username'])) {
@@ -13,24 +14,14 @@ if (!isset($_SESSION['username'])) {
 $user_id = $_SESSION['user_id'];
 
 // Lấy danh sách sản phẩm trong giỏ hàng
-$query = $conn->prepare("
-    SELECT 
-        product.id AS product_id,       -- ✅ Đảm bảo cột này tồn tại
-        cart.id AS cart_id,             -- (tùy bạn có cần cart_id hay không)
-        product.name,
-        product.image,
-        product.price,
-        cart.quantity 
-    FROM cart 
+$data->select_prepare("
+    SELECT product.id AS product_id,cart.id AS cart_id,product.name,product.image,product.price,cart.quantity FROM cart 
     JOIN product ON cart.product_id = product.id 
     WHERE cart.user_id = ?
-");
-$query->bind_param("i", $user_id);
-$query->execute();
-$result = $query->get_result();
+", "i", $user_id);
 
 $cart_items = [];
-while ($row = $result->fetch_assoc()) {
+while ($row = $data->fetch()) {
     $cart_items[] = $row;
 }
 ?>

@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$conn = new mysqli('localhost', 'root', '', 'mydp');
+$conn = new mysqli('localhost', 'root', '', 'mydb');
 if ($conn->connect_error) {
     die('Kết nối thất bại: ' . $conn->connect_error);
 }
@@ -51,10 +51,10 @@ if (isset($_POST['place_order'])) {
     foreach ($cart_items as $item) {
         var_dump($item); // kiểm tra giá trị thật sự
 
-        $sql = "INSERT INTO order_details (order_id, product_id, product_name, product_price, quantity) 
+        $sql = "INSERT INTO order_details (order_id,id, product_name, product_price, quantity) 
         VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iisii", $order_id, $item['product_id'], $item['name'], $item['price'], $item['quantity']);
+$stmt->bind_param("iisii", $order_id, $item['id'], $item['name'], $item['price'], $item['quantity']);
 $stmt->execute();
     }
    
