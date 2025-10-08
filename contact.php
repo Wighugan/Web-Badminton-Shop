@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 $servername = "localhost"; // Thay đổi nếu cần
 $username = "root"; // Tài khoản MySQL mặc định trên XAMPP
 $password = ""; // Mật khẩu (nếu có)
-$database = "mydp"; // Thay bằng tên database của bạn
+$database = "mydb"; // Thay bằng tên database của bạn
 
 // Tạo kết nối
 $conn = new mysqli($servername, $username, $password, $database);

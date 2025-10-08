@@ -4,18 +4,14 @@
 
 
 // Kết nối đến MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include "database/connect.php";
+$data = new Database();
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $new_status = $_POST['status'];
     $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
-    $stmt_update = $conn->prepare($update_sql);
-    $stmt_update->bind_param("si", $new_status, $order_id);
-    if ($stmt_update->execute()) {
+    $data->command_prepare($update_sql, "si", $new_status, $order_id);
+    if ($data->execute()) {
         // Load lại trang để hiển thị trạng thái mới
         echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
         exit;
@@ -29,24 +25,16 @@ $sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address
               JOIN users ON orders.user_id = users.id 
               WHERE orders.id = ?";
 
-              
-$stmt_order = $conn->prepare($sql_order);
-$stmt_order->bind_param("i", $order_id);
-$stmt_order->execute();
-$result_order = $stmt_order->get_result();
-$order = $result_order->fetch_assoc();
 
+$data->select_prepare($sql_order, "i", $order_id);
+$order = $data->fetch();
 // Lấy danh sách sản phẩm trong đơn hàng
 $sql_detail = "SELECT order_details.*, product.image 
                FROM order_details 
              left JOIN product ON order_details.product_id = product.id 
                WHERE order_details.order_id = ?";
-$stmt_detail = $conn->prepare($sql_detail);
-$stmt_detail->bind_param("i", $order_id);
-$stmt_detail->execute();
-$result_detail = $stmt_detail->get_result();
-
-
+$data->select_prepare($sql_detail, "i", $order_id);
+$result_detail = $data->execute() ? $data : null;
 ?>
 
 
@@ -217,7 +205,7 @@ $result_detail = $stmt_detail->get_result();
                         <?php 
         $i = 1;
         $total = 0;
-        while($row = $result_detail->fetch_assoc()) { 
+        while($row = $result_detail->fetch()) { 
             $thanhtien = $row['quantity'] * $row['product_price'];
             $total += $thanhtien;
         ?>

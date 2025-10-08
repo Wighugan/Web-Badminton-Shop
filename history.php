@@ -5,36 +5,21 @@
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
-}
-
+include 'database/connect.php';
+$data = new Database();
 $limit = 10; // số đơn hàng mỗi trang
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
-
 if (!isset($_SESSION['user_id'])) {
     die("Bạn chưa đăng nhập!");
 }
 
 $user_id = $_SESSION['user_id'];  // Lấy ID từ session
 // Lấy thông tin người dùng
-$stmt = $conn->prepare("SELECT fullname, numberphone FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user_result = $stmt->get_result();
-$user = $user_result->fetch_assoc();
+$data->select_prepare("SELECT fullname, numberphone FROM users WHERE id = ?", "i", $user_id);
+$data->execute();
+$user = $data->fetch();
 
 if (!$user) {
     die("Người dùng không tồn tại!");
@@ -42,29 +27,24 @@ if (!$user) {
 
 
 // Lấy các đơn hàng của người dùng
-$stmt = $conn->prepare("SELECT orders.*, users.fullname, users.numberphone 
+$stmt = $data->select_prepare("SELECT orders.*, users.fullname, users.numberphone 
                         FROM orders 
                         JOIN users ON orders.user_id = users.id 
                         WHERE orders.user_id = ? 
                         ORDER BY orders.created_at DESC");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$stmt_count = $conn->prepare("SELECT COUNT(*) as total FROM orders WHERE user_id = ?");
-$stmt_count->bind_param("i", $user_id);
-$stmt_count->execute();
-$count_result = $stmt_count->get_result()->fetch_assoc();
+$data->execute();
+$stmt_count = $data->select_prepare("SELECT COUNT(*) as total FROM orders WHERE user_id = ?", "i", $user_id);
+$data->execute();
+$count_result = $stmt_count->fetch();
 $total_orders = $count_result['total'];
 
-$stmt = $conn->prepare("SELECT orders.*, users.fullname, users.numberphone
+$stmt ="SELECT orders.*, users.fullname, users.numberphone
                          FROM orders 
                           JOIN users ON orders.user_id = users.id 
                          WHERE orders.user_id = ? 
-                         ORDER BY created_at DESC LIMIT ?, ?");
-$stmt->bind_param("iii", $user_id, $offset, $limit);
-$stmt->execute();
-$result = $stmt->get_result();
+                         ORDER BY created_at DESC LIMIT ?, ?";
+$data->select_prepare($stmt, "iii", $user_id, $offset, $limit);
+$data->execute();
 $total_pages = ceil($total_orders / $limit);
 
 ?>
@@ -107,7 +87,7 @@ $total_pages = ceil($total_orders / $limit);
             </div>
         </div>
     <?php else: ?>
-        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signin.php" class="nav-item nav-link">Đăng Nhập</a>
         <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
     <?php endif; ?>
 </div>

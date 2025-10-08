@@ -1,6 +1,7 @@
 <?php
 session_start();
-include 'db.php'; // Kết nối CSDL
+include 'database/connect.php';
+$data = new database();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -19,26 +20,18 @@ if ($quantity < 1) {
 }
 
 // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-$check_cart = $conn->prepare("SELECT quantity FROM cart WHERE product_id = ? AND user_id = ?");
-$check_cart->bind_param("ii", $product_id, $user_id);
-$check_cart->execute();
-$result = $check_cart->get_result();
+$check_cart = $data->select_prepare("SELECT quantity FROM cart WHERE product_id = ? AND user_id = ?", "ii", $product_id, $user_id);
+$result = $data->fetch();
 
-if ($result->num_rows > 0) {
+if ($result) {
     // Nếu sản phẩm đã có trong giỏ -> Cập nhật số lượng
-    $update_cart = $conn->prepare("UPDATE cart SET quantity = quantity + ? WHERE product_id = ? AND user_id = ?");
-    $update_cart->bind_param("iii", $quantity, $product_id, $user_id);
-    $update_cart->execute();
-    $update_cart->close();
+    $data->select_prepare("UPDATE cart SET quantity = quantity + ? WHERE product_id = ? AND user_id = ?", "iii", $quantity, $product_id, $user_id);
 } else {
     // Nếu sản phẩm chưa có -> Thêm mới vào giỏ hàng
-    $insert_cart = $conn->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
-    $insert_cart->bind_param("iii", $user_id, $product_id, $quantity);
-    $insert_cart->execute();
-    $insert_cart->close();
+    $data->select_prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)", "iii", $user_id, $product_id, $quantity);
 }
 
-$check_cart->close();
+$data->close();
 
 // Quay lại giỏ hàng
 $_SESSION['success_message'] = "Sản phẩm đã được thêm vào giỏ hàng.";

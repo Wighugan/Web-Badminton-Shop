@@ -1,28 +1,8 @@
-
 <?php
-session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
-
-// Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
-$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
-
-
-$servername = "localhost"; // Thay đổi nếu cần
-$username = "root"; // Tài khoản MySQL mặc định trên XAMPP
-$password = ""; // Mật khẩu (nếu có)
-$database = "mydp"; // Thay bằng tên database của bạn
-
-// Tạo kết nối
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
-
-
+session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
+include "database/connect.php";
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -207,15 +187,10 @@ $(document).ready(function() {
             </div>
         </div>
     <?php else: ?>
-        <a href="Login.php" class="nav-item nav-link">Đăng Nhập</a>
+        <a href="Signin.php" class="nav-item nav-link">Đăng Nhập</a>
         <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
     <?php endif; ?>
 </div>
-
-
-
-
-
                         </div>
                     </div>
                 </div>
@@ -349,15 +324,16 @@ $(document).ready(function() {
             <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Nổi Bật</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
-
         <?php
-
 // Lấy danh sách sản phẩm
+$data = new database();
 $sql = "SELECT * FROM product ORDER BY id ASC";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) { ?>
+$data->select($sql);
+    while ($row = $data->fetch()) { 
+        if($row == 0 || $row === null){
+            break;
+        }
+?>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="card product-item border-0 mb-4">
                 <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -383,16 +359,7 @@ if ($result->num_rows > 0) {
             </div>
         </div>
     <?php }
-} else {
-    echo "<p>Không có sản phẩm nào!</p>";
-}
 ?>
-
-
-
-
-
-
 
     <!-- Products Start -->
     <div class="container-fluid pt-5">
@@ -405,13 +372,13 @@ if ($result->num_rows > 0) {
             
            
         <?php
-
 // Lấy danh sách sản phẩm
 $sql = "SELECT * FROM product ORDER BY id ASC";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) { ?>
+$data->select($sql);
+    while ($row = $data->fetch()) {
+        if($row == 0 || $row === null)
+            break;
+        ?>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="card product-item border-0 mb-4">
                 <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -427,51 +394,31 @@ if ($result->num_rows > 0) {
                             <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
                         <?php } ?>
                     </div>
-                </div>
-                
+                </div>    
                 <script>
                 function showMessage() {
                     alert("Chưa đăng nhập!");
                 }
-              </script>
+                </script>
             </div>
         </div>
     <?php }
-} else {
-    echo "<p>Không có sản phẩm nào!</p>";
-}
-$conn->close();
 ?>
     <!-- Products End -->
-
-
-    <?php include 'footer.php'; ?>
-
-
+    <?php include 'footer.php';?>
     <!-- Footer End -->
-
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
-
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
     <!-- Contact Javascript File -->
     <script src="mail/jqBootstrapValidation.min.js"></script>
     <script src="mail/contact.js"></script>
-
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-
-
-
-
-
 </body>
 
 </html>

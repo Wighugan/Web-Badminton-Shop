@@ -1,19 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include 'database/connect.php';$data = new Database();
 
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$district = isset($_GET['district']) ? trim($_GET['district']) : ''; // Lấy giá trị quận/huyện
+$district = isset($_GET['district']) ? trim($_GET['district']) : '';
 
 $limit = 5;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -45,30 +36,23 @@ if (!empty($where)) {
 
 // Đếm tổng số kết quả
 $sql_total = "SELECT COUNT(*) AS total FROM users $where_sql";
-$stmt_total = $conn->prepare($sql_total);
-if (!empty($params)) {
-    $stmt_total->bind_param($param_types, ...$params);
-}
-$stmt_total->execute();
-$total_users = $stmt_total->get_result()->fetch_assoc()['total'];
-$stmt_total->close();
+$data->select_prepare($sql_total, $param_types, ...$params);
+$total_users = $data->fetch()['total'];
 
 // Lấy dữ liệu người dùng
 $sql_data = "SELECT * FROM users $where_sql ORDER BY id DESC LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($sql_data);
+$param_types_data = $param_types . "ii";
+$params_data = $params;
+$params_data[] = $limit;
+$params_data[] = $offset;
+$data->select_prepare($sql_data, $param_types_data, ...$params_data);
 
-// Gộp lại tất cả params + thêm limit, offset
-$params[] = $limit;
-$params[] = $offset;
-$param_types .= "ii";
-
-$stmt->bind_param($param_types, ...$params);
-$stmt->execute();
-$result = $stmt->get_result();
-
+$result = [];
+while ($row = $data->fetch()) {
+    $result[] = $row;
+}
 $total_pages = ceil($total_users / $limit);
 ?>
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -285,14 +269,12 @@ $total_pages = ceil($total_users / $limit);
                         </thead>
 
                         <tbody>
-                           
-            
-                        <?php
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+<?php
+if (count($result) > 0) {
+    foreach ($result as $row) {
         echo "<tr>
                 <td>{$row['id']}</td>
-                <td>  <img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'>    </td>
+                <td><img src='../../{$row['avatar']}' width='50' height='50' style='border-radius: 0%;'></td>
                 <td>{$row['username']}</td>
                 <td>{$row['fullname']}</td>
                 <td>{$row['email']}</td>
@@ -300,7 +282,7 @@ if ($result->num_rows > 0) {
                 <td>{$row['address']}</td>
                 <td>" . date("d/m/Y", strtotime($row['birthday'])) . "</td>
                 <td>
-                    <a href='suakhachhang.php?id={$row['id']}' id='suanguoidung'_{$row['id']}'>
+                    <a href='suakhachhang.php?id={$row['id']}' id='suanguoidung_{$row['id']}'>
                         <i class='fas fa-edit'></i> Sửa
                     </a>
                     <a href='#' onclick='deleteuser({$row['id']})' style='color: red;'>
@@ -310,13 +292,11 @@ if ($result->num_rows > 0) {
               </tr>";
     }
 } else {
-    echo "<tr><td colspan='8'>Không có người dùng nào!</td></tr>";
+    echo "<tr><td colspan='9'>Không có người dùng nào!</td></tr>";
 }
-$conn->close();
+$data->close();
 ?>
         <script>
-        
-
         function deleteuser(userId) {
         const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này?");
         if (confirmation) {
@@ -327,7 +307,6 @@ $conn->close();
     </script>
                         </tbody>
                     </table>
-
                     <div class="pagination">
     <?php
     // Nút Trước

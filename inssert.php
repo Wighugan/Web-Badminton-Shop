@@ -4,7 +4,7 @@
 $servername = "localhost";
 $username = "root"; // Thay bằng username của MySQL
 $password = ""; // Thay bằng password của MySQL
-$database = "mydp";
+$database = "mydb";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
@@ -60,12 +60,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkUser->close();
 
     // Thêm tài khoản vào database
-    $sql = "INSERT INTO users (avatar, username, fullname, email, address1, birthday, password, numberphone, address,city) 
+    $sql = "INSERT INTO users (avatar, username, fullname, email,address1, birthday, password, numberphone, address,city) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssss", $avatar, $username, $fullname, $email, $address1, $birthday, $password, $numberphone, $address,$city);
-
     if ($stmt->execute()) {
         $_SESSION["success"] = "Đăng ký thành công!";
         header("Location: login.php"); // Chuyển hướng đến trang đăng nhập
@@ -75,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: Signup.php");
         exit();
     }
-
     // Đóng kết nối
     $stmt->close();
     $conn->close();

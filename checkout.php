@@ -1,30 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include 'db.php';
+include 'database/connect.php';
 session_start();
-
+$data = new database();
 $isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
-
 $user_id = $_SESSION['user_id'];
-
-// Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
 // Lấy thông tin user
 $sql = "SELECT * FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user_result = $stmt->get_result();
-$user = $user_result->fetch_assoc();
+$data->select_prepare($sql, "i", $user_id);
+$user = $data->fetch();
 
 if (!$user) {
     die("Không tìm thấy người dùng!");
@@ -35,15 +24,11 @@ $sql = "SELECT p.id as product_id, p.name as product_name, p.price as product_pr
         FROM cart c 
         JOIN product p ON c.product_id = p.id 
         WHERE c.user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$cart_result = $stmt->get_result();
-
+$data->select_prepare($sql, "i", $user_id);
 $cart_items = [];
 $total = 0;
 
-while ($row = $cart_result->fetch_assoc()) {
+while ($row = $data->fetch()) {
     $cart_items[] = $row;
 }
 

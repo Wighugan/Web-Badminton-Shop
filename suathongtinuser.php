@@ -14,20 +14,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id']; // Lấy ID user từ session
 
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+include "database/connect.php";
+$data = new Database();
 
 // Truy vấn thông tin user dựa vào session
 $sql = "SELECT * FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-
+$data->select_prepare($sql, "i", [$user_id]);
+$user = $data->fetch();
 if (!$user) {
     die("Không tìm thấy người dùng!");
 }
@@ -368,7 +361,7 @@ document.getElementById('imageInput').addEventListener('change', function(event)
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="logedin.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="login.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
                             <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
                             <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
                             <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
