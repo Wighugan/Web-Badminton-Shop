@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include 'database/connect.php';$data = new Database();
+include 'database/connect.php';
+$data = new Database();
 
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $district = isset($_GET['district']) ? trim($_GET['district']) : '';

@@ -1,18 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
 
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
-}
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';$data = new database();
 // Lấy dữ liệu tìm kiếm và ngày tháng
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $start = isset($_GET['start']) ? $_GET['start'] : '';
@@ -46,40 +36,25 @@ if (!empty($start) && !empty($end)) {
 $sql_count = "SELECT COUNT(DISTINCT users.id) AS total FROM users 
               LEFT JOIN orders ON users.id = orders.user_id 
               WHERE $where";
-$stmt_total = $conn->prepare($sql_count);
-if (!empty($params)) {
-    $stmt_total->bind_param($types, ...$params);
-}
-$stmt_total->execute();
-$total_row = $stmt_total->get_result()->fetch_assoc();
+$data->select_prepare($sql_count, $types, ...$params);
+$total_row = $data->fetch();
 $total_users = $total_row['total'];
-$stmt_total->close();
+// $data->close();  // <-- XÓA DÒNG NÀY nếu còn dùng $data bên dưới
 
 // Lấy dữ liệu khách hàng
 $sql_data = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, 
-                    SUM(orders.total) AS tongtien 
+            SUM(orders.total) AS tongtien 
              FROM users 
              LEFT JOIN orders ON users.id = orders.user_id 
              WHERE $where 
              GROUP BY users.id, users.fullname 
              LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($sql_data);
-
-// Thêm limit và offset vào params
+$data->select_prepare($sql_data, $types . "ii", ...array_merge($params, [$limit, $offset])); // Thêm limit và offset vào params
 $params_with_limit = $params;
 $params_with_limit[] = $limit;
 $params_with_limit[] = $offset;
-$types_with_limit = $types . "ii";
-
-$stmt->bind_param($types_with_limit, ...$params_with_limit);
-
-$stmt->execute();
-$result = $stmt->get_result();
-
 $total_pages = ceil($total_users / $limit);
-
 ?>
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -382,7 +357,7 @@ $total_pages = ceil($total_users / $limit);
             </thead>
 
             <tbody>
-                <?php while($row = $result->fetch_assoc()) { ?>
+                <?php while($row = $data->fetch()) { ?>
                     <tr>
                         <td><?= 'KH00'.$row['makh'] ?></td>
                         <td><?= $row['tenkh'] ?></td>
@@ -449,11 +424,10 @@ $total_pages = ceil($total_users / $limit);
                             GROUP BY users.id, users.fullname
                             ORDER BY sohoadon DESC 
                             LIMIT 5";
-
-                    $result = $conn->query($sql);
+                    $data->select($sql);
                     $stt = 1; // Khởi tạo số thứ tự
                 ?>
-                <?php while ($row = $result->fetch_assoc()) { ?>
+                <?php while ($row = $data->fetch()) { ?>
                     <tr>
                         <td><?= $stt++ ?></td> <!-- Hiển thị số thứ tự -->
                         <td><?= $row['tenkh'] ?></td>
@@ -500,11 +474,6 @@ $total_pages = ceil($total_users / $limit);
             </tbody>
       
         </table>
-       
-      
-      
-      
-      
       </div>
       </div>
       <div class="details">

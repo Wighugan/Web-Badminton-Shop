@@ -1,34 +1,17 @@
 <?php
 // Kết nối đến MySQL
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "mydp";
-
-$conn = mysqli_connect($servername, $username, $password, $database);
-
-// Kiểm tra kết nối
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';$data = new database();
 if (isset($_GET['id'])) {
     $user_id = intval($_GET['id']);
-
     // B1: Mở khóa người dùng bằng cách đặt trạng thái thành 1
     $sql_unlock_user = "UPDATE users SET status = 1 WHERE id = ?";
-    $stmt_unlock_user = $conn->prepare($sql_unlock_user);
-    $stmt_unlock_user->bind_param("i", $user_id);
-
-    if ($stmt_unlock_user->execute()) {
+   $data->command_prepare($sql_unlock_user, 'i', $user_id);
+    if ($data->execute()) {
         echo "<script>alert('Đã mở khóa người dùng.'); window.location.href = 'quanlykhachhang.php';</script>";
         exit();
     } else {
-        echo "Lỗi khi mở khóa người dùng: " . $stmt_unlock_user->error;
+        echo "Lỗi khi mở khóa người dùng: " ;
     }
-
-    $stmt_unlock_user->close();
+    $data->close();
+    exit();
 }
-
-$conn->close();
-?>

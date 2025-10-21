@@ -1,143 +1,142 @@
-.banner{
+.banner {
   margin: 20px;
   display: flex;
   background-color: white;
   justify-content: space-between;
   padding: 10px;
   border-radius: 20px;
-  }
-  #month, #find, #chon{
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    font-size: 16px;
-    border-radius: 10px;
-  }
+}
+#month,
+#find,
+#chon {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 16px;
+  border-radius: 10px;
+}
 
-
-  #month1, #find, #chon{
-    padding: 5px;
-    background-color: #fff;
-    font-size: 16px;
-    border-radius: 10px;
-    text-align: center;
-  }
-  #customDate {
-    position: fixed;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 10px;
-    margin-left: 375px;
-    margin-top: 40px;
-    border-radius: 5px;
-    display: none;
-    z-index: 1;
+#month1,
+#find,
+#chon {
+  padding: 5px;
+  background-color: #fff;
+  font-size: 16px;
+  border-radius: 10px;
+  text-align: center;
+}
+#customDate {
+  position: fixed;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+  margin-left: 375px;
+  margin-top: 40px;
+  border-radius: 5px;
+  display: none;
+  z-index: 1;
 }
 
 #customDate label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 13px;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
 }
 
 #customDate input[type="date"],
 #customDate input[type="submit"] {
-    padding: 5px;
-    margin-bottom: 10px;
+  padding: 5px;
+  margin-bottom: 10px;
 }
 
-  option:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-  }
-  option {
-    background-color: #fff;
-    color: #333;
-  }
-  
-  option:hover {
-    background-color: #f2f2f2;
-    color: #333;
-  }
-  
-  option:checked {
-    background-color: #3498db;
-    color: #fff;
-  }
-  .chartsBx{
-    margin-left: 20px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .chartsBx .chart{
-    position: relative;
-    background: #fff;
-    margin: 10px;
-    padding: 20px;
-    width: 48%;
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
-    border: 1px solid var(--blue);
-  }
-  .order-table {
-    position: relative;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
-    
-  }
-  .order-table{
-    padding: 30px;
-  }
- 
-  #xoanguoidung{
-    padding: 4px;
-  color: rgb(255, 0, 0);
- 
-  }
-  #suanguoidung{
-    padding: 4px;
- 
-  color: rgb(10, 171, 58);
- 
-  
-  }
- 
-  .pagination {
-    padding: 10px;
-    text-align: center;
-    list-style: none;
-    font-weight: lighter;
-  }
-  
-  .pagination li {
-    padding: 10px;
-    display: inline-block;
-    margin: 5px 3px;
-    cursor: pointer;
-  }
-  
-  .pagination .hientai {
-    border-bottom: 3px solid rgb(0, 0, 0);
-  }
-  
-  .pagination li:not(.hientai):hover {
-    background-color: rgb(196, 195, 195);
-    border-radius: 10px;
-  }
+option:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+option {
+  background-color: #fff;
+  color: #333;
+}
 
-  .details .recentOrders table tr td:last-child {
-    text-align: center;
-  }
-  .details table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    text-align: center;
-    padding: 20px;
-    margin-left: 5px;
+option:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+option:checked {
+  background-color: #3498db;
+  color: #fff;
+}
+.chartsBx {
+  margin-left: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.chartsBx .chart {
+  position: relative;
+  background: #fff;
+  margin: 10px;
+  padding: 20px;
+  width: 48%;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  border: 1px solid var(--blue);
+}
+.order-table {
+  position: relative;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+}
+.order-table {
+  padding: 30px;
+}
+
+#xoanguoidung {
+  padding: 4px;
+  color: rgb(255, 0, 0);
+}
+#suanguoidung {
+  padding: 4px;
+
+  color: rgb(10, 171, 58);
+}
+
+.pagination {
+  padding: 10px;
+  text-align: center;
+  list-style: none;
+  font-weight: lighter;
+}
+
+.pagination li {
+  padding: 10px;
+  display: inline-block;
+  margin: 5px 3px;
+  cursor: pointer;
+}
+
+.pagination .hientai {
+  border-bottom: 3px solid rgb(0, 0, 0);
+}
+
+.pagination li:not(.hientai):hover {
+  background-color: rgb(196, 195, 195);
+  border-radius: 10px;
+}
+
+.details .recentOrders table tr td:last-child {
+  text-align: center;
+}
+.details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  text-align: center;
+  padding: 20px;
+  margin-left: 5px;
 }
 #timnguoidung1 {
   padding: 8px;
@@ -149,10 +148,49 @@
 }
 
 #timnguoidung {
-  padding: 8px; 
-  border: 1px solid #ccc; 
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px; 
-  color: #333; 
-  
+  font-size: 16px;
+  color: #333;
+}
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.table thead th {
+  color: white;
+  font-weight: 600;
+  padding: 18px 12px;
+  text-align: left;
+  border: none;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table tbody td {
+  padding: 16px 12px;
+  vertical-align: middle;
+  color: #333;
 }

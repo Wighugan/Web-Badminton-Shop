@@ -1,11 +1,6 @@
 <?php
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Nhận dữ liệu từ form
 $id = $_POST['id'];
 $category = $_POST['category'];
@@ -44,21 +39,17 @@ if (!empty($_FILES["image"]["name"])) {
 // Cập nhật dữ liệu
 if ($image) {
     $sql = "UPDATE product SET category=?,  productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?, image=?, updated_at=NOW() WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssssi", $category,  $productcode, $name, $price, $flex, $length, $weight,  $description, $image, $id);
+   $data->command_prepare($sql, 'sssssssssi', $category,  $productcode, $name, $price, $flex, $length, $weight, $description, $image, $id);
 } else {
     $sql = "UPDATE product SET category=?,  productcode=?, name=?, price=?, flex=?, length=?, weight=?,  description=?,updated_at=NOW() WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssi", $category,  $productcode, $name, $price, $flex, $length, $weight, $description, $id);
+    $data->command_prepare($sql, 'ssssssssi', $category,  $productcode, $name, $price, $flex, $length, $weight, $description, $id);
 }
 
-if ($stmt->execute()) {
+if ($data->execute()) {
     header("Location: quanlysanpham.php");
     exit();
 } else {
-    echo "Lỗi: " . $stmt->error;
+    echo "Lỗi: ";
 }
-
-$stmt->close();
-$conn->close();
+$data->close();
 ?>

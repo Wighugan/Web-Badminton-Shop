@@ -1,11 +1,6 @@
 <?php
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Nhận dữ liệu từ form
 $id = $_POST['id'];
 $username = $_POST['username'];
@@ -36,26 +31,20 @@ if (!empty($_FILES["avatar"]["name"])) {
         exit();
     }
 }
-
-
 // Cập nhật dữ liệu
 if ($avatar) {
     $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?, birthday=?, avatar=?, numberphone=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssi", $username, $fullname, $email, $address, $birthday, $avatar, $numberphone, $id);
+    $data->command_prepare($sql, 'sssssssi', $username, $fullname, $email, $address, $birthday, $avatar, $numberphone, $id);
 } else {
     $sql = "UPDATE users SET username=?, fullname=?, email=?, address=?, birthday=?, numberphone=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi", $username, $fullname, $email, $address, $birthday, $numberphone, $id);
+    $data->command_prepare($sql, 'ssssssi', $username, $fullname, $email, $address, $birthday, $numberphone, $id);
 }
 
-if ($stmt->execute()) {
+if ($data->execute()) {
     header("Location: quanlykhachhang.php");
     exit();
 } else {
-    echo "Lỗi: " . $stmt->error;
+    echo "Lỗi: ";
 }
-
-$stmt->close();
-$conn->close();
+$data->close();
 ?>

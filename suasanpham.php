@@ -6,13 +6,12 @@ include "database/connect.php";
 $data = new Database();
 // Lấy thông tin sản phẩm từ database
 $sql = "SELECT * FROM product WHERE id = ?";
-$data->select_prepare($sql, "i", [$_GET['id']]);
+$data->select_prepare($sql, "i", $_GET['id']);
 $product = $data->fetch();
 if (!$product) {
     die("Sản phẩm không tồn tại!");
 }
-$stmt->close();
-$conn->close();
+$data->close();
 ?>
 
 <head>

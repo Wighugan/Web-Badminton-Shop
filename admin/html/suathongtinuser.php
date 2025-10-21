@@ -13,26 +13,16 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id']; // Lấy ID user từ session
 
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Truy vấn thông tin user dựa vào session
 $sql = "SELECT * FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$data->select_prepare($sql, $user_id);
+$user = $data->fetch();
 
 if (!$user) {
     die("Không tìm thấy người dùng!");
 }
-
-$stmt->close();
-$conn->close();
+$data->close();
 ?>
 
 

@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
 
 $limit = 10;
-
-// Lấy số trang hiện tại từ query string, nếu không có thì mặc định là 1
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
-}
-$sql = "SELECT orders.*, users.fullname, users.numberphone  , users.address ,users.id AS makh
+
+// ===== FIX 1: Lấy tổng TRƯỚC =====
+$sql_total = "SELECT COUNT(*) as total FROM orders";
+$data = new Database();
+$data->select($sql_total);
+$row_total = $data->fetch();
+$total_orders = $row_total['total'] ?? 0;
+$total_pages = ceil($total_orders / $limit);
+
+// ===== FIX 2: Tạo object mới để lấy data =====
+$data = new Database(); // ← QUAN TRỌNG: Tạo object mới
+$sql = "SELECT orders.*, users.fullname, users.numberphone, users.address, users.id AS makh
         FROM orders 
         JOIN users ON orders.user_id = users.id 
         ORDER BY orders.created_at DESC
-        LIMIT $offset, $limit";
+        LIMIT ? OFFSET ?";
 
-$result = mysqli_query($conn, $sql);
-$stt = 1;
+$data->select_prepare($sql, "ii", $limit, $offset);
 
-$sql_total = "SELECT COUNT(*) as total FROM orders";
-$result_total = $conn->query($sql_total);
-$row_total = $result_total->fetch_assoc();
-$total_orders = $row_total['total'];
-$total_pages = ceil($total_orders / $limit);
+// ===== FIX 3: fetchAll() không cần tham số =====
+$orders = $data->fetchAll(); // ✅ ĐÚNG
+
+$stt = ($page - 1) * $limit + 1;
 ?>
 <head>
     <meta charset="UTF-8">
@@ -161,62 +159,110 @@ $total_pages = ceil($total_orders / $limit);
                         <div class="recentOrders">
                             <div class="cardHeader">
                                 <h2>DANH SÁCH ĐƠN HÀNG </h2>
-        
-                                
-                               
                             </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>STT</td>
-                                <td>Mã đơn hàng</td>
-                                <td>Người đặt</td>
-                                <td>SĐT</td>
-                                <td>Địa chỉ</td>
-                                <td>Ngày đặt hàng</td>
-                                <td>Tình Trạng</td>
-                                <td>Chi tiết</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php while($row = mysqli_fetch_assoc($result)) { ?>
-    <tr>
-        <td><?= $stt++ ?></td>
-        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
-        <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td><?= htmlspecialchars($row['address']) ?></td>
-
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-
-        <?php
-$status = $row['status'];
-$class = '';
-
-if ($status == 'Thành công') {
-    $class = 'success';
-} elseif ($status == 'Chờ xác nhận') {
-    $class = 'pending';
-} elseif ($status == 'Đã hủy') {
-    $class = 'cancelled';
-}
-elseif ($status == 'Đang giao') {
-    $class = 'shipping';
-}
-?>
-
-<td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
-
-<td><a href="hoadon.php?id=<?= $row['id'] ?>">Xem chi tiết</a></td>
-
-    </tr>
-<?php } ?>
-
+        <table>
+            <thead>
+                <tr style="text-align: center;">
+                     <th>STT</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày đặt</th>
+                        <th>Trạng thái</th>
+                        <th >Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!empty($orders)) {
+                    foreach ($orders as $order) {
+                        $orderId = (int)$order['id'];
+                        $status = htmlspecialchars($order['status'] ?? '');
+                        ?>
+                        <tr>
+                            <td><?php echo $stt++; ?></td>
+                            <td>
+                                <a href="chitietdonhang.php?id=<?php echo $orderId; ?>">
+                                    <?php echo htmlspecialchars($order['code'] ?? ''); ?>
+                                </a>
+                            </td>
+                            <td><?php echo htmlspecialchars($order['fullname'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($order['numberphone'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($order['address'] ?? ''); ?></td>
+                            <td><?php echo date('d/m/Y', strtotime($order['created_at'] ?? 'now')); ?></td>
+                            <td>
+                                <span class="badge bg-<?php 
+                                    echo ($status == 'Thành công') ? 'success' : 
+                                         (($status == 'Chờ xác nhận') ? 'warning' : 
+                                         (($status == 'Đã hủy') ? 'danger' : 'info'));
+                                ?>">
+                                    <?php echo $status; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="hoadon.php?id=<?php echo $orderId; ?>" class="btn btn-sm btn-info">
+                                    Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            Không có đơn hàng nào
+                        </td>
+                    </tr>
+                    <?php
+                }
+                ?>
                         </tbody>
                     </table>
                     <style>
+.table-wrapper {
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .table thead th {
+            color: white;
+            font-weight: 600;
+            padding: 18px 12px;
+            text-align: center;
+            border: none;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .table tbody td {
+            padding: 16px 12px;
+            vertical-align: middle;
+            color: #333;
+            text-align: center;
+        }
 .pagination {
     display: flex;
     justify-content: center;
