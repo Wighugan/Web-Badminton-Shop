@@ -5,7 +5,6 @@
 <?php
 require_once 'database/connect.php';
 $data = new Database();
-
 $limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -30,7 +29,6 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $total_row = $data->fetch();
     $total_product = $total_row['total'];
     $total_pages = ceil($total_product / $limit);
-    
     // Lấy sản phẩm
     $sql = "SELECT * FROM product ORDER BY id DESC LIMIT ? OFFSET ?";
     $data->select_prepare($sql, "ii", $limit, $offset);
@@ -79,7 +77,7 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="login.php">Trang Chủ</a></p>
+                <p class="m-0"><a href="index.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -272,29 +270,6 @@ height: calc(1.5em + 0.75rem + 10px); /* giống input */
     </div>
     <button type="submit" class="btn btn-primary mt-3">Lọc</button>
 </form>
-<style>
-/* Bo góc vuông radio */
-.custom-radio-square .custom-control-input ~ .custom-control-label::before {
-    border-radius: 0 !important;  /* ô vuông */
-}
-/* Tick dấu */
-.custom-radio-square .custom-control-input:checked ~ .custom-control-label::before {
-    background-color:rgb(0, 0, 0); /* màu tick nền xanh */
-    border-color:rgb(0, 0, 0);
-}
-/*  tick checkbox */
-.custom-radio-square .custom-control-input:checked ~ .custom-control-label::after {
-    content: "";
-    position: absolute;
-    left: -1.15rem;
-    top: 0.35rem;
-    width: 0.3rem;
-    height: 0.6rem;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-</style>
 </div>
             <!-- Shop Sidebar End -->
             <style>
@@ -341,55 +316,6 @@ function searchProduct() {
  </div>
 <p id="output"></p>
 </div>
-<style>
-.container {
-    margin-top: 20px;
-}
-
-/* Giữ đúng lưới Bootstrap, chỉ cách đều bằng margin */
-.card {
-    height: 97%;
-    margin-bottom: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Ảnh sản phẩm */
-.card-img-top {
-    height: 450px;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-/* Zoom ảnh khi hover */
-.card-img-top:hover {
-    transform: scale(0.5);
-}
-
-/* Nội dung sản phẩm */
-.card-body {
-    text-align: center;
-}
-
-/* Tên sản phẩm */
-.card-title {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-/* Giá sản phẩm */
-.card-text {
-    font-weight: bold;
-    color:rgb(0, 0, 0);
-    font-size: 1.1rem;
-}
-</style>
 <?php
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $sql = "SELECT * FROM product WHERE name LIKE '%$search%'";

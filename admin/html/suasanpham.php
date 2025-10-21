@@ -1,36 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+session_start();
 // Thông tin kết nối database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-	die("Kết nối thất bại: " . mysqli_connect_error());
-}
-$id = $_GET['id'] ?? '';
-if (!$id) {
-    die("Không tìm thấy sản phẩm!");
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Lấy thông tin sản phẩm từ database
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $sql = "SELECT * FROM product WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$product = $result->fetch_assoc();
+$data->select_prepare($sql, "i", $id);
+$product = $data->fetch();
 if (!$product) {
     die("Sản phẩm không tồn tại!");
 }
-$stmt->close();
-$conn->close();
+$data->close();
 ?>
 
 <head>

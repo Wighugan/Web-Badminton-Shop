@@ -1,32 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-
-
-// Kết nối đến MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
 // Lấy thông tin đơn hàng + khách hàng
 $sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
               JOIN users ON orders.user_id = users.id 
               WHERE orders.id = ?";
-$stmt_order = $conn->prepare($sql_order);
-$stmt_order->bind_param("i", $order_id);
-$stmt_order->execute();
-$result_order = $stmt_order->get_result();
-$order = $result_order->fetch_assoc();
-
+$data->select_prepare($sql_order, 'i', $order_id);
+$order = $data->fetch();
 // Lấy danh sách sản phẩm trong đơn hàng
 $sql_detail = "SELECT * FROM order_details WHERE order_id = ?";
-$stmt_detail = $conn->prepare($sql_detail);
-$stmt_detail->bind_param("i", $order_id);
-$stmt_detail->execute();
-$result_detail = $stmt_detail->get_result();
+$data->select_prepare($sql_detail, 'i', $order_id);
 ?>
 <head>
     <meta charset="UTF-8">
@@ -200,7 +185,7 @@ $result_detail = $stmt_detail->get_result();
                         <?php 
         $i = 1;
         $total = 0;
-        while($row = $result_detail->fetch_assoc()) { 
+        while($row = $data->fetch()) { 
             $thanhtien = $row['quantity'] * $row['product_price'];
             $total += $thanhtien;
         ?>
@@ -218,9 +203,6 @@ $result_detail = $stmt_detail->get_result();
             <td><b>Tổng tiền:</b></td>
             <td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td>
         </tr>
-                           
-                           
-
                             <tr>
                                 <td></td>
                             </tr>

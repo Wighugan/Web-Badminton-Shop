@@ -1,18 +1,7 @@
 <?php
 
 // Kết nối MySQL (XAMPP)
-$servername = "localhost";
-$username = "root"; // Thay bằng username của MySQL
-$password = ""; // Thay bằng password của MySQL
-$database = "mydp";
-
-$conn = mysqli_connect($servername, $username, $password, $database);
-
-// 2. Kiểm tra kết nối
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Xử lý ảnh đại diện
@@ -45,10 +34,9 @@ $avatar_path = "../uploads/" . basename($_FILES["avatar"]["name"]);
     $password = trim($_POST['password']); // ❌ Lưu mật khẩu dạng text (không bảo mật)
 
     // Kiểm tra username/email đã tồn tại chưa
-    $checkUser = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $checkUser->bind_param("ss", $username, $email);
-    $checkUser->execute();
-    $checkUser->store_result();
+    $sql = "SELECT id FROM users WHERE username = ? OR email = ?";
+    $data->select_prepare($sql, $username, $email);
+    $checkUser = $data->fetch();
 
     if ($checkUser->num_rows > 0) {
         $_SESSION["error"] = "Tên đăng nhập hoặc email đã tồn tại!";
@@ -58,23 +46,20 @@ $avatar_path = "../uploads/" . basename($_FILES["avatar"]["name"]);
     $checkUser->close();
 
     // Thêm tài khoản vào database
-    $sql = "INSERT INTO users (avatar, username, fullname, email, address, birthday, password) 
+    $sql1 = "INSERT INTO users (avatar, username, fullname, email, address, birthday, password) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssss", $avatar, $username, $fullname, $email, $address, $birthday, $password);
+    $data->command_prepare($sql1, $avatar, $username, $fullname, $email, $address, $birthday, $password);
 
-    if ($stmt->execute()) {
+    if ($data->execute()) {
         $_SESSION["success"] = "Đăng ký thành công!";
         header("Location: login.php"); // Chuyển hướng đến trang đăng nhập
         exit();
     } else {
-        $_SESSION["error"] = "Lỗi khi đăng ký: " . $stmt->error;
+        $_SESSION["error"] = "Lỗi khi đăng ký: ";
         header("Location: Signup.php");
         exit();
     }
-
     // Đóng kết nối
-    $stmt->close();
-    $conn->close();
+    $data->close();
 }
 ?>

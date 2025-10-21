@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php include "src/header-login.php"; ?>
 <?php
-session_start();
 include "database/connect.php";
 $data = new Database();
-
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Cập nhật trạng thái đơn hàng nếu có POST
@@ -22,62 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
 $sql_order = "SELECT orders.*, users.fullname, users.numberphone, users.address1 FROM orders JOIN users ON orders.user_id = users.id WHERE orders.id = ?";
 $data->select_prepare($sql_order, "i", $order_id);
 $order = $data->fetch();
+$data->close();
 // ✅ Lấy danh sách sản phẩm trong đơn hàng từ chính bảng order_details
 $sql_detail = "
-    SELECT od.*, p.name AS product_name, p.image, p.price AS product_price
-FROM order_details od
-JOIN product p ON od.product_id = p.id
-WHERE od.order_id = ?
+   SELECT od.*, p.image FROM order_details od
+   JOIN product p ON od.product_id = p.id
+   WHERE od.order_id = ?
 ";
-$data->select_prepare($sql_detail, "i", $order_id);
-$result_detail = $data->execute() ? $data : null;
+$detail_db = new Database();
+$detail_db->select_prepare($sql_detail, "i", $order_id);
 ?>
 
-
-<?php include 'header.php'; ?>
-            <div class="container-fluid bg-white mb-2"> <!-- giảm khoảng cách -->
-    <div class="row border-top px-xl-5">
-        <div class="col-lg-12">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-0">
-                <a href="" class="text-decoration-none d-block d-lg-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold">
-                        <span class="text-primary font-weight-bold border px-3 mr-1">VNB</span>Shop
-                    </h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
-                    <!-- Menu bên trái -->
-                    <div class="navbar-nav py-0">
-                        <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
-                        <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
-                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
-                    </div>
-
-                    <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
-                    <div class="navbar-nav ml-auto py-0">
-    <?php if ($isLoggedIn): ?>
-        <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                👤 <?php echo $_SESSION['username']; ?>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                  <a href="logout.php" class="dropdown-item">Đăng Xuất</a>
-                <a href="suathongtinuser.php" class="dropdown-item">Đổi thông tin</a>
-                                  <a href="history.php" class="dropdown-item">Lịch sử mua hàng</a>
-
-            </div>
-        </div>
-    <?php else: ?>
-        <a href="Signin.php" class="nav-item nav-link">Đăng Nhập</a>
-        <a href="Signup.php" class="nav-item nav-link">Đăng Ký</a>
-    <?php endif; ?>
-</div>
-
-    </div>
-</div>
     <!-- Navbar End -->
 
 
@@ -86,7 +40,7 @@ $result_detail = $data->execute() ? $data : null;
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Chi tiết đơn Hàng</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="logedin.php">Trang chủ</a></p>
+                <p class="m-0"><a href="login.php">Trang chủ</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Chi tiết đơn hàng</p>
             </div>
@@ -111,32 +65,32 @@ $result_detail = $data->execute() ? $data : null;
                 </thead>
                 <tbody>
                     <?php 
-                    $i = 1;
-                    $total = 0;
-                    while($row = $result_detail->fetch()) { 
-                        $quantity = (int)$row['quantity'];
-                        $product_price = (float)$row['product_price'];
-                        $thanhtien = $quantity * $product_price;
-                        $total += $thanhtien;
+                    
+$i = 1;
+$total = 0;
+while($row = $detail_db->fetch()) { 
+    $quantity = (int)$row['quantity'];
+    $product_price = (float)$row['product_price'];
+    $thanhtien = $quantity * $product_price;
+    $total += $thanhtien;
 
-                        // Xử lý đường dẫn ảnh
-                        $imageFile = htmlspecialchars($row['image']);
-                        $serverImagePath = __DIR__ . '/img/' . $imageFile;
-                        $urlImagePath = 'img/' . $imageFile;
+    $imageFile = htmlspecialchars($row['image']);
+    $serverImagePath = __DIR__ . '/img/' . $imageFile;
+    $urlImagePath = 'img/' . $imageFile;
 
-                        if (!empty($imageFile) && file_exists($serverImagePath)) {
-                            $imagePath = $urlImagePath;
-                        } else {
-                            $imagePath = 'img/no-image.png';
-                        }
-                    ?>
-                    <tr>
-                        <td><?= $i++ ?></td>
-                        <td><img src="<?= $imagePath ?>" width="80" alt="Ảnh sản phẩm"></td>
-                        <td><?= htmlspecialchars($row['product_name']) ?></td>
-                        <td><?= $quantity ?></td>
-                        <td><?= number_format($product_price, 0, ',', '.') ?> VND</td>
-                    </tr>
+    if (!empty($imageFile) && file_exists($serverImagePath)) {
+        $imagePath = $urlImagePath;
+    } else {
+        $imagePath = 'img/no-image.png';
+    }
+?>
+    <tr>
+        <td><?= $i++ ?></td>
+        <td><img src="<?= $imagePath ?>" width="80" alt="Ảnh sản phẩm"></td>
+        <td><?= htmlspecialchars($row['product_name']) ?></td>
+        <td><?= $quantity ?></td>
+        <td><?= number_format($product_price, 0, ',', '.') ?> VND</td>
+    </tr>
                     <?php } ?>
                 </tbody>
             </table>
@@ -257,7 +211,6 @@ $result_detail = $data->execute() ? $data : null;
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
     <!-- Contact Javascript File -->
     <script src="mail/jqBootstrapValidation.min.js"></script>
     <script src="mail/contact.js"></script>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php include 'src/header-login.php'; ?>
 <?php
-session_start();
 include "database/connect.php";
 // Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
 if (!isset($_SESSION['user_id'])) {
@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 ?>
-<?php include 'src/header-login.php'; ?>
                 <div id="header-carousel" class="carousel slide" data-ride="carousel" style="width: 100vw; overflow: hidden;">
     <div class="carousel-inner">
         <div class="carousel-item active" style="height: 410px;">

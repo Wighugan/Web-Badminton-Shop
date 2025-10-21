@@ -1,61 +1,33 @@
 <?php
 // Kết nối đến MySQL
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "mydp";
-
-$conn = mysqli_connect($servername, $username, $password, $database);
-
 // Kiểm tra kết nối
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 if (isset($_GET['id'])) {
     $user_id = intval($_GET['id']);
-
     // B1: Lấy tất cả đơn hàng của người dùng
     $sql_get_orders = "SELECT id FROM orders WHERE user_id = ?";
-    $stmt_get_orders = $conn->prepare($sql_get_orders);
-    $stmt_get_orders->bind_param("i", $user_id);
-    $stmt_get_orders->execute();
-    $result = $stmt_get_orders->get_result();
-
-    while ($order = $result->fetch_assoc()) {
+    $data->select_prepare($sql_get_orders, 'i', $user_id);
+    $result = $data->fetch();
+    while ($order = $result->fetch()) {
         $order_id = $order['id'];
 
         // B2: Xóa chi tiết đơn hàng liên quan
         $sql_delete_order_details = "DELETE FROM order_details WHERE order_id = ?";
-        $stmt_delete_details = $conn->prepare($sql_delete_order_details);
-        $stmt_delete_details->bind_param("i", $order_id);
-        $stmt_delete_details->execute();
-        $stmt_delete_details->close();
+        $data->command_prepare($sql_delete_order_details, 'i', $order_id);
     }
-
-    $stmt_get_orders->close();
-
     // B3: Xóa đơn hàng
     $sql_delete_orders = "DELETE FROM orders WHERE user_id = ?";
-    $stmt_delete_orders = $conn->prepare($sql_delete_orders);
-    $stmt_delete_orders->bind_param("i", $user_id);
-    $stmt_delete_orders->execute();
-    $stmt_delete_orders->close();
-
+    $data->command_prepare($sql_delete_orders, 'i', $user_id);
     // B4: Xóa người dùng
     $sql_delete_user = "DELETE FROM users WHERE id = ?";
-    $stmt_delete_user = $conn->prepare($sql_delete_user);
-    $stmt_delete_user->bind_param("i", $user_id);
+    $data->command_prepare($sql_delete_user, 'i', $user_id);
 
-    if ($stmt_delete_user->execute()) {
+    if ($data->execute()) {
         echo "<script>alert('Đã xóa người dùng và các dữ liệu liên quan.'); window.location.href = 'quanlykhachhang.php';</script>";
         exit();
     } else {
-        echo "Lỗi khi xóa người dùng: " . $stmt_delete_user->error;
+        echo "Lỗi khi xóa người dùng: ";
     }
 
-    $stmt_delete_user->close();
+    $data->close();
 }
-
-$conn->close();
-?>

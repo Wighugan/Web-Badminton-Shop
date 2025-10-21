@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php
+<head>
+    <?php
 include 'database/connect.php';
-session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
 $isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 $data = new database();
 // Lấy ID sản phẩm từ URL
@@ -11,20 +11,14 @@ if (!isset($_GET['id'])) {
     exit;
 }
 $id = intval($_GET['id']);
-
 $sql = "SELECT * FROM product WHERE id = ?";
 $data->select_prepare($sql,"i", $id);
 $product = $data->fetch();
-
 if (!$product) {
     echo "Sản phẩm không tồn tại!";
     exit;
 }
-
-
 ?>
-
-<head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
     <link href='img/logo.png' rel='icon' type='image/x-icon' />

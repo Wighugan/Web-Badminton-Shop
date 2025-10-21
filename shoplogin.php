@@ -1,33 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="vi">
-    
-<?php
-session_start();
-include 'database/connect.php';
-$data = new database();
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php"); // Chuyển hướng nếu chưa đăng nhập
-    exit();
-}
-// Xử lý tìm kiếm
-// Xác định trang hiện tại (mặc định trang 1)
-$limit = 6; // Số sản phẩm mỗi trang
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
-
-// Lấy tổng số sản phẩm
-$total_result = "SELECT COUNT(*) AS total FROM product";
-$data->select($total_result);
-$total_row = $data->fetch();
-$total_products = $total_row['total'];
-$total_pages = ceil($total_products / $limit);
-
-// Lấy sản phẩm cho trang hiện tại
-$sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$data->select($sql);
-?>
-
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="utf-8">
@@ -60,6 +33,31 @@ $data->select($sql);
     <?php 
     include "src/header-login.php"
     ?>
+    
+<?php
+include 'database/connect.php';
+$data = new database();
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php"); // Chuyển hướng nếu chưa đăng nhập
+    exit();
+}
+// Xử lý tìm kiếm
+// Xác định trang hiện tại (mặc định trang 1)
+$limit = 6; // Số sản phẩm mỗi trang
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Lấy tổng số sản phẩm
+$total_result = "SELECT COUNT(*) AS total FROM product";
+$data->select($total_result);
+$total_row = $data->fetch();
+$total_products = $total_row['total'];
+$total_pages = ceil($total_products / $limit);
+
+// Lấy sản phẩm cho trang hiện tại
+$sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
+$data->select($sql);
+?>
     <!-- Topbar End -->
 
     <!-- <script>
@@ -199,38 +197,7 @@ $params[] = $offset;
 $types .= "ii";
 $data->select_prepare($sql, $types, ...$params);
 ?>
-<style>
-.input-group.search-bar {
-    margin-bottom: 20px; /* hoặc 1.5rem */
-    display: block;
-    max-width: 250px;
-  height: calc(1.5em + 0.75rem + 10px);
-  padding: 0.1rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
-  margin-bottom: 20px;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 0.5px solid #EDF1FF;
-  border-radius: 0;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-}
-.input-group-icon{
-height: calc(1.5em + 0.75rem + 10px); /* giống input */
-    padding: 0.1rem 0.1rem;
-
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-left: none; /* nếu bạn muốn dính liền */
-
-}
-</style>
-    <!-- Shop Start -->
+<!-- Shop Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <!-- Shop Sidebar Start -->
@@ -259,7 +226,6 @@ height: calc(1.5em + 0.75rem + 10px); /* giống input */
             <label class="custom-control-label" for="sort-price-desc">Giá giảm dần</label>
         </div>
     </div>
-
     <!-- Giá -->
     <div class="border-bottom mb-4 pb-4">
         <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
@@ -438,9 +404,6 @@ function searchProduct() {
     font-size: 1.1rem;
 }
 </style>
-
-
-
 <?php
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $search = trim($_GET['query']);
@@ -450,18 +413,17 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         echo '<div class="container">';
         echo '<h2>Kết quả tìm kiếm:</h2>';
         echo '<div class="row">';
-        while ($row = $data->fetch()) {
-            echo '<div class="col-md-4">';
-            echo '<div class="card mb-4">';
-            // Bọc ảnh bằng thẻ <a> để click vào ảnh => đi đến chi tiết
-            echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
-            echo '<img src="' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
-            echo '</a>';
-            echo '<div class="card-body">';
-            echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
-            echo '<p class="card-text">Giá: ' . number_format($row['price'], 0, ',', '.') . ' VNĐ</p>';
-            echo '</div></div></div>';
-        }
+       while ($row = $data->fetch()) {
+    echo '<div class="col-md-4">';
+    echo '<div class="card mb-4">';
+    echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
+    echo '<img src="img/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
+    echo '</a>';
+    echo '<div class="card-body">';
+    echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
+    echo '<p class="card-text">Giá: ' . number_format($row['price'], 0, ',', '.') . ' VNĐ</p>';
+    echo '</div></div></div>';
+}
         echo '</div></div>';
     } else {
         echo "<h2>Không tìm thấy sản phẩm phù hợp.</h2>";

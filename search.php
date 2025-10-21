@@ -17,13 +17,13 @@ if (isset($_GET['query'])) {
     <body>
         <h1>Kết quả cho "<?php echo htmlspecialchars($search); ?>"</h1>
         <?php
-        if ($data->execute()) {
             while ($row = $data->fetch()) {
-                echo "<p>" . htmlspecialchars($row['name']) . "</p>";
+                echo '<div style="margin-bottom: 16px;">';
+                echo '<img src="img/' . htmlspecialchars($row['image']) . '" alt="' . htmlspecialchars($row['name']) . '" style="width:100px;height:100px;object-fit:cover;margin-right:10px;">';
+                echo '<span>' . htmlspecialchars($row['name']) . '</span>';
+                echo '</div>';
             }
-        } else {
-            echo "<p>Không tìm thấy sản phẩm nào.</p>";
-        }
+            $data->close();
         ?>
         <a href="index.php">Quay lại tìm kiếm</a>
     </body>

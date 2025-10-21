@@ -1,32 +1,20 @@
 
 <?php
 // Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "mydp");
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Kiểm tra nếu có ID hợp lệ
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
     $sql = "SELECT * FROM users WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-
+    $data->select_prepare($sql,'i',$id);
+    $user = $data->fetch();
     if (!$user) {
         die("Không tìm thấy người dùng!");
     }
 } else {
     die("ID không hợp lệ!");
 }
-
-$stmt->close();
-$conn->close();
+$data->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">

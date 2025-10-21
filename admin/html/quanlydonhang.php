@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$data = new database();
+$limit = 10;
 
 $limit = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -54,7 +48,7 @@ if (!empty($status)) {
     $params[] = "%$status%";
     $param_types .= "s";
 }
-// Xây câu query chính
+// Xây dựng query chính
 $sql = "SELECT orders.*, users.fullname, users.numberphone, users.address 
         FROM orders 
         JOIN users ON orders.user_id = users.id";
@@ -62,35 +56,39 @@ $sql = "SELECT orders.*, users.fullname, users.numberphone, users.address
 if (!empty($where)) {
     $sql .= " WHERE " . implode(' AND ', $where);
 }
-$sql .= " ORDER BY orders.created_at DESC LIMIT ?, ?";
-$params[] = $offset;
+$sql .= " ORDER BY orders.created_at DESC LIMIT ? OFFSET ?";
+
+// Thêm param: limit trước, offset sau (khớp syntax LIMIT limit OFFSET offset)
 $params[] = $limit;
+$params[] = $offset;
 $param_types .= "ii";
 
-$stmt = $conn->prepare($sql);
-if (!empty($params)) {
-    $stmt->bind_param($param_types, ...$params);
+// Thực hiện query chính và lưu data vào array (tránh overwrite)
+$data->select_prepare($sql, $param_types, ...$params);
+$orders = []; // Lưu data orders
+while ($row = $data->fetch()) {
+    $orders[] = $row; // Lưu từng row
 }
-$stmt->execute();
-$result = $stmt->get_result();
 
-// Tổng số đơn hàng để phân trang
+// Tổng số đơn hàng để phân trang (bây giờ an toàn, result đã overwrite nhưng data orders đã lưu)
 $sql_count = "SELECT COUNT(*) as total FROM orders JOIN users ON orders.user_id = users.id";
 if (!empty($where)) {
     $sql_count .= " WHERE " . implode(' AND ', $where);
 }
-$stmt_count = $conn->prepare($sql_count);
 
-// Chuẩn bị tham số cho count
-if (!empty($params)) {
-    $params_count = array_slice($params, 0, count($params) - 2); // bỏ LIMIT
-    $types_count = substr($param_types, 0, strlen($param_types) - 2);
-    if (!empty($params_count)) {
-        $stmt_count->bind_param($types_count, ...$params_count);
-    }
+// Params và types cho count: Chỉ param của WHERE
+$params_count = array_slice($params, 0, count($params) - 2);
+$types_count = substr($param_types, 0, strlen($param_types) - 2);
+
+if (!empty($types_count) && !empty($params_count)) {
+    $data->select_prepare($sql_count, $types_count, ...$params_count);
+} else {
+    $data->select_prepare($sql_count);
 }
-$stmt_count->execute();
-$total_orders = $stmt_count->get_result()->fetch_assoc()['total'];
+
+// Lấy total
+$row_count = $data->fetch();
+$total_orders = $row_count['total'] ?? 0;
 $total_pages = ceil($total_orders / $limit);
 
 $stt = 1;
@@ -215,81 +213,67 @@ $stt = 1;
             <!-- ================ LÀM QUẢN LÝ ĐƠN HÀNG Ở ĐÂY ================= -->
             <div class="order">
                 <!-- ================ LÀM BANNER ================= -->
-                <div class="banner">
-                <form method="GET" action="">
+               <div class="banner">
+
+               <form method="GET" action="">
     <div class="date1">
+        <!-- Ngày -->
         <label for="start">Từ ngày: </label>
         <input type="date" id="start" name="start" 
-               value="<?= isset($_GET['start']) ? htmlspecialchars($_GET['start']) : '' ?>" 
-               min="2023-01-01" max="2025-12-31">
+            value="<?= isset($_GET['start']) ? htmlspecialchars($_GET['start']) : '' ?>" 
+            min="2023-01-01" max="2025-12-31">
 
         <label for="end">đến</label>
         <input type="date" id="end" name="end" 
-               value="<?= isset($_GET['end']) ? htmlspecialchars($_GET['end']) : '' ?>" 
-               min="2023-01-01" max="2025-12-31">
+            value="<?= isset($_GET['end']) ? htmlspecialchars($_GET['end']) : '' ?>" 
+            min="2023-01-01" max="2025-12-31">
+    </div>
 
+    <div class="date1">
+        <!-- Quận/huyện -->
+        <select name="district" id="district">
+            <option value="">Chọn Quận/Huyện</option>
+          
+            <option value="Quận 2" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 2') ? 'selected' : '' ?>>Quận 2</option>
+<option value="Quận 3" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 3') ? 'selected' : '' ?>>Quận 3</option>
+  <option value="Quận 5" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
+<option value="Quận 4" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 4') ? 'selected' : '' ?>>Quận 4</option>
+<option value="Quận 5" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
+<option value="Quận 6" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 6') ? 'selected' : '' ?>>Quận 6</option>
+<option value="Quận 7" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 7') ? 'selected' : '' ?>>Quận 7</option>
+<option value="Quận 8" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 8') ? 'selected' : '' ?>>Quận 8</option>
+<option value="Quận 9" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 9') ? 'selected' : '' ?>>Quận 9</option>
+<option value="Quận 10" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 10') ? 'selected' : '' ?>>Quận 10</option>
+<option value="Quận 11" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 11') ? 'selected' : '' ?>>Quận 11</option>
+<option value="Quận 12" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 12') ? 'selected' : '' ?>>Quận 12</option>
+
+
+<option value="Gò Vấp" <?= (isset($_GET['district']) && $_GET['district'] == 'Gò Vấp') ? 'selected' : '' ?>>Gò Vấp</option>
+            <option value="Bình Thạnh" <?= (isset($_GET['district']) && $_GET['district'] == 'Bình Thạnh') ? 'selected' : '' ?>>Bình Thạnh</option>
+<option value="Phú Nhuận" <?= (isset($_GET['district']) && $_GET['district'] == 'Phú Nhuận') ? 'selected' : '' ?>>Phú Nhuận</option>
+<option value="Tân Bình" <?= (isset($_GET['district']) && $_GET['district'] == 'Tân Bình') ? 'selected' : '' ?>>Tân Bình</option>
+<option value="Tân Phú" <?= (isset($_GET['district']) && $_GET['district'] == 'Tân Phú') ? 'selected' : '' ?>>Tân Phú</option>
+<option value="Bình Tân" <?= (isset($_GET['district']) && $_GET['district'] == 'Bình Tân') ? 'selected' : '' ?>>Bình Tân</option>
+<option value="Thủ Đức" <?= (isset($_GET['district']) && $_GET['district'] == 'Thủ Đức') ? 'selected' : '' ?>>Thủ Đức</option>      
+  </select>
+    </div>
+
+    <div class="date1">
+        <!-- Tình trạng -->
+        <select name="status" id="status">
+            <option value="">Tình Trạng</option>
+            <option value="Thành công" <?= (isset($_GET['status']) && $_GET['status'] == 'Thành công') ? 'selected' : '' ?>>Thành công</option>
+            <option value="Chờ xác nhận" <?= (isset($_GET['status']) && $_GET['status'] == 'Chờ xác nhận') ? 'selected' : '' ?>>Chờ xác nhận</option>
+            <option value="Đã hủy" <?= (isset($_GET['status']) && $_GET['status'] == 'Đã hủy') ? 'selected' : '' ?>>Đã hủy</option>
+            <option value="Đang giao" <?= (isset($_GET['status']) && $_GET['status'] == 'Đang giao') ? 'selected' : '' ?>>Đang giao</option>
+        </select>
+    </div>
+
+    <div class="date1">
         <button type="submit" class="search-btn">
-            <i class="fa fa-search"></i> 
+            <i class="fa fa-search"></i> Tìm kiếm
         </button>
     </div>
-</form>
-
-<form method="GET" action="" >
-<div class="date1">
-
-    <select name="district" id="month">
-        <option value="">Chọn Quận/Huyện</option>
-        <option value="Quận 1">Quận 2</option>
-        <option value="Quận 3">Quận 3</option>
-        <option value="Quận 4">Quận 4</option>
-<option value="Quận 5">Quận 5</option>
-<option value="Quận 6">Quận 6</option>
-<option value="Quận 7">Quận 7</option>
-<option value="Quận 8">Quận 8</option>
-<option value="Quận 9">Quận 9</option>
-<option value="Quận 10">Quận 10</option>
-<option value="Quận 11">Quận 11</option>
-<option value="Quận 12">Quận 12</option>
-<option value="Bình Thạnh">Bình Thạnh</option>
-<option value="Gò Vấp">Gò Vấp</option>
-<option value="Phú Nhuận">Phú Nhuận</option>
-<option value="Tân Bình">Tân Bình</option>
-<option value="Tân Phú">Tân Phú</option>
-<option value="Bình Tân">Bình Tân</option>
-<option value="Thủ Đức">Thủ Đức</option>
-<option value="Huyện Nhà Bè">Huyện Nhà Bè</option>
-<option value="Huyện Bình Chánh">Huyện Bình Chánh</option>
-<option value="Huyện Hóc Môn">Huyện Hóc Môn</option>
-<option value="Huyện Củ Chi">Huyện Củ Chi</option>
-<option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
-
-        <!-- ... thêm các quận huyện khác -->
-    </select>
-    <button type="submit" class="search-btn">
-            <i class="fa fa-search"></i> 
-        </button>
-
-</div>
-</form>
-
-<form method="GET" action="" >
-
-<div class="date1">
-
-    <select name="status" id="month">
-        <option value="">Tình Trạng</option>
-        <option value="Thành công">Thành công</option>
-        <option value="Chờ xác nhận">Chờ xác nhận</option>
-        <option value="Đã hủy">Đã hủy</option>
-<option value="Đang giao">Đang giao</option>
-
-
-        <!-- ... thêm các quận huyện khác -->
-    </select>
-    <button type="submit" class="search-btn">
-            <i class="fa fa-search"></i> 
-        </button>
-</div>
 </form>
 
 
@@ -303,7 +287,6 @@ $stt = 1;
         <i class="fa fa-search"></i> 
     </button>  
 </form>
-
                 </div>
                 <div class="chartsBx">
                   
@@ -326,41 +309,36 @@ $stt = 1;
                             </tr>
                         </thead>
                         <tbody>
-                        <?php while($row = mysqli_fetch_assoc($result)) { ?>
-    <tr>
-        <td><?= $stt++ ?></td>
-        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
-        <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td><?= htmlspecialchars($row['address']) ?></td>
-
-        <?php
-$status = $row['status'];
-$class = '';
-
-if ($status == 'Thành công') {
-    $class = 'success';
-} elseif ($status == 'Chờ xác nhận') {
-    $class = 'pending';
-} elseif ($status == 'Đã hủy') {
-    $class = 'cancelled';
-}
-elseif ($status == 'Đang giao') {
-    $class = 'shipping';
-}
-?>
-
-<td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-
-    </tr>
-<?php } ?>
+                        <?php foreach ($orders as $row): ?>
+            <tr>
+                <td><?= $stt++ ?></td>
+                <td><a href="chitietdonhang.php?id=<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['code']) ?></a></td>
+                <td><?= htmlspecialchars($row['fullname']) ?></td>
+                <td><?= htmlspecialchars($row['numberphone']) ?></td>
+                <td><?= htmlspecialchars($row['address']) ?></td>
+                <?php
+                $status = $row['status'];
+                $class = '';
+                if ($status == 'Thành công') {
+                    $class = 'success';
+                } elseif ($status == 'Chờ xác nhận') {
+                    $class = 'pending';
+                } elseif ($status == 'Đã hủy') {
+                    $class = 'cancelled';
+                } elseif ($status == 'Đang giao') {
+                    $class = 'shipping';
+                }
+                ?>
+                <td class="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($status) ?></td>
+                <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+            </tr>
+        <?php endforeach; ?>
 
 
 
                         </tbody>
                     </table>
-                    <style>
+                   <style>
 .pagination {
     display: flex;
     justify-content: center;
@@ -398,23 +376,43 @@ elseif ($status == 'Đang giao') {
         <!-- Phân trang -->
         <div class="pagination">
             <?php
-            // Hiển thị liên kết phân trang
-            if ($page > 1) {
-                echo "<a href='quanlydonhang.php?page=" . ($page - 1) . "'>Trước</a>";
-            }
+// Function để xây dựng URL pagination, giữ tất cả GET params trừ 'page'
+function buildPageUrl($pageNumber, $extraParams = []) {
+    $currentParams = $_GET; // Lấy tất cả GET params hiện tại
+    unset($currentParams['page']); // Bỏ param 'page' cũ
+    $newParams = array_merge($currentParams, $extraParams, ['page' => $pageNumber]); // Thêm page mới và extra nếu có
+    return '?' . http_build_query($newParams); // Trả về query string như ?search=abc&page=2
+}
 
-            for ($i = 1; $i <= $total_pages; $i++) {
-                if ($i == $page) {
-                    echo "<span class='current'>$i</span>";
-                } else {
-                    echo "<a href='quanlydonhang.php?page=$i'>$i</a>";
-                }
-            }
+// ... (Phần code query trước đó: $data->select_prepare, lưu $orders[], tính $total_pages)
 
-            if ($page < $total_pages) {
-                echo "<a href='quanlydonhang.php?page=" . ($page + 1) . "'>Sau</a>";
-            }
-            ?>
+// Pagination (đặt sau loop hiển thị)
+if ($total_pages > 1) { // Chỉ hiển thị nếu có nhiều trang
+    echo '<div class="pagination">'; // Wrapper CSS cho đẹp (thêm style nếu cần)
+    
+    // Link "Trước"
+    if ($page > 1) {
+        echo "<a href='" . buildPageUrl($page - 1) . "'>Trước</a> ";
+    }
+
+    // Các số trang (có thể thêm ellipsis cho dài)
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='current'>$i</span> ";
+        } else {
+            echo "<a href='" . buildPageUrl($i) . "'>$i</a> ";
+        }
+    }
+
+    // Link "Sau"
+    if ($page < $total_pages) {
+        echo "<a href='" . buildPageUrl($page + 1) . "'>Sau</a>";
+    }
+    echo '</div>';
+} else {
+    echo "<p>Chỉ có 1 trang kết quả.</p>";
+}
+?>
         </div>
 
 

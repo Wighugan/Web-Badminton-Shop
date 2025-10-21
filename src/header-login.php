@@ -25,6 +25,7 @@
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
+    <?php session_start(); ?>
 <div class = "header">
     <div class="container-fluid">
         <div class="row bg-secondary py-2 px-xl-5">
@@ -59,7 +60,7 @@
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="index.php" class="text-decoration-none">
+                <a href="" class="text-decoration-none">
                     <div style="display: flex; align-items: center; position: relative;">
                         <img src="img/logo.png" alt="a logo" width="85px" height="85px">
                         <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
@@ -110,7 +111,6 @@
                 </nav> 
             </div> -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
             <script>
 $(document).ready(function() {
     $("#search").keyup(function() {

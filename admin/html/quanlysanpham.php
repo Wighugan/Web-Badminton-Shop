@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-// Thông tin kết nối database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$data = new database();
 
-// Kết nối đến MySQL
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
-}
 
 // Lấy dữ liệu tìm kiếm và ngày tháng
 $raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -46,30 +36,18 @@ if (!empty($start) && !empty($end)) {
 
 // Đếm tổng số sản phẩm
 $sql_count = "SELECT COUNT(*) AS total FROM product WHERE $where";
-$stmt_total = $conn->prepare($sql_count);
-if (!empty($params)) {
-    $stmt_total->bind_param($types, ...$params);
-}
-$stmt_total->execute();
-$total_row = $stmt_total->get_result()->fetch_assoc();
+$data->select_prepare($sql_count, $types, $params);
+$total_row = $data->fetch();
 $total_users = $total_row['total'];
-$stmt_total->close();
-
 // Lấy dữ liệu sản phẩm
 $sql_data = "SELECT * FROM product WHERE $where LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($sql_data);
 
 // Thêm limit và offset vào params
 $params_with_limit = $params;
 $params_with_limit[] = $limit;
 $params_with_limit[] = $offset;
 $types_with_limit = $types . "ii";
-
-$stmt->bind_param($types_with_limit, ...$params_with_limit);
-
-$stmt->execute();
-$result = $stmt->get_result();
-
+$data->select_prepare($sql_data, $types_with_limit, ...$params_with_limit);
 $total_pages = ceil($total_users / $limit);
 ?>
 
@@ -272,13 +250,12 @@ $total_pages = ceil($total_users / $limit);
  // Biến đếm số thứ tự
  $stt = ($page - 1) * $limit + 1;
 
-while ($row = mysqli_fetch_assoc($result)) {  
+while ($row = $data->fetch()) {  
     $formatted_price = number_format($row['price'], 0, ',', '.') . " VND"; // Định dạng giá
 ?>          
     <tr>
         <td><?= $stt ?></td> <!-- Số thứ tự tự tăng -->
     <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
-
         <td><img src="<?= '../../' . htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
         <td><?= htmlspecialchars($row['name']) ?></td> <!-- Tên sản phẩm -->
         <td><?= htmlspecialchars($row['category']) ?></td> <!-- Danh mục (Cố định, bạn có thể sửa thành dynamic nếu cần) -->
@@ -308,13 +285,10 @@ while ($row = mysqli_fetch_assoc($result)) {
     
 <?php
     $stt++; // Tăng STT cho dòng tiếp theo
-
 }
+$data->close(); // Đóng kết nối sau khi hoàn thành truy vấn
 ?>
-
-<?php				
-
-?>
+                        </tbody>
    </table>                         
                    
                 

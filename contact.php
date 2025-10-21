@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php include 'src/header-login.php'; ?>
 <?php
-session_start(); // 🔹 Đặt ở dòng đầu tiên của file!
 $isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 
 
@@ -13,8 +13,6 @@ if (!isset($_SESSION['user_id'])) {
  include 'database/connect.php';
  $data = new Database();
 ?>
-<?php include 'src/header-login.php'; ?>
-
     <!-- Navbar End -->
 
 

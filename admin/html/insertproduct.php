@@ -1,13 +1,8 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "mydp");
 
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category = $_POST['category'];
-
     $productcode = $_POST['productcode'];
     $name = $_POST['name'];
     $price = $_POST['price'];
@@ -15,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $length = $_POST['length'];
     $weight = $_POST['weight'];
     $description = $_POST['description'];
-
     // Xử lý upload ảnh
     $image = "uploads/default.jpg"; // Nếu không có ảnh mới thì giữ nguyên ảnh cũ
 
@@ -37,21 +31,15 @@ if (!empty($_FILES["image"]["name"])) {
         exit();
     }
 }
-
-
     // Thêm sản phẩm vào database
     $sql = "INSERT INTO product (category, color, productcode, name, price, flex, length, weight, image, description,updated_at) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW());";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssss", $category, $color, $productcode, $name, $price, $flex, $length, $weight, $image, $description);
-    
-    if ($stmt->execute()) {
+    $data->command_prepare($sql, 'ssssssssss', $category, $color, $productcode, $name, $price, $flex, $length, $weight, $image, $description);
+    if ($data->execute()) {
         echo "<script>alert('Sản phẩm đã được thêm thành công!'); window.location.href='quanlysanpham.php';</script>";
     } else {
         echo "<script>alert('Có lỗi xảy ra, vui lòng thử lại!');</script>";
     }
-    
-    $stmt->close();
-    $conn->close();
+    $data->close();
 }
 ?>

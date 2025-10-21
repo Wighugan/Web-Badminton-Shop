@@ -4,7 +4,6 @@
 session_start();
 include "database/connect.php";
 $data = new database();
-
 $error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';

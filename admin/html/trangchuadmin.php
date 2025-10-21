@@ -1,19 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-// Kết nối cơ sở dữ liệu
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mydp";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Số đơn hàng mỗi trang
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$data = new Database();
 $limit = 10;
 
 // Lấy số trang hiện tại từ query string, nếu không có thì mặc định là 1
@@ -26,14 +15,14 @@ $sql = "SELECT orders.*, users.fullname
         JOIN users ON orders.user_id = users.id 
         ORDER BY orders.created_at DESC 
         LIMIT $offset, $limit";
-$result = $conn->query($sql);
-
-
+$data->select_prepare($sql);
+$result = $data->fetchAll();
 
 // Truy vấn để lấy tổng số đơn hàng
 $sql_total = "SELECT COUNT(*) as total FROM orders";
-$result_total = $conn->query($sql_total);
-$row_total = $result_total->fetch_assoc();
+$data->select_prepare($sql_total);
+$result_total = $data->fetchAll();
+$row_total = $result_total[0];
 $total_orders = $row_total['total'];
 $total_pages = ceil($total_orders / $limit);
 ?>
@@ -201,32 +190,31 @@ $total_pages = ceil($total_orders / $limit);
             </thead>
             <tbody>
                 <?php
-                $stt = ($page - 1) * $limit + 1;
-                while($row = mysqli_fetch_assoc($result)) {
-                ?>
-                    <tr>
-                        <td><?= $stt++ ?></td>
-                        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-                        <td><?= htmlspecialchars($row['fullname']) ?></td>
-                        <?php
-                        $status = $row['status'];
-                        $class = '';
-
-                        if ($status == 'Thành công') {
-                            $class = 'success';
-                        } elseif ($status == 'Chờ xác nhận') {
-                            $class = 'pending';
-                        } elseif ($status == 'Đã hủy') {
-                            $class = 'cancelled';
-                        } elseif ($status == 'Đang giao') {
-                            $class = 'shipping';
-                        }
-                        ?>
-                        <td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
-                        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
-                        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-                    </tr>
-                <?php } ?>
+$stt = ($page - 1) * $limit + 1;
+foreach ($result as $row) {
+?>
+    <tr>
+        <td><?= $stt++ ?></td>
+        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
+        <td><?= htmlspecialchars($row['fullname']) ?></td>
+        <?php
+        $status = $row['status'];
+        $class = '';
+        if ($status == 'Thành công') {
+            $class = 'success';
+        } elseif ($status == 'Chờ xác nhận') {
+            $class = 'pending';
+        } elseif ($status == 'Đã hủy') {
+            $class = 'cancelled';
+        } elseif ($status == 'Đang giao') {
+            $class = 'shipping';
+        }
+        ?>
+        <td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
+        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
+        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+    </tr>
+<?php } ?>
             </tbody>
         </table>
 <style>
@@ -288,11 +276,7 @@ $total_pages = ceil($total_orders / $limit);
     </div>
 </div>
 
-<?php $conn->close(); ?>
-           
-                
-               
-
+<?php $data->close(); ?>
             <script>
             
                     ten = document.getElementById("ten");

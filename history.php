@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<?php include 'src/header-login.php'; ?>
 <?php
-session_start();
-$isLoggedIn = isset($_SESSION['user_id']);
-
 include 'database/connect.php';
-
+$isLoggedIn = isset($_SESSION['user_id']);
 if (!isset($_SESSION['user_id'])) {
     die("Bạn chưa đăng nhập!");
 }
-
+$order_db = new Database();
 $user_id = $_SESSION['user_id'];
 $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -37,17 +34,15 @@ $count_db->close();
 $total_pages = ceil($total_orders / $limit);
 
 // Lấy các đơn hàng của người dùng (có phân trang)
-$order_db = new Database();
-$sql = "SELECT orders.*, users.fullname, users.numberphone 
-        FROM orders 
-        JOIN users ON orders.user_id = users.id 
-        WHERE orders.user_id = ? 
-        ORDER BY orders.created_at DESC 
+$sql = "SELECT o.*, u.fullname, u.numberphone 
+        FROM orders o
+        JOIN users u ON o.user_id = u.id 
+        WHERE o.user_id = ? 
+        ORDER BY o.created_at DESC 
         LIMIT ?, ?";
 $order_db->select_prepare($sql, "iii", $user_id, $offset, $limit);
 // Sau này dùng $order_db->fetch() để lấy dữ liệu từng dòng
-?>
-<?php include 'src/header-login.php'; ?>  
+?>  
     <!-- Navbar End -->
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
@@ -61,8 +56,6 @@ $order_db->select_prepare($sql, "iii", $user_id, $offset, $limit);
         </div>
     </div>
     <!-- Page Header End -->
-
-
     <!-- Cart Start -->
     <div class="container-fluid pt-5">
         <div class="row1 px-xl-6">
@@ -79,21 +72,17 @@ $order_db->select_prepare($sql, "iii", $user_id, $offset, $limit);
                            
                         </tr>
                     </thead>
-
                     <tbody class="align-middle">
-                        <?php while($row = $count_db->fetch()) { ?>
-    <tr>
-        <td><a href="chitiet.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
-        <td><?= htmlspecialchars($row['numberphone']) ?></td>
-        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
-                            <td>0đ </td>
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
-
-
-    </tr>
+                        <?php while($row = $order_db->fetch()) { ?>
+<tr>
+    <td><a href="chitiet.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
+    <td><?= htmlspecialchars($row['fullname']) ?></td>
+    <td><?= htmlspecialchars($row['numberphone']) ?></td>
+    <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
+    <td>0đ </td>
+    <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+</tr>
 <?php } ?>
-
                     </tbody>
                 </table>
             </div>
