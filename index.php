@@ -2,10 +2,17 @@
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 include "database/connect.php";
+include "src/header.php";
+include "src/products.php";
+$sp = new SanPham();
+$featured_products = $sp->lietketspnb();
+// Lấy 8 sản phẩm mới nhất
+$new_products = $sp->lietketspmoi();
+// Link chi tiết sản phẩm cho user đã đăng nhập
+$detailLink = 'detail.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -33,9 +40,6 @@ include "database/connect.php";
 
 <body>
     <!-- Topbar Start -->
- <?php
- include "src/header.php";
- ?>
 <!--  -->
 </div>
 <div id="header-carousel" class="carousel slide" data-ride="carousel" style="width: 100vw; overflow: hidden;">
@@ -90,8 +94,6 @@ include "database/connect.php";
         </div>
     </div>
     <!-- Navbar End -->
-
-
     <!-- Featured Start -->
     <div class="container-fluid pt-5">
         <div class="row px-xl-5 pb-3">
@@ -163,87 +165,77 @@ include "database/connect.php";
             <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Nổi Bật</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
-        <?php
-// Lấy danh sách sản phẩm
-$data = new database();
-$sql = "SELECT * FROM product ORDER BY id ASC";
-$data->select($sql);
-    while ($row = $data->fetch()) { 
-        if($row == 0 || $row === null){
-            break;
-        }
-?>
-        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-            <div class="card product-item border-0 mb-4">
-                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
-                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-                    </a>
-                </div>
-                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
-                    <div class="d-flex justify-content-center">
-                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
-                        <?php if ($row['price'] > 0) { ?>
-                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
-                        <?php } ?>
+            <?php if (!empty($featured_products)): ?>
+                <?php foreach ($featured_products as $product): ?>
+                    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <a href="<?php echo $detailLink; ?>?id=<?php echo (int)$product['MASP']; ?>">
+                                    <img class="img-fluid w-100" 
+                                         src="<?php echo htmlspecialchars($product['IMAGE']); ?>" 
+                                         alt="<?php echo htmlspecialchars($product['TENSP']); ?>"
+                                         style="height: 300px; object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3">
+                                    <?php echo htmlspecialchars($product['TENSP']); ?>
+                                </h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6><?php echo number_format($product['DONGIA'], 0, ',', '.'); ?>đ</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        Hiện chưa có sản phẩm nào
                     </div>
                 </div>
-                
-                <script>
-                function showMessage() {
-                    alert("Chưa đăng nhập!");
-                }
-                </script>
-            </div>
+            <?php endif; ?>
         </div>
-    <?php }
-?>
-
-    <!-- Products Start -->
-    <div class="container-fluid pt-5">
-        
+    </div>
+    <!-- Sản Phẩm Nổi Bật End -->
+     <div class="container-fluid pt-5">
         <div class="text-center mb-4">
             <h2 class="section-title px-5"><span class="px-2">Sản Phẩm Mới</span></h2>
         </div>
-
         <div class="row px-xl-5 pb-3">
-            
-           
-        <?php
-// Lấy danh sách sản phẩm
-$sql = "SELECT * FROM product ORDER BY id ASC";
-$data->select($sql);
-    while ($row = $data->fetch()) {
-        if($row == 0 || $row === null)
-            break;
-        ?>
-        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-            <div class="card product-item border-0 mb-4">
-                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
-                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-                    </a>
-                </div>
-                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
-                    <div class="d-flex justify-content-center">
-                        <h6><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
-                        <?php if ($row['price'] > 0) { ?>
-                            <h6 class="text-muted ml-2"><del><?= number_format($row['price'], 0, ',', '.') ?>đ</del></h6>
-                        <?php } ?>
+            <?php if (!empty($new_products)): ?>
+                <?php foreach ($new_products as $product): ?>
+                    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <a href="<?php echo $detailLink; ?>?id=<?php echo (int)$product['MASP']; ?>">
+                                    <img class="img-fluid w-100" 
+                                         src="<?php echo htmlspecialchars($product['IMAGE']); ?>" 
+                                         alt="<?php echo htmlspecialchars($product['TENSP']); ?>"
+                                         style="height: 300px; object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3">
+                                    <?php echo htmlspecialchars($product['TENSP']); ?>
+                                </h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6><?php echo number_format($product['DONGIA'], 0, ',', '.'); ?>đ</h6>
+                                </div>
+                            </div>                        
+                        </div>
                     </div>
-                </div>    
-                <script>
-                function showMessage() {
-                    alert("Chưa đăng nhập!");
-                }
-                </script>
-            </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            Hiện chưa có sản phẩm nào
         </div>
-    <?php }
-?>
-    <!-- Products End -->
+    </div>
+<?php endif; ?>
+        </div>
+    </div>
+    <!-- Sản Phẩm Mới End -->
     <?php include 'src/footer.php';?>
     <!-- Footer End -->
     <!-- Back to Top -->
@@ -259,5 +251,4 @@ $data->select($sql);
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>
-
 </html>

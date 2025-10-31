@@ -1,60 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/ThongKe.php';
 
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';$data = new database();
-// Lấy dữ liệu tìm kiếm và ngày tháng
-$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$start = isset($_GET['start']) ? $_GET['start'] : '';
-$end = isset($_GET['end']) ? $_GET['end'] : '';
+$data = new database();
+$thongke = new ThongKe($data); 
 
-$limit = 5;
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-if ($page < 1) $page = 1;
-$offset = ($page - 1) * $limit;
+// Nhận dữ liệu từ form (GET)
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start  = isset($_GET['start']) ? $_GET['start'] : '';
+$end    = isset($_GET['end']) ? $_GET['end'] : '';
+$page   = isset($_GET['page']) ? intval($_GET['page']) : 1;
 
-// Xây dựng điều kiện WHERE
-$where = "1"; // mặc định luôn đúng
+// Gọi hàm trong class
+$result = $thongke->getCustomers($search, $start, $end, $page, 5);
 
-$params = []; // tham số bind
-$types = "";  // chuỗi loại dữ liệu cho bind_param
-
-if (!empty($raw_search)) {
-    $where .= " AND users.fullname LIKE ?";
-    $params[] = "%$raw_search%";
-    $types .= "s";
-}
-
-if (!empty($start) && !empty($end)) {
-    $where .= " AND orders.created_at BETWEEN ? AND ?";
-    $params[] = $start . " 00:00:00";
-    $params[] = $end . " 23:59:59";
-    $types .= "ss";
-}
-
-// Đếm tổng số khách hàng
-$sql_count = "SELECT COUNT(DISTINCT users.id) AS total FROM users 
-              LEFT JOIN orders ON users.id = orders.user_id 
-              WHERE $where";
-$data->select_prepare($sql_count, $types, ...$params);
-$total_row = $data->fetch();
-$total_users = $total_row['total'];
-// $data->close();  // <-- XÓA DÒNG NÀY nếu còn dùng $data bên dưới
-
-// Lấy dữ liệu khách hàng
-$sql_data = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, 
-            SUM(orders.total) AS tongtien 
-             FROM users 
-             LEFT JOIN orders ON users.id = orders.user_id 
-             WHERE $where 
-             GROUP BY users.id, users.fullname 
-             LIMIT ? OFFSET ?";
-$data->select_prepare($sql_data, $types . "ii", ...array_merge($params, [$limit, $offset])); // Thêm limit và offset vào params
-$params_with_limit = $params;
-$params_with_limit[] = $limit;
-$params_with_limit[] = $offset;
-$total_pages = ceil($total_users / $limit);
+// Trích xuất dữ liệu
+$customers = $result['data'];
+$total_pages = $result['total_pages'];
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -162,7 +128,36 @@ $total_pages = ceil($total_users / $limit);
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+                         
+<li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
 
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
                 <li>
                     <a href="thongke.php"style="color: black;"id="active">
                         <span class="icon">
@@ -309,31 +304,7 @@ $total_pages = ceil($total_users / $limit);
         }
           
   </script>
-  <div class="pagination">
-    <?php
-    // Build base URL giữ lại search, start, end
-    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
-
-    // Nút Trước
-    if ($page > 1) {
-        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
-    }
-
-    // Các số trang
-    for ($i = 1; $i <= $total_pages; $i++) {
-        if ($i == $page) {
-            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
-        } else {
-            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
-        }
-    }
-
-    // Nút Sau
-    if ($page < $total_pages) {
-        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
-    }
-    ?>
-</div>
+  
    
             </div>
 
@@ -357,15 +328,15 @@ $total_pages = ceil($total_users / $limit);
             </thead>
 
             <tbody>
-                <?php while($row = $data->fetch()) { ?>
-                    <tr>
-                        <td><?= 'KH00'.$row['makh'] ?></td>
-                        <td><?= $row['tenkh'] ?></td>
-                        <td><?= $row['sohoadon'] ?></td>
-                        <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
-                        <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
-                    </tr>
-                <?php } ?>
+                <?php foreach ($customers as $row) { ?>
+            <tr>
+                <td><?= 'KH00' . $row['makh'] ?></td>
+                <td><?= htmlspecialchars($row['tenkh']) ?></td>
+                <td><?= $row['sohoadon'] ?></td>
+                <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+                <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
+            </tr>
+        <?php } ?>
             </tbody>
         </table>
 
@@ -373,31 +344,20 @@ $total_pages = ceil($total_users / $limit);
 
 <div class="pagination">
     <?php
-    // Build base URL giữ lại search, start, end
-    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
-
-    // Nút Trước
-    if ($page > 1) {
-        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
-    }
-
-    // Các số trang
+    $base_url = "?search=" . urlencode($search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
+    if ($page > 1) echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
     for ($i = 1; $i <= $total_pages; $i++) {
-        if ($i == $page) {
-            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
-        } else {
-            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
-        }
+        echo ($i == $page)
+            ? "<span class='hientai1'>$i</span>"
+            : "<a href='{$base_url}&page=$i'>$i</a>";
     }
-
-    // Nút Sau
-    if ($page < $total_pages) {
-        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
-    }
+    if ($page < $total_pages) echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
     ?>
 </div>
     </div>
         </div>
+
+        
 
         <div class="details">
     <div class="recentOrders">
@@ -415,27 +375,35 @@ $total_pages = ceil($total_users / $limit);
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    // Lấy 5 khách hàng mua nhiều nhất
-                    $sql = "SELECT users.id AS makh, users.fullname AS tenkh, COUNT(orders.id) AS sohoadon, 
-                                    SUM(orders.total) AS tongtien
-                            FROM users
-                            LEFT JOIN orders ON users.id = orders.user_id
-                            GROUP BY users.id, users.fullname
-                            ORDER BY sohoadon DESC 
-                            LIMIT 5";
-                    $data->select($sql);
-                    $stt = 1; // Khởi tạo số thứ tự
-                ?>
-                <?php while ($row = $data->fetch()) { ?>
-                    <tr>
-                        <td><?= $stt++ ?></td> <!-- Hiển thị số thứ tự -->
-                        <td><?= $row['tenkh'] ?></td>
-                        <td><?= $row['sohoadon'] ?></td>
-                        <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
-                        <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
-                    </tr>
-                <?php } ?>
+               <body>
+    <?php
+        // Lấy 5 khách hàng mua nhiều nhất
+        $sql = "SELECT 
+                    khach_hang.MAKH AS makh, 
+                    khach_hang.HOTEN AS tenkh, 
+                    COUNT(don_hang.MADH) AS sohoadon, 
+                    SUM(don_hang.TONGTIEN) AS tongtien
+                FROM khach_hang
+                LEFT JOIN don_hang ON khach_hang.MAKH = don_hang.MAKH
+                GROUP BY khach_hang.MAKH, khach_hang.HOTEN
+                ORDER BY sohoadon DESC 
+                LIMIT 5";
+
+        $data->select($sql);
+        $stt = 1; // Khởi tạo số thứ tự
+    ?>
+
+    <?php while ($row = $data->fetch()) { ?>
+        <tr>
+            <td><?= $stt++ ?></td> <!-- Hiển thị số thứ tự -->
+            <td><?= htmlspecialchars($row['tenkh']) ?></td>
+            <td><?= $row['sohoadon'] ?></td>
+            <td><?= number_format($row['tongtien'], 0, ',', '.') ?> VND</td>
+            <td><a href="xemhoadon.php?id=<?= $row['makh'] ?>">Xem</a></td>
+        </tr>
+    <?php } ?>
+</body>
+
             </tbody>
         </table>
     </div>

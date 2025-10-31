@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-session_start();
-include "database/connect.php";
+include "src/systemManage.php";
+$sm = new QuanLyHeThong();
 $data = new database();
 $error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
-    $sql = 'SELECT id, password FROM users WHERE username = ?';
-    $data->select_prepare($sql, "s", $username);
-    $row = $data->fetch();
-    if ($row && $password === $row['password']) {
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['username'] = $username;
-            header("Location: login.php");
-            exit();
-    } else {
-        $error = "Sai tên đăng nhập hoặc mật khẩu!";
-    }
+    $sm->dangnhap($username,$password);
 }
 $data->close();
 ?>
@@ -269,7 +259,7 @@ button:hover {
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
                         <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
+                            <a class="text-dark mb-2" href="index.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
                             <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
                             <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Chi Tiết Cửa Hàng</a>
                             <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>

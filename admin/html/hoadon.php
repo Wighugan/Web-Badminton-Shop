@@ -4,13 +4,14 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 // Lấy thông tin đơn hàng + khách hàng
-$sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
-              JOIN users ON orders.user_id = users.id 
-              WHERE orders.id = ?";
+$sql_order = "SELECT dh.*, kh.HOTEN, kh.SDT, kh.DIACHI1
+              FROM don_hang dh
+              JOIN khach_hang kh ON dh.MAKH = kh.MAKH
+              WHERE dh.MADH = ?";
 $data->select_prepare($sql_order, 'i', $order_id);
 $order = $data->fetch();
 // Lấy danh sách sản phẩm trong đơn hàng
-$sql_detail = "SELECT * FROM order_details WHERE order_id = ?";
+$sql_detail = "SELECT * FROM ctdh WHERE MADH = ?";
 $data->select_prepare($sql_detail, 'i', $order_id);
 ?>
 <head>
@@ -89,6 +90,35 @@ $data->select_prepare($sql_detail, 'i', $order_id);
                     </a>
                 </li>
                 <li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
@@ -109,31 +139,7 @@ $data->select_prepare($sql_detail, 'i', $order_id);
        
                 
             </div>
-            <!-- ======================= Cards ================== -->
-            
-            <!----
-            <h2 style="margin-left: 20px;">Thống kê tình hình kinh doanh</h2>
-        
-            <div class="filter">
-                <div class="flex">
-                <span><input type="radio" name="chon" value="ten" id="ten" onclick="checkTen()" checked>Theo tên sản phẩm</span>
-                <span><input type="radio" name="chon" value="loai" id="loai" onclick="checkLoai()">Theo loại sản phẩm</span>
-                <input type="text" name="tenSp" id="tenSp" placeholder="Tên sản phẩm">
-                <select name="loaiSp" id="loaiSp">
-                    <option value="Kỹ năng sống - Phát triển bản thân">Kỹ năng sống - Phát triển bản thân</option>
-                    <option value="Manga-Comic">Manga-Comic</option>
-                    <option value="Nghệ thuật-Văn hóa">Nghệ thuật-Văn hóa</option>
-                </select>
-                </div>
-                <div class="date">
-                    <label for="start">Từ ngày: </label>
-                    <input type="date" id="start" name="start" value="2023-11-24" min="2018-01-01" max="2023-12-31">
-                    <label for="start">đến </label>
-                    <input type="date" id="end" name="end" value="2023-11-30" min="2018-01-01" max="2023-12-31">
-                </div>
-                <button class="thongke"><a href="thongke.html">Thống kê</a></button>
-            </div>
-        -->
+          
         <div class="chartsBx">
             <h2>                                                   </h2>
            
@@ -150,19 +156,19 @@ $data->select_prepare($sql_detail, 'i', $order_id);
                     </div>
                     <div class="card">
                     <div class="thongtinnguoimua">
-                        <p> <span style="font-weight: bold;">Mã đơn hàng:</span> <?= $order['code'] ?></span></p>
+                        <p> <span style="font-weight: bold;">Mã đơn hàng:</span> <?= $order['CODE'] ?></span></p>
 
-                        <p> <span style="font-weight: bold;">Tên Khách Hàng:</span> <?= $order['fullname'] ?></span></p>
-                        <p> <span style="font-weight: bold;">Số điện thoại:</span> <?= $order['numberphone'] ?></p>
+                        <p> <span style="font-weight: bold;">Tên Khách Hàng:</span> <?= $order['HOTEN'] ?></span></p>
+                        <p> <span style="font-weight: bold;">Số điện thoại:</span> <?= $order['SDT'] ?></p>
 
                         
-                        <p> <span style="font-weight: bold;">Địa chỉ giao hàng:</span>  <?= $order['address1'] ?></p>
+                        <p> <span style="font-weight: bold;">Địa chỉ giao hàng:</span>  <?= $order['DIACHI1'] ?></p>
                     </div>
                     <div class="thongtinnguoimua">
-                        <p> <span style="font-weight: bold;">Ngày đặt hàng:</span> <?= $order['created_at'] ?></span></p>
+                        <p> <span style="font-weight: bold;">Ngày đặt hàng:</span> <?= $order['NGAYLAP'] ?></span></p>
                         <p> <span style="font-weight: bold;">Thanh toán:</span> Thanh toán khi nhận hàng</span></p>
-                        <p> <span style="font-weight: bold;">Trạng thái đơn hàng:</span><span style="color: <?= $order['status'] === 'Thành công' ? 'green' : 'red' ?>">
-                <?= $order['status'] ?>
+                        <p> <span style="font-weight: bold;">Trạng thái đơn hàng:</span><span style="color: <?= $order['TRANGTHAI'] === 'Thành công' ? 'green' : 'red' ?>">
+                <?= $order['TRANGTHAI'] ?>
             </span></p>
 
                     </div>
@@ -186,15 +192,15 @@ $data->select_prepare($sql_detail, 'i', $order_id);
         $i = 1;
         $total = 0;
         while($row = $data->fetch()) { 
-            $thanhtien = $row['quantity'] * $row['product_price'];
+            $thanhtien = $row['SOLUONG'] * $row['DONGIA'];
             $total += $thanhtien;
         ?>
         <tr>
             <td><?= $i++ ?></td>
-            <td>SP00<?= $row['id'] ?></td>
-            <td><?= $row['product_name'] ?></td>
-            <td><?= $row['quantity'] ?></td>
-            <td><?= number_format($row['product_price'], 0, ',', '.') ?> VND</td>
+            <td>SP00<?= $row['MADH'] ?></td>
+            <td><?= $row['TENSP'] ?></td>
+            <td><?= $row['SOLUONG'] ?></td>
+            <td><?= number_format($row['DONGIA'], 0, ',', '.') ?> VND</td>
             <td><?= number_format($thanhtien, 0, ',', '.') ?> VND</td>
         </tr>
         <?php } ?>

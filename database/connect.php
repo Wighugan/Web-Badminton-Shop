@@ -72,6 +72,9 @@
         }
         return $this->stmt->execute();
     }
+    public function affectedRows() {
+    return $this->conn->affected_rows; // Trả số row affected
+}
     public function close() {
         if ($this->stmt) $this->stmt->close();
         if ($this->conn) $this->conn->close();

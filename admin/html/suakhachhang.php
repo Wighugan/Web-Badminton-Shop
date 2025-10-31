@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
 // Kiểm tra nếu có ID hợp lệ
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
-    $sql = "SELECT * FROM users WHERE id = ?";
+    $sql = "SELECT * FROM khach_hang WHERE MAKH = ?";
     $data->select_prepare($sql,'i',$id);
     $user = $data->fetch();
     if (!$user) {
@@ -102,6 +102,35 @@ $data->close();
                     </a>
                 </li>
                 <li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
@@ -127,15 +156,15 @@ $data->close();
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Sửa Thông Tin Khách Hàng ---------------------------</h1>
-                <form action="updateuser.php" method="POST" enctype="multipart/form-data">                   
-                <input type="hidden" name="id" value="<?= $user['id'] ?>">
+                <form action="updateuser.php?type=khach_hang"method="POST" enctype="multipart/form-data">                   
+                <input type="hidden" name="MAKH" value="<?= $user['MAKH'] ?>">
 
 
 
 
                     <div class="form-group">
                         <label for="name">Tên đăng nhập:</label>
-                        <input type="text" name="username" value="<?= $user['username'] ?>" required>
+                        <input type="text" name="TENKH" value="<?= $user['TENKH'] ?>" required>
                         </div>
 
                         
@@ -143,42 +172,42 @@ $data->close();
                     
                     <label for="name">Ảnh đại diện:</label>
                     <div>
-                    <input class="form-group" type="file" id="avatar" name="avatar" accept="image/*"  onchange="previewImage(event)">
+                    <input class="form-group" type="file" id="AVATAR" name="AVATAR" accept="image/*"  onchange="previewImage(event)">
 </div>
-                    <img src="<?= '../../' .$user['avatar'] ?>" width="30" id="preview"  height="50" padding="20">
+                    <img src="<?= '../../' .$user['AVATAR'] ?>" width="30" id="preview"  height="50" padding="20">
                     
                  </div>
                     <div class="form-group">
                         <label for="name">Họ và tên:</label>
-                        <input type="text" name="fullname" value="<?= $user['fullname'] ?>" required>
+                        <input type="text" name="HOTEN" value="<?= $user['HOTEN'] ?>" required>
                        
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="text" id="email" name="email" value="<?= $user['email'] ?>" required>
+                        <input type="text" id="email" name="EMAIL" value="<?= $user['EMAIL'] ?>" required>
                         
                     </div>
                     
                     <div class="form-group">
                         <label for="name">Số điện thoại:</label>
-                        <input type="text" id="numberphone" name="numberphone" value="<?= $user['numberphone'] ?>" required>
+                        <input type="text" id="numberphone" name="SDT" value="<?= $user['SDT'] ?>" required>
                         
                     </div>
 
                     <div class="form-group">
                         <label for="email">Địa chỉ:</label>
-                        <input type="text" id="address1" name="address1" value="<?= $user['address1'] ?>" required>
+                        <input type="text" id="address1" name="DIACHI1" value="<?= $user['DIACHI1'] ?>" required>
                         </div>
 
   <div class="form-group">
                         <label for="email">Quận:</label>
-                        <input type="text" id="address" name="address" value="<?= $user['address'] ?>" required>
+                        <input type="text" id="address" name="DIACHI" value="<?= $user['DIACHI'] ?>" required>
                         </div>
 
   <div class="form-group">
                         <label for="email">Thành phố:</label>
-                        <input type="text" id="city" name="city" value="<?= $user['city'] ?>" required>
+                        <input type="text" id="city" name="TP" value="<?= $user['TP'] ?>" required>
                         </div>
 
 
@@ -186,7 +215,7 @@ $data->close();
 
                     <div class="form-group">
                         <label for="email">Ngày Sinh:</label>
-                        <input type="date" id="birthday" name="birthday" value="<?= $user['birthday'] ?>" required>
+                        <input type="date" id="birthday" name="NS" value="<?= $user['NS'] ?>" required>
                         </div>
 
                     <div class="form-group">

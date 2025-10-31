@@ -1,64 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';$data = new database();
-$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$district = isset($_GET['district']) ? trim($_GET['district']) : '';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/User.php';
 
-$limit = 5;
+// Khởi tạo database và class User
+$db = new database();
+$user = new User($db);
+
+// Nhận tham số từ GET
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
-$offset = ($page - 1) * $limit;
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$district = isset($_GET['district']) ? trim($_GET['district']) : '';
 
-// Xây dựng WHERE
-$where_parts = [];
-$params = [];
-$param_types = "";
-
-// Tìm kiếm theo tên
-if (!empty($raw_search)) {
-    $where_parts[] = "fullname LIKE ?";
-    $params[] = "%$raw_search%";
-    $param_types .= "s";
-}
-
-// Lọc theo quận/huyện
-if (!empty($district)) {
-    $where_parts[] = "address LIKE ?";
-    $params[] = "%$district%";
-    $param_types .= "s";
-}
-
-// QUAN TRỌNG: Ghép WHERE clause từ mảng
-$where_sql = "";
-if (!empty($where_parts)) {
-    $where_sql = "WHERE " . implode(" AND ", $where_parts);
-}
-
-// ===== ĐẾM TỔNG =====
-$sql_total = "SELECT COUNT(*) AS total FROM users $where_sql";
-
-if (!empty($params)) {
-    $data->select_prepare($sql_total, $param_types, ...$params);
-} else {
-    $data->select($sql_total);
-}
-
-$total_row = $data->fetch();
-$total_users = $total_row['total'] ?? 0;
-$total_pages = ceil($total_users / $limit);
-
-// ===== LẤY DỮ LIỆU =====
-$sql_data = "SELECT * FROM users $where_sql ORDER BY id DESC LIMIT ? OFFSET ?";
-
-// Copy params và thêm LIMIT/OFFSET
-$params_data = $params;
-$params_data[] = $limit;
-$params_data[] = $offset;
-$types_data = $param_types . "ii";
-
-$data->select_prepare($sql_data, $types_data, ...$params_data);
-$total_pages = ceil($total_users / $limit);
+// Lấy danh sách và tổng
+$users = $user->getUsers($page, $search, $district);
+$total_users = $user->countUsers($search, $district);
+$total_pages = ceil($total_users / $user->getLimit());
+$stt = ($page - 1) * $user->getLimit() + 1;
 ?>
 
 <head>
@@ -176,6 +136,36 @@ $total_pages = ceil($total_users / $limit);
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+                                         
+<li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
                 <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
@@ -280,66 +270,64 @@ $total_pages = ceil($total_users / $limit);
                            
             
    <?php
-        $stt = ($page - 1) * $limit + 1;
-        $users = $data->fetchAll(); // LẤY TẤT CẢ DÒNG MỘT LẦN
-        
-        if (!empty($users)) {
-            foreach ($users as $row) {
-                // Escape output để tránh XSS
-                $username = htmlspecialchars($row['username']);
-                $fullname = htmlspecialchars($row['fullname']);
-                $email = htmlspecialchars($row['email']);
-                $phone = htmlspecialchars($row['numberphone']);
-                $address = htmlspecialchars($row['address']);
-                $id = (int)$row['id'];
-                $avatar = htmlspecialchars($row['avatar']);
-                // $status = (int)$row['status'];
-                $birthday = date("d/m/Y", strtotime($row['birthday']));
-                
-                echo "<tr>";
-                echo "<td>{$stt}</td>";
-                
-                // Ảnh đại diện
-                echo "<td>";
-                echo "<img src=\"../../{$avatar}\" width=\"50\" height=\"50\" alt=\"$fullname\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\">";
-                echo "</td>";
-                
-                echo "<td>{$username}</td>";
-                echo "<td>{$fullname}</td>";
-                echo "<td>{$email}</td>";
-                echo "<td>{$phone}</td>";
-                echo "<td>{$address}</td>";
-                echo "<td>{$birthday}</td>";
-                
-                // Thao tác
-                echo "<td>";
-                echo "<a href=\"suakhachhang.php?id={$id}\" class=\"btn btn-sm btn-warning\" title=\"Sửa\">";
-                echo "<i class=\"fas fa-edit\"></i> Sửa";
-                echo "</a> ";
-                echo "</td>";
-                echo "</tr>";
-                $stt++;
-            }
+$stt = ($page - 1) * $user->getLimit() + 1;
+
+if (!empty($users)) {
+    foreach ($users as $row) {
+        $username = htmlspecialchars($row['TENKH']);
+        $fullname = htmlspecialchars($row['HOTEN']);
+        $email = htmlspecialchars($row['EMAIL']);
+        $phone = htmlspecialchars($row['SDT']);
+        $address = htmlspecialchars($row['DIACHI']);
+        $id = (int)$row['MAKH'];
+        $avatar = htmlspecialchars($row['AVATAR']);
+        $birthday = date("d/m/Y", strtotime($row['NS']));
+
+        echo "<tr>";
+        echo "<td>{$stt}</td>";
+
+        echo "<td><img src=\"../../{$avatar}\" width=\"50\" height=\"50\" alt=\"{$fullname}\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\"></td>";
+        echo "<td>{$username}</td>";
+        echo "<td>{$fullname}</td>";
+        echo "<td>{$email}</td>";
+        echo "<td>{$phone}</td>";
+        echo "<td>{$address}</td>";
+        echo "<td>{$birthday}</td>";
+
+        echo "<td>";
+        echo "<a href=\"suakhachhang.php?id={$id}\" class=\"btn btn-sm btn-warning\" title=\"Sửa\"><i class=\"fas fa-edit\"></i> Sửa</a> ";
+
+        if ($row['TRANGTHAI'] == 1) {
+            echo "<a href='#' onclick='lock_user({$id}, \"khach_hang\")' class='btn btn-sm btn-danger' style='color: red' title='Khóa tài khoản'><i class='fa-solid fa-lock'></i> Khóa</a>";
         } else {
-            echo "<tr><td colspan=\"9\" class=\"text-center text-muted\">Không có người dùng nào!</td></tr>";
+            echo "<a href='#' onclick='unlock_user({$id}, \"khach_hang\")' class='btn btn-sm btn-success' style='color: green' title='Mở khóa tài khoản'><i class='fa-solid fa-lock-open'></i> Mở khóa</a>";
         }
-        $data->close();
-        ?>
+
+        echo "</td>";
+        echo "</tr>";
+
+        $stt++;
+    }
+} else {
+    echo "<tr><td colspan=\"9\" class=\"text-center text-muted\">Không có người dùng nào!</td></tr>";
+}
+$user->close();
+?>
+
 
 <script>
-    function lock_user(userId) {
-        const confirmation = confirm("Bạn có chắc chắn muốn khóa người dùng này?");
-        if (confirmation) {
-            window.location.href = 'lock_user.php?id=' + userId;
-        }
+function lock_user(id, type) {
+    if (confirm("Bạn có chắc chắn muốn khóa tài khoản này?")) {
+        window.location.href = 'khoa.php?id=' + id + '&type=' + type;
     }
+}
 
-    function unlock_user(userId) {
-        const confirmation = confirm("Bạn có chắc chắn muốn mở khóa người dùng này?");
-        if (confirmation) {
-            window.location.href = 'unlock_user.php?id=' + userId;
-        }
+function unlock_user(id, type) {
+    if (confirm("Bạn có chắc chắn muốn mở khóa tài khoản này?")) {
+        window.location.href = 'mokhoa.php?id=' + id + '&type=' + type;
     }
+}
+
 </script>
 
 
@@ -353,7 +341,7 @@ $total_pages = ceil($total_users / $limit);
     <?php
     // Nút Trước
     if ($page > 1) {
-        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($raw_search) . "'>Trước</a>";
+        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "'>Trước</a>";
     }
 
     // Các số trang
@@ -361,13 +349,13 @@ $total_pages = ceil($total_users / $limit);
         if ($i == $page) {
             echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
         } else {
-            echo "<a href='?page=$i&search=" . urlencode($raw_search) . "'>$i</a>";  // Trang khác
+            echo "<a href='?page=$i&search=" . urlencode($search) . "'>$i</a>";  // Trang khác
         }
     }
 
     // Nút Sau
     if ($page < $total_pages) {
-        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($raw_search) . "'>Sau</a>";
+        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($search) . "'>Sau</a>";
     }
     ?>
 </div>

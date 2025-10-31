@@ -1,6 +1,6 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>MMB- Shop Bán Đồ Cầu Lông</title>
@@ -84,7 +84,6 @@
                
                 <a href="cart.php" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
-                    <span class="badge">0</span>
                 </a>
             </div>
         </div>
@@ -156,10 +155,16 @@ $(document).ready(function() {
 
                 <div class="collapse navbar-collapse d-flex justify-content-between w-100" id="navbarCollapse">
                     <!-- Menu bên trái -->
-                    <div class="navbar-nav py-0">
-                        <a href="index.php" class="nav-item nav-link active">Trang Chủ</a>
-                        <a href="shop.php" class="nav-item nav-link">Sản Phẩm</a>
-                        <a href="contact.php" class="nav-item nav-link">Liên Hệ</a>
+                      <div class="navbar-nav py-0">
+                        <a href="index.php" class="nav-item nav-link">
+                            <i class="fas fa-home"></i> Trang Chủ
+                        </a>
+                        <a href="shop.php" class="nav-item nav-link">
+                            <i class="fas fa-shopping-bag"></i> Sản Phẩm
+                        </a>
+                        <a href="contact.php" class="nav-item nav-link">
+                            <i class="fas fa-envelope"></i> Liên Hệ
+                        </a>
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->

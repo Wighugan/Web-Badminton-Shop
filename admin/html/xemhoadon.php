@@ -2,35 +2,28 @@
 <html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
 
-$limit = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
-$offset = ($page - 1) * $limit;
+// Khởi tạo kết nối và class
+$db = new database();
+$order = new Order($db);
 
-// ===== FIX 1: Lấy tổng TRƯỚC =====
-$sql_total = "SELECT COUNT(*) as total FROM orders";
-$data = new Database();
-$data->select($sql_total);
-$row_total = $data->fetch();
-$total_orders = $row_total['total'] ?? 0;
-$total_pages = ceil($total_orders / $limit);
+// Nhận tham số lọc & tìm kiếm
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start_date = isset($_GET['start']) ? $_GET['start'] : '';
+$end_date = isset($_GET['end']) ? $_GET['end'] : '';
+$district = isset($_GET['district']) ? trim($_GET['district']) : '';
+$status = isset($_GET['status']) ? trim($_GET['status']) : '';
 
-// ===== FIX 2: Tạo object mới để lấy data =====
-$data = new Database(); // ← QUAN TRỌNG: Tạo object mới
-$sql = "SELECT orders.*, users.fullname, users.numberphone, users.address, users.id AS makh
-        FROM orders 
-        JOIN users ON orders.user_id = users.id 
-        ORDER BY orders.created_at DESC
-        LIMIT ? OFFSET ?";
-
-$data->select_prepare($sql, "ii", $limit, $offset);
-
-// ===== FIX 3: fetchAll() không cần tham số =====
-$orders = $data->fetchAll(); // ✅ ĐÚNG
-
-$stt = ($page - 1) * $limit + 1;
+// Lấy danh sách đơn hàng và tổng số
+$orders = $order->getOrders($page, $search, $start_date, $end_date, $district, $status);
+$total_orders = $order->countOrders($search, $start_date, $end_date, $district, $status);
+$total_pages = ceil($total_orders / $order->getLimit());
+$stt = ($page - 1) * $order->getLimit() + 1;
 ?>
+
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -127,6 +120,35 @@ $stt = ($page - 1) * $limit + 1;
                     </a>
                 </li>
                 <li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
@@ -177,20 +199,20 @@ $stt = ($page - 1) * $limit + 1;
                 <?php
                 if (!empty($orders)) {
                     foreach ($orders as $order) {
-                        $orderId = (int)$order['id'];
-                        $status = htmlspecialchars($order['status'] ?? '');
+                        $orderId = (int)$order['MADH'];
+                        $status = htmlspecialchars($order['TRANGTHAI'] ?? '');
                         ?>
                         <tr>
                             <td><?php echo $stt++; ?></td>
                             <td>
                                 <a href="chitietdonhang.php?id=<?php echo $orderId; ?>">
-                                    <?php echo htmlspecialchars($order['code'] ?? ''); ?>
+                                    <?php echo htmlspecialchars($order['CODE'] ?? ''); ?>
                                 </a>
                             </td>
-                            <td><?php echo htmlspecialchars($order['fullname'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($order['numberphone'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($order['address'] ?? ''); ?></td>
-                            <td><?php echo date('d/m/Y', strtotime($order['created_at'] ?? 'now')); ?></td>
+                            <td><?php echo htmlspecialchars($order['HOTEN'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($order['SDT'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($order['DIACHI1'] ?? ''); ?></td>
+                            <td><?php echo date('d/m/Y', strtotime($order['NGAYLAP'] ?? 'now')); ?></td>
                             <td>
                                 <span class="badge bg-<?php 
                                     echo ($status == 'Thành công') ? 'success' : 
@@ -201,9 +223,8 @@ $stt = ($page - 1) * $limit + 1;
                                 </span>
                             </td>
                             <td>
-                                <a href="hoadon.php?id=<?php echo $orderId; ?>" class="btn btn-sm btn-info">
-                                    Chi tiết
-                                </a>
+                               <a href="hoadon.php?id=<?php echo $orderId; ?>" class="btn btn-sm btn-info">Chi tiết</a>
+
                             </td>
                         </tr>
                         <?php

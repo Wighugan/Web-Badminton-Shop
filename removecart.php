@@ -10,7 +10,7 @@ $user_id = $_SESSION['user_id'];
 $cart_id = $_GET['id'];
 
 // Xóa sản phẩm khỏi giỏ hàng
-$data->select_prepare("DELETE FROM cart WHERE id = ? AND user_id = ?", "ii", $cart_id, $user_id);
+$data->select_prepare("DELETE FROM gio_hang WHERE MAGH = ? AND MAKH = ?", "ii", $cart_id, $user_id);
 
 // Quay lại giỏ hàng
 header("Location: cart.php");
