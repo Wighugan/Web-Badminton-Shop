@@ -1,18 +1,16 @@
+<?php
+include 'database/connect.php';
+if (isset($_SESSION['user_id'])) {
+    include 'src/header-login.php';
+} else {
+    include 'src/header.php';
+}
+$data = new Database();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'src/header-login.php'; ?>
-<?php
-$isLoggedIn = isset($_SESSION['user_id']); // Giả sử bạn lưu thông tin đăng nhập trong $_SESSION['user']
 
-
-// Kiểm tra nếu chưa đăng nhập thì chuyển về login.php
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
-}
- include 'database/connect.php';
- $data = new Database();
-?>
     <!-- Navbar End -->
 
 
@@ -21,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông Tin Liên Hệ </h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="index.php">Trang Chủ</a></p>
+                <p class="m-0"><a href="login.php">Trang Chủ</a></p>
             </div>
         </div>
     </div>
@@ -39,7 +37,7 @@ button {
 }
 
 button:hover {
-    background-color: #969393;
+    background-color: #c2bdbdff;
 }
 .no-border-button-rec-contact{
         border: 0px;      /* Loại bỏ viền */

@@ -41,7 +41,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                 </li>
             </div>
                 <li>
-                    <a href="trangchuadmin.html"style="color: black;">
+                    <a href="trangchuadmin.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -50,7 +50,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html"style="color: black;">
+                    <a href="quanlydonhang.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -76,7 +76,36 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                     </a>
                 </li>
                 <li>
-                    <a href="thongke.html"style="color: black;">
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
                         </span>
@@ -102,12 +131,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin Khách Hàng ----------------</h1>
                 
-                <form action="insertuser.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+                <form action="insertuser.php?type=khachhang" method="POST" enctype="multipart/form-data" id="suaUserForm">
                    
                    
                     <div class="form-group">
                         <label for="name">Tên đăng nhập:</label>
-                        <input type="text" id="username" name="username" >
+                        <input type="text" id="username" name="TENKH" >
                     </div>
 
 
@@ -121,7 +150,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
         <span class="input-group-text">
             <i class="fa fa-user"></i>
         </span>
-        <input type="file" class="form-control" name="avatar" id="avatar" accept="image/*" onchange="previewImage(event)">
+        <input type="file" class="form-control" name="AVATAR" id="AVATAR" accept="image/*" onchange="previewImage(event)">
 
     </div>      
     
@@ -150,30 +179,30 @@ function previewImage(event) {
 
                     <div class="form-group">
                         <label for="name">Họ và tên:</label>
-                        <input type="text" id="fullname" name="fullname">
+                        <input type="text" id="fullname" name="HOTEN">
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="text" id="email" name="email">
+                        <input type="text" id="email" name="EMAIL">
                     </div>
 
                     <div class="form-group">
                         <label for="email">Số điện thoại:</label>
-                        <input type="text" id="numberphone" name="numberphone">
+                        <input type="text" id="numberphone" name="SDT">
                     </div>
 
                     <div class="form-group">
                         <label for="email">Địa chỉ:</label>
-                        <input type="text" id="address1" name="address1">
+                        <input type="text" id="address1" name="DIACHI1">
                     </div>
  <div class="form-group">
                         <label for="email">Quận:</label>
-                        <input type="text" id="address" name="address">
+                        <input type="text" id="address" name="DIACHI">
                     </div>
  <div class="form-group">
                         <label for="email">Thành phố:</label>
-                        <input type="text" id="city" name="city">
+                        <input type="text" id="city" name="TP">
                     </div>
 
 
@@ -181,7 +210,7 @@ function previewImage(event) {
 
                     <div class="form-group">
                         <label for="email">Ngày Sinh:</label>
-                        <input type="text" id="birthday" name="birthday" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >
+                        <input type="text" id="birthday" name="NS" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >
                     </div>
                    
 

@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
+
 $data = new Database();
+$orderObj = new Order($data);
+
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Khi admin bấm cập nhật trạng thái
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $new_status = $_POST['status'];
-    $update_sql = "UPDATE orders SET status = ? WHERE id = ?";
-    $data->select_prepare($update_sql, "si", $new_status, $order_id);
-    if ($data->execute()) {
-        // Load lại trang để hiển thị trạng thái mới
+    if ($orderObj->updateStatus($order_id, $new_status)) {
         echo "<script>location.href='chitietdonhang.php?id=$order_id';</script>";
         exit;
     } else {
@@ -17,22 +21,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     }
 }
 
-// Lấy thông tin đơn hàng + khách hàng
-$sql_order = "SELECT orders.*, users.fullname, users.numberphone , users.address1 FROM orders 
-              JOIN users ON orders.user_id = users.id 
-              WHERE orders.id = ?";
+// Lấy thông tin đơn (kiểm tra tồn tại)
+$order = $orderObj->getOrderInfo($order_id);
+if (!$order) {
+    echo "<p style='color:red'>Không tìm thấy đơn hàng với id = {$order_id}</p>";
+    exit;
+}
 
-              
-$data->select_prepare($sql_order, "i", $order_id);
-$result_order = $data->fetchAll();
-$order = $result_order[0];
-
-// Lấy danh sách sản phẩm trong đơn hàng
-$sql_detail = "SELECT order_details.*, product.image, product.name
-               FROM order_details 
-             left JOIN product ON order_details.product_id = product.id 
-               WHERE order_details.order_id = ?";
-$data->select_prepare($sql_detail, "i", $order_id);
+// Lấy chi tiết đơn, đảm bảo là mảng (không để null)
+$details = $orderObj->getOrderDetails($order_id);
+if (!is_array($details)) {
+    $details = []; // fallback an toàn
+}
 ?>
 
 
@@ -108,6 +108,35 @@ $data->select_prepare($sql_detail, "i", $order_id);
                     </a>
                 </li>
                 <li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
@@ -130,7 +159,7 @@ $data->select_prepare($sql_detail, "i", $order_id);
 
             <div class="chitietdonhang">
                 <div class="banner">
-                    <p>Mã đơn hàng: <a href ="chitietdonhang.php"><?= $order['code'] ?></a>
+                    <p>Mã đơn hàng: <a href ="chitietdonhang.php"><?= $order['CODE'] ?></a>
                         
                     </p>
                     <p>20/11/2024 - 23:51 | NV tư vấn: Nguyễn Văn B - nguyenvanB@gmail.com</p>
@@ -162,9 +191,9 @@ $data->select_prepare($sql_detail, "i", $order_id);
                     </div>
                    
                     <div class="thongtinnguoimua">
-                        <p style="font-weight: bold; "><?= $order['fullname'] ?></p>
-                        <p> <?= $order['numberphone'] ?></p>
-                        <p>  <?= $order['address1'] ?></p>
+                        <p style="font-weight: bold; "><?= $order['HOTEN'] ?></p>
+                        <p> <?= $order['SDT'] ?></p>
+                        <p>  <?= $order['DIACHI1'] ?></p>
                     </div>
                     <!-- Trong phần HTML -->
                    
@@ -176,113 +205,81 @@ $data->select_prepare($sql_detail, "i", $order_id);
                
                
 
-                       <div class="detail">
-                        <div class="recentOrder">
-                           
-                        <form  method="POST" enctype="multipart/form-data" id="suaUserForm">
+                      <?php if (!$order) { echo "<p style='color:red;'>⚠ Không tìm thấy đơn hàng!</p>"; } ?>
 
+<div class="detail">
+    <div class="recentOrder">
+        <form method="POST" enctype="multipart/form-data" id="suaUserForm">
+            <table>
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Ảnh</td>
+                        <td>Tên SP</td>
+                        <td>Số lượng</td>
+                        <td>Giá tiền</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $i = 1;
+                    $total = 0;
+                    foreach ($details as $row) { 
+                        $thanhtien = $row['SOLUONG'] * $row['DONGIA'];
+                        $total += $thanhtien;
+                    ?>
+                    <tr>
+                        <td><?= $i++ ?></td>
+                        <td><img src="../<?= htmlspecialchars($row['IMAGE']) ?>" width="80"></td>
+                        <td><?= htmlspecialchars($row['TENSP']) ?></td>
+                        <td><?= $row['SOLUONG'] ?></td>
+                        <td><?= number_format($row['DONGIA'], 0, ',', '.') ?> VND</td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
 
-                    <table>
-                        <thead>
-                            <tr>
-                                
-                               <td>id</td>
-                                <td>Ảnh</td>
-                                 <td>Tên SP</td>
-                                 <td>Số lượng</td>
-                                <td>Giá tiền </td>
-                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php 
-        $i = 1;
-        $total = 0;
-        while($row = $data->fetch()) { 
-            $thanhtien = $row['quantity'] * $row['product_price'];
-            $total += $thanhtien;
-        ?>
-        <tr>
-            <td><?= $i++ ?></td>
+            <div class="thanhtoan">
+                <table>
+                    <tbody>
+                        <tr><td>Tổng tiền hàng:</td><td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td></tr>
+                        <tr><td>Phí vận chuyển:</td><td>50.000 VND</td></tr>
+                        <tr><td>Giảm giá phí vận chuyển:</td><td>-50.000 VND</td></tr>
+                        <tr><td>Phí Bảo Đảm:</td><td>30.000 VND</td></tr>
+                        <tr><td><b>Thành tiền:</b></td>
+                            <td><b><?= number_format($total + 30000, 0, ',', '.') ?> VND</b></td></tr>
+                        <tr><td>Phương thức thanh toán:</td><td>COD</td></tr>
 
-            <td><img src="<?=$row['image'] ?>" width="80"></td> <!-- Ảnh -->
-            <td><?= $row['name'] ?></td>
-            <td><?= $row['quantity'] ?></td>
-            <td><?= number_format($row['product_price'], 0, ',', '.') ?> VND</td>
-        </tr>
-        <?php } ?>
-                        </tbody>
-                    </table>
-                    <div class="thanhtoan">
-    <table>
-        <tbody>
-            <tr>
-                <td>Tổng tiền hàng:</td>
-                <td><b><?= number_format($total, 0, ',', '.') ?> VND</b></td>
-            </tr>
-            <tr>
-                <td>Phí vận chuyển:</td>
-                <td>50.000 VND</td>
-            </tr>
-            <tr>
-                <td>Giảm giá phí vận chuyển:</td>
-                <td>-50.000 VND</td>
-            </tr>
-            <tr>
-                <td>Phí Bảo Đảm:</td>
-                <td>30.000 VND</td>
-            </tr>
-            <tr>
-                <td><b>Thành tiền:</b></td>
-                <td>
-                    <b>
-                        <?php 
-                        $total_final = $total + 30000; // phí bảo đảm, miễn phí vận chuyển
-                        echo number_format($total_final, 0, ',', '.'); 
-                        ?> VND
-                    </b>
-                </td>
-            </tr>
-            <tr>
-                <td>Phương thức thanh toán:</td>
-                <td>COD</td>
-                            </tr>
-
-                            <tr>
+                        <tr>
                             <td>Trạng thái:</td>
-<td>   
-    <select id="month1" name="status" required>
-        <?php
-        $current_status = $order['status'];
-        $statuses = ['Chờ xác nhận', 'Đang giao', 'Thành công', 'Đã hủy'];
-        $status_order = array_flip($statuses); // dùng để so sánh thứ tự
+                            <td>
+                                <select id="month1" name="TRANGTHAI" required>
+                                    <?php
+                                    $statuses = ['Chờ xác nhận', 'Đang giao', 'Thành công', 'Đã hủy'];
+                                    $current_status = $order['TRANGTHAI'] ?? 'Chờ xác nhận';
+                                    $status_order = array_flip($statuses);
+                                    foreach ($statuses as $status) {
+                                        $disabled = ($status_order[$status] < $status_order[$current_status]) ? 'disabled' : '';
+                                        $selected = ($status == $current_status) ? 'selected' : '';
+                                        echo "<option value=\"$status\" $selected $disabled>$status</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-        foreach ($statuses as $status) {
-            // Nếu trạng thái đang duyệt có thứ tự nhỏ hơn trạng thái hiện tại thì disable
-            $disabled = ($status_order[$status] < $status_order[$current_status]) ? 'disabled' : '';
-            $selected = ($status == $current_status) ? 'selected' : '';
-            echo "<option value=\"$status\" $selected $disabled>$status</option>";
-        }
-        ?>
-    </select>
-</td>
-
-                    
-
-                        </tbody>
-                    </table>
-                    
-                    <div class="chon">
+  <div class="chon">
                         <button type="submit" name="update_status" onclick="done()">Cập nhật trạng thái</button>
                         </div>
-
-        
-
-                </div>
             </div>
-                </div>
-                </div>
-                </form>
+        </form>
+    </div>
+</div>
+         
+
+                       
                
                     <script>
                         function done() {

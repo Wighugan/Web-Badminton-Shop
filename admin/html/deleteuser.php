@@ -1,33 +1,64 @@
 <?php
-// Kết nối đến MySQL
-// Kiểm tra kết nối
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
-if (isset($_GET['id'])) {
-    $user_id = intval($_GET['id']);
-    // B1: Lấy tất cả đơn hàng của người dùng
-    $sql_get_orders = "SELECT id FROM orders WHERE user_id = ?";
-    $data->select_prepare($sql_get_orders, 'i', $user_id);
-    $result = $data->fetch();
-    while ($order = $result->fetch()) {
-        $order_id = $order['id'];
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
 
-        // B2: Xóa chi tiết đơn hàng liên quan
-        $sql_delete_order_details = "DELETE FROM order_details WHERE order_id = ?";
-        $data->command_prepare($sql_delete_order_details, 'i', $order_id);
+class Deleter extends database {
+
+    public function deleteRecord($type, $id) {
+        // Xác định bảng, cột khóa chính và trang redirect
+        switch ($type) {
+            case 'nhan_vien':
+                $table = 'nhan_vien';
+                $primaryKey = 'MANV';
+                $redirect = 'quanlynhanvien.php';
+                break;
+
+            case 'khach_hang':
+                $table = 'khach_hang';
+                $primaryKey = 'MAKH';
+                $redirect = 'quanlykhachhang.php';
+                break;
+
+            case 'ncc':
+                $table = 'ncc';
+                $primaryKey = 'MANCC';
+                $redirect = 'quanlyncc.php';
+                break;
+
+            default:
+                throw new Exception("❌ Loại dữ liệu không hợp lệ!");
+        }
+
+        // Câu lệnh xóa (chuẩn hóa an toàn)
+        $sql = "DELETE FROM $table WHERE $primaryKey = ?";
+        $this->command_prepare($sql, 'i', $id);
+
+        if ($this->execute()) {
+            echo "<script>
+                    alert('✅ Đã xóa thành công!');
+                    window.location.href = '$redirect';
+                  </script>";
+        } else {
+            echo "<script>
+                    alert('❌ Lỗi khi xóa dữ liệu!');
+                    window.location.href = '$redirect';
+                  </script>";
+        }
     }
-    // B3: Xóa đơn hàng
-    $sql_delete_orders = "DELETE FROM orders WHERE user_id = ?";
-    $data->command_prepare($sql_delete_orders, 'i', $user_id);
-    // B4: Xóa người dùng
-    $sql_delete_user = "DELETE FROM users WHERE id = ?";
-    $data->command_prepare($sql_delete_user, 'i', $user_id);
-
-    if ($data->execute()) {
-        echo "<script>alert('Đã xóa người dùng và các dữ liệu liên quan.'); window.location.href = 'quanlykhachhang.php';</script>";
-        exit();
-    } else {
-        echo "Lỗi khi xóa người dùng: ";
-    }
-
-    $data->close();
 }
+
+
+try {
+    if (isset($_GET['id']) && isset($_GET['type'])) {
+        $deleter = new Deleter();
+        $id = intval($_GET['id']);
+        $type = $_GET['type'];
+
+        $deleter->deleteRecord($type, $id);
+        $deleter->close();
+    } else {
+        throw new Exception("❌ Thiếu ID hoặc loại dữ liệu!");
+    }
+} catch (Exception $e) {
+    echo "<script>alert('{$e->getMessage()}'); window.history.back();</script>";
+}
+?>

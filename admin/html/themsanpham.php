@@ -2,7 +2,13 @@
 <html lang="en">
 <?php
 // Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$db = new database();
+
+// Lấy danh sách loại sản phẩm
+$db->select("SELECT MALOAI, TENLOAI FROM loai_sp");
+$loaiList = $db->fetchAll();
 ?>
 <head>
     <meta charset="UTF-8">
@@ -44,7 +50,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
 
                 <li>
                    
-                    <a href="trangchuadmin.html"style="color: black;">
+                    <a href="trangchuadmin.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -53,7 +59,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                 </li>
 
                 <li>
-                    <a href="quanlydonhang.html"style="color: black;">
+                    <a href="quanlydonhang.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="cart-outline"></ion-icon>
                         </span>
@@ -79,7 +85,36 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                     </a>
                 </li>
                 <li>
-                    <a href="thongke.html"style="color: black;">
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
                         </span>
@@ -107,60 +142,60 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
                 <h1>------------------------------ Thêm sản phẩm mới ------------------------------</h1>
                 <form action="insertproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
 
-                <div class="form-group">
-            <label for="category">Loại:</label>
-            <select id="category" name="category" required>
-                <option value="Không có">Không có</option>
-                <option value="Yonex">Yonex</option>
-                <option value="Mizuno">Mizuno</option>
-                <option value="Lining">Lining</option>
-                <option value="Victor">Victor</option>
-            </select>
-        </div>
+              <div class="form-group">
+        <label for="category">Loại sản phẩm:</label>
+        <select id="category" name="category" required>
+            <option value="yx">Yonex</option>
+            <option value="mo">Mizuno</option>
+            <option value="lg">Lining</option>
+            <option value="vr">Victor</option>
+        </select>
+    </div>
 
-        <div class="form-group">
+     <div class="form-group">
         <label for="image">Ảnh sản phẩm:</label>
-            <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
-            <br>
-            <img id="preview" src="https://bizweb.dktcdn.net/100/485/982/collections/248f25eb211faf87af29dfe6be4b3b0b.jpg?v=1695029604207" alt="Xem trước ảnh" width="150" height="150" style="display: block; margin-top: 10px;">
-        </div>
+        <input type="file" id="image" name="IMAGE" accept="image/*" required onchange="previewImage(event)">
+        <br>
+        <img id="preview" src="https://bizweb.dktcdn.net/100/485/982/collections/248f25eb211faf87af29dfe6be4b3b0b.jpg?v=1695029604207"
+             alt="Xem trước ảnh" width="150" height="150" style="display: block; margin-top: 10px;">
+    </div>
 
-        
+    <div class="form-group">
+        <label for="productcode">Mã sản phẩm:</label>
+        <input type="text" id="productcode" name="productcode" required>
+    </div>
 
-        <div class="form-group">
-            <label for="productcode">Mã sản phẩm:</label>
-            <input type="text" id="productcode" name="productcode" required>
-        </div>
+    <div class="form-group">
+        <label for="name">Tên sản phẩm:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
 
-        <div class="form-group">
-            <label for="name">Tên sản phẩm:</label>
-            <input type="text" id="name" name="name" required>
-        </div>
+    <div class="form-group">
+        <label for="price">Đơn giá:</label>
+        <input type="text" id="price" name="price" required>
+    </div>
 
-        <div class="form-group">
-            <label for="price">Giá:</label>
-            <input type="text" id="price" name="price" required>
-        </div>
+    
 
-        <div class="form-group">
-            <label for="flex">Độ cứng:</label>
-            <input type="text" id="flex" name="flex" required>
-        </div>
+    <div class="form-group">
+        <label for="flex">Độ cứng:</label>
+        <input type="text" id="flex" name="flex" required>
+    </div>
 
-        <div class="form-group">
-            <label for="length">Chiều dài vợt:</label>
-            <input type="text" id="length" name="length" required>
-        </div>
+    <div class="form-group">
+        <label for="length">Chiều dài:</label>
+        <input type="text" id="length" name="length" required>
+    </div>
 
-        <div class="form-group">
-            <label for="weight">Trọng lượng:</label>
-            <input type="text" id="weight" name="weight" required>
-        </div>
+    <div class="form-group">
+        <label for="weight">Trọng lượng:</label>
+        <input type="text" id="weight" name="weight" required>
+    </div>
 
-        <div class="form-group">
-            <label for="description">Mô tả:</label>
-            <textarea id="description" name="description" required></textarea>
-        </div>
+    <div class="form-group">
+        <label for="description">Mô tả:</label>
+        <textarea id="description" name="description" required></textarea>
+    </div>
 
         <div class="form-group">
                         <input type="submit" value="Lưu vào Database" onclick="myFunction()">

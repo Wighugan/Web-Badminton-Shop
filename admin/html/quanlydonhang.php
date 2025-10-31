@@ -2,96 +2,25 @@
 <html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-$data = new database();
-$limit = 10;
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
 
-$limit = 10;
+// Khởi tạo kết nối và class
+$db = new database();
+$order = new Order($db);
+
+// Nhận tham số lọc & tìm kiếm
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-$offset = ($page - 1) * $limit;
-
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $start_date = isset($_GET['start']) ? $_GET['start'] : '';
 $end_date = isset($_GET['end']) ? $_GET['end'] : '';
+$DIACHI1 = isset($_GET['DIACHI1']) ? trim($_GET['DIACHI1']) : '';
+$TRANGTHAI = isset($_GET['TRANGTHAI']) ? trim($_GET['TRANGTHAI']) : '';
 
-$where = [];
-$params = [];
-$param_types = "";
-
-// Tìm kiếm theo tên
-if (!empty($search)) {
-    $where[] = "users.fullname LIKE ?";
-    $params[] = "%$search%";
-    $param_types .= "s";
-}
-
-// Lọc theo ngày
-if (!empty($start_date) && !empty($end_date)) {
-    $where[] = "DATE(orders.created_at) BETWEEN ? AND ?";
-    $params[] = $start_date;
-    $params[] = $end_date;
-    $param_types .= "ss";
-}
-$district = isset($_GET['district']) ? trim($_GET['district']) : '';
-
-// Lọc theo quận/huyện
-if (!empty($district)) {
-    $where[] = "users.address like ?";
-    $params[] = "%$district%";
-    $param_types .= "s";
-}
-
-$status = isset($_GET['status']) ? trim($_GET['status']) : '';
-
-// Lọc theo quận/huyện
-if (!empty($status)) {
-    $where[] = "orders.status like ?";
-    $params[] = "%$status%";
-    $param_types .= "s";
-}
-// Xây dựng query chính
-$sql = "SELECT orders.*, users.fullname, users.numberphone, users.address 
-        FROM orders 
-        JOIN users ON orders.user_id = users.id";
-
-if (!empty($where)) {
-    $sql .= " WHERE " . implode(' AND ', $where);
-}
-$sql .= " ORDER BY orders.created_at DESC LIMIT ? OFFSET ?";
-
-// Thêm param: limit trước, offset sau (khớp syntax LIMIT limit OFFSET offset)
-$params[] = $limit;
-$params[] = $offset;
-$param_types .= "ii";
-
-// Thực hiện query chính và lưu data vào array (tránh overwrite)
-$data->select_prepare($sql, $param_types, ...$params);
-$orders = []; // Lưu data orders
-while ($row = $data->fetch()) {
-    $orders[] = $row; // Lưu từng row
-}
-
-// Tổng số đơn hàng để phân trang (bây giờ an toàn, result đã overwrite nhưng data orders đã lưu)
-$sql_count = "SELECT COUNT(*) as total FROM orders JOIN users ON orders.user_id = users.id";
-if (!empty($where)) {
-    $sql_count .= " WHERE " . implode(' AND ', $where);
-}
-
-// Params và types cho count: Chỉ param của WHERE
-$params_count = array_slice($params, 0, count($params) - 2);
-$types_count = substr($param_types, 0, strlen($param_types) - 2);
-
-if (!empty($types_count) && !empty($params_count)) {
-    $data->select_prepare($sql_count, $types_count, ...$params_count);
-} else {
-    $data->select_prepare($sql_count);
-}
-
-// Lấy total
-$row_count = $data->fetch();
-$total_orders = $row_count['total'] ?? 0;
-$total_pages = ceil($total_orders / $limit);
-
-$stt = 1;
+// Lấy danh sách đơn hàng và tổng số
+$orders = $order->getOrders($page, $search, $start_date, $end_date, $DIACHI1, $TRANGTHAI);
+$total_orders = $order->countOrders($search, $start_date, $end_date, $DIACHI1, $TRANGTHAI);
+$total_pages = ceil($total_orders / $order->getLimit());
+$stt = ($page - 1) * $order->getLimit() + 1;
 ?>
 
 <head>
@@ -190,6 +119,37 @@ $stt = 1;
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+
+                                         
+<li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
                 <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
@@ -231,41 +191,41 @@ $stt = 1;
 
     <div class="date1">
         <!-- Quận/huyện -->
-        <select name="district" id="district">
+        <select name="DIACHI1" id="DIACHI1">
             <option value="">Chọn Quận/Huyện</option>
           
-            <option value="Quận 2" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 2') ? 'selected' : '' ?>>Quận 2</option>
-<option value="Quận 3" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 3') ? 'selected' : '' ?>>Quận 3</option>
-  <option value="Quận 5" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
-<option value="Quận 4" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 4') ? 'selected' : '' ?>>Quận 4</option>
-<option value="Quận 5" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
-<option value="Quận 6" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 6') ? 'selected' : '' ?>>Quận 6</option>
-<option value="Quận 7" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 7') ? 'selected' : '' ?>>Quận 7</option>
-<option value="Quận 8" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 8') ? 'selected' : '' ?>>Quận 8</option>
-<option value="Quận 9" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 9') ? 'selected' : '' ?>>Quận 9</option>
-<option value="Quận 10" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 10') ? 'selected' : '' ?>>Quận 10</option>
-<option value="Quận 11" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 11') ? 'selected' : '' ?>>Quận 11</option>
-<option value="Quận 12" <?= (isset($_GET['district']) && $_GET['district'] == 'Quận 12') ? 'selected' : '' ?>>Quận 12</option>
+            <option value="Quận 2" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 2') ? 'selected' : '' ?>>Quận 2</option>
+<option value="Quận 3" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 3') ? 'selected' : '' ?>>Quận 3</option>
+  <option value="Quận 5" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
+<option value="Quận 4" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 4') ? 'selected' : '' ?>>Quận 4</option>
+<option value="Quận 5" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 5') ? 'selected' : '' ?>>Quận 5</option>
+<option value="Quận 6" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 6') ? 'selected' : '' ?>>Quận 6</option>
+<option value="Quận 7" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 7') ? 'selected' : '' ?>>Quận 7</option>
+<option value="Quận 8" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 8') ? 'selected' : '' ?>>Quận 8</option>
+<option value="Quận 9" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 9') ? 'selected' : '' ?>>Quận 9</option>
+<option value="Quận 10" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 10') ? 'selected' : '' ?>>Quận 10</option>
+<option value="Quận 11" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 11') ? 'selected' : '' ?>>Quận 11</option>
+<option value="Quận 12" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Quận 12') ? 'selected' : '' ?>>Quận 12</option>
 
 
-<option value="Gò Vấp" <?= (isset($_GET['district']) && $_GET['district'] == 'Gò Vấp') ? 'selected' : '' ?>>Gò Vấp</option>
-            <option value="Bình Thạnh" <?= (isset($_GET['district']) && $_GET['district'] == 'Bình Thạnh') ? 'selected' : '' ?>>Bình Thạnh</option>
-<option value="Phú Nhuận" <?= (isset($_GET['district']) && $_GET['district'] == 'Phú Nhuận') ? 'selected' : '' ?>>Phú Nhuận</option>
-<option value="Tân Bình" <?= (isset($_GET['district']) && $_GET['district'] == 'Tân Bình') ? 'selected' : '' ?>>Tân Bình</option>
-<option value="Tân Phú" <?= (isset($_GET['district']) && $_GET['district'] == 'Tân Phú') ? 'selected' : '' ?>>Tân Phú</option>
-<option value="Bình Tân" <?= (isset($_GET['district']) && $_GET['district'] == 'Bình Tân') ? 'selected' : '' ?>>Bình Tân</option>
-<option value="Thủ Đức" <?= (isset($_GET['district']) && $_GET['district'] == 'Thủ Đức') ? 'selected' : '' ?>>Thủ Đức</option>      
+<option value="Gò Vấp" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Gò Vấp') ? 'selected' : '' ?>>Gò Vấp</option>
+            <option value="Bình Thạnh" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Bình Thạnh') ? 'selected' : '' ?>>Bình Thạnh</option>
+<option value="Phú Nhuận" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Phú Nhuận') ? 'selected' : '' ?>>Phú Nhuận</option>
+<option value="Tân Bình" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Tân Bình') ? 'selected' : '' ?>>Tân Bình</option>
+<option value="Tân Phú" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Tân Phú') ? 'selected' : '' ?>>Tân Phú</option>
+<option value="Bình Tân" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Bình Tân') ? 'selected' : '' ?>>Bình Tân</option>
+<option value="Thủ Đức" <?= (isset($_GET['DIACHI1']) && $_GET['DIACHI1'] == 'Thủ Đức') ? 'selected' : '' ?>>Thủ Đức</option>      
   </select>
     </div>
 
     <div class="date1">
         <!-- Tình trạng -->
-        <select name="status" id="status">
+        <select name="TRANGTHAI" id="TRANGTHAI">
             <option value="">Tình Trạng</option>
-            <option value="Thành công" <?= (isset($_GET['status']) && $_GET['status'] == 'Thành công') ? 'selected' : '' ?>>Thành công</option>
-            <option value="Chờ xác nhận" <?= (isset($_GET['status']) && $_GET['status'] == 'Chờ xác nhận') ? 'selected' : '' ?>>Chờ xác nhận</option>
-            <option value="Đã hủy" <?= (isset($_GET['status']) && $_GET['status'] == 'Đã hủy') ? 'selected' : '' ?>>Đã hủy</option>
-            <option value="Đang giao" <?= (isset($_GET['status']) && $_GET['status'] == 'Đang giao') ? 'selected' : '' ?>>Đang giao</option>
+            <option value="Thành công" <?= (isset($_GET['TRANGTHAI']) && $_GET['TRANGTHAI'] == 'Thành công') ? 'selected' : '' ?>>Thành công</option>
+            <option value="Chờ xác nhận" <?= (isset($_GET['TRANGTHAI']) && $_GET['TRANGTHAI'] == 'Chờ xác nhận') ? 'selected' : '' ?>>Chờ xác nhận</option>
+            <option value="Đã hủy" <?= (isset($_GET['TRANGTHAI']) && $_GET['TRANGTHAI'] == 'Đã hủy') ? 'selected' : '' ?>>Đã hủy</option>
+            <option value="Đang giao" <?= (isset($_GET['TRANGTHAI']) && $_GET['TRANGTHAI'] == 'Đang giao') ? 'selected' : '' ?>>Đang giao</option>
         </select>
     </div>
 
@@ -312,12 +272,12 @@ $stt = 1;
                         <?php foreach ($orders as $row): ?>
             <tr>
                 <td><?= $stt++ ?></td>
-                <td><a href="chitietdonhang.php?id=<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-                <td><?= htmlspecialchars($row['fullname']) ?></td>
-                <td><?= htmlspecialchars($row['numberphone']) ?></td>
-                <td><?= htmlspecialchars($row['address']) ?></td>
+                <td><a href="chitietdonhang.php?id=<?= htmlspecialchars($row['MADH']) ?>"><?= htmlspecialchars($row['CODE']) ?></a></td>
+                <td><?= htmlspecialchars($row['HOTEN']) ?></td>
+                <td><?= htmlspecialchars($row['SDT']) ?></td>
+                <td><?= htmlspecialchars($row['DIACHI1']) ?></td>
                 <?php
-                $status = $row['status'];
+                $status = $row['TRANGTHAI'];
                 $class = '';
                 if ($status == 'Thành công') {
                     $class = 'success';
@@ -330,7 +290,7 @@ $stt = 1;
                 }
                 ?>
                 <td class="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($status) ?></td>
-                <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+                <td><?= date('d/m/Y', strtotime($row['NGAYLAP'])) ?></td>
             </tr>
         <?php endforeach; ?>
 

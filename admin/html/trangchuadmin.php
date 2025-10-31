@@ -2,30 +2,27 @@
 <html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-$data = new Database();
-$limit = 10;
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
 
-// Lấy số trang hiện tại từ query string, nếu không có thì mặc định là 1
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
+// Khởi tạo kết nối và class
+$db = new database();
+$order = new Order($db);
 
-// Truy vấn để lấy danh sách đơn hàng (kèm fullname người đặt)
-$sql = "SELECT orders.*, users.fullname 
-        FROM orders 
-        JOIN users ON orders.user_id = users.id 
-        ORDER BY orders.created_at DESC 
-        LIMIT $offset, $limit";
-$data->select_prepare($sql);
-$result = $data->fetchAll();
+// Nhận tham số lọc & tìm kiếm
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$start_date = isset($_GET['start']) ? $_GET['start'] : '';
+$end_date = isset($_GET['end']) ? $_GET['end'] : '';
+$district = isset($_GET['district']) ? trim($_GET['district']) : '';
+$status = isset($_GET['status']) ? trim($_GET['status']) : '';
 
-// Truy vấn để lấy tổng số đơn hàng
-$sql_total = "SELECT COUNT(*) as total FROM orders";
-$data->select_prepare($sql_total);
-$result_total = $data->fetchAll();
-$row_total = $result_total[0];
-$total_orders = $row_total['total'];
-$total_pages = ceil($total_orders / $limit);
+// Lấy danh sách đơn hàng và tổng số
+$orders = $order->getOrders($page, $search, $start_date, $end_date, $district, $status);
+$total_orders = $order->countOrders($search, $start_date, $end_date, $district, $status);
+$total_pages = ceil($total_orders / $order->getLimit());
+$stt = ($page - 1) * $order->getLimit() + 1;
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -120,6 +117,39 @@ $total_pages = ceil($total_orders / $limit);
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+
+                          
+<li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+
+
                 <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
@@ -141,31 +171,7 @@ $total_pages = ceil($total_orders / $limit);
        
                 
             </div>
-            <!-- ======================= Cards ================== -->
             
-            <!----
-            <h2 style="margin-left: 20px;">Thống kê tình hình kinh doanh</h2>
-        
-            <div class="filter">
-                <div class="flex">
-                <span><input type="radio" name="chon" value="ten" id="ten" onclick="checkTen()" checked>Theo tên sản phẩm</span>
-                <span><input type="radio" name="chon" value="loai" id="loai" onclick="checkLoai()">Theo loại sản phẩm</span>
-                <input type="text" name="tenSp" id="tenSp" placeholder="Tên sản phẩm">
-                <select name="loaiSp" id="loaiSp">
-                    <option value="Kỹ năng sống - Phát triển bản thân">Kỹ năng sống - Phát triển bản thân</option>
-                    <option value="Manga-Comic">Manga-Comic</option>
-                    <option value="Nghệ thuật-Văn hóa">Nghệ thuật-Văn hóa</option>
-                </select>
-                </div>
-                <div class="date">
-                    <label for="start">Từ ngày: </label>
-                    <input type="date" id="start" name="start" value="2023-11-24" min="2018-01-01" max="2023-12-31">
-                    <label for="start">đến </label>
-                    <input type="date" id="end" name="end" value="2023-11-30" min="2018-01-01" max="2023-12-31">
-                </div>
-                <button class="thongke"><a href="thongke.html">Thống kê</a></button>
-            </div>
-        -->
         <div class="chartsBx">
             <h2>                                                   </h2>
            
@@ -190,15 +196,14 @@ $total_pages = ceil($total_orders / $limit);
             </thead>
             <tbody>
                 <?php
-$stt = ($page - 1) * $limit + 1;
-foreach ($result as $row) {
+foreach ($orders as $row) {
 ?>
     <tr>
         <td><?= $stt++ ?></td>
-        <td><a href="chitietdonhang.php?id=<?= $row['id'] ?>"><?= htmlspecialchars($row['code']) ?></a></td>
-        <td><?= htmlspecialchars($row['fullname']) ?></td>
+        <td><a href="chitietdonhang.php?id=<?= $row['MADH'] ?>"><?= htmlspecialchars($row['CODE']) ?></a></td>
+        <td><?= htmlspecialchars($row['HOTEN']) ?></td>
         <?php
-        $status = $row['status'];
+        $status = $row['TRANGTHAI'];
         $class = '';
         if ($status == 'Thành công') {
             $class = 'success';
@@ -211,8 +216,8 @@ foreach ($result as $row) {
         }
         ?>
         <td class="<?= $class ?>"><?= htmlspecialchars($status) ?></td>
-        <td><?= number_format($row['total'], 0, ',', '.') ?> VND</td>
-        <td><?= date('d/m/Y', strtotime($row['created_at'])) ?></td>
+        <td><?= number_format($row['TONGTIEN'], 0, ',', '.') ?> VND</td>
+        <td><?= date('d/m/Y', strtotime($row['NGAYLAP'])) ?></td>
     </tr>
 <?php } ?>
             </tbody>
@@ -276,7 +281,6 @@ foreach ($result as $row) {
     </div>
 </div>
 
-<?php $data->close(); ?>
             <script>
             
                     ten = document.getElementById("ten");

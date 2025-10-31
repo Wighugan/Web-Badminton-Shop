@@ -1,4 +1,37 @@
 
+<?php
+include "src/header-login.php";
+$data = new Database();
+$sp = new SanPham();
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php");
+    exit();
+}
+// Phân trang
+$limit = 6;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $limit;
+// Tham số lọc và tìm kiếm
+$search = isset($_GET['query']) ? trim($_GET['query']) : '';
+$price = $_GET['price'] ?? '';
+$brands = isset($_GET['brand']) ? (array)$_GET['brand'] : [];
+$sort = $_GET['sort'] ?? '';
+// Nếu có tìm kiếm hoặc lọc
+if ($search !== '' || $price !== '' || !empty($brands) || $sort !== '') {
+    list($where, $params, $types, $order) = $sp->timkiemsp($search, $price, $brands, $sort);
+    $total_products = $sp->demSoSanPham($where, $types, $params);
+    $products = $sp->layDanhSachSanPham($where, $order, $types, $params, $limit, $offset);
+} else {
+    // Ngược lại: lấy toàn bộ sản phẩm
+    $result = $sp->layTatCaSanPham($limit, $page);
+    $products = $result['products'];
+    $total_products = $result['total_products'];
+}
+// Tính tổng số trang
+$total_pages = ceil($total_products / $limit);
+$current_page = $page;
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -29,35 +62,6 @@
 </head>
 
 <body>
-    <!-- Topbar Start -->
-    <?php 
-    include "src/header-login.php"
-    ?>
-    
-<?php
-include 'database/connect.php';
-$data = new database();
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php"); // Chuyển hướng nếu chưa đăng nhập
-    exit();
-}
-// Xử lý tìm kiếm
-// Xác định trang hiện tại (mặc định trang 1)
-$limit = 6; // Số sản phẩm mỗi trang
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
-
-// Lấy tổng số sản phẩm
-$total_result = "SELECT COUNT(*) AS total FROM product";
-$data->select($total_result);
-$total_row = $data->fetch();
-$total_products = $total_row['total'];
-$total_pages = ceil($total_products / $limit);
-
-// Lấy sản phẩm cho trang hiện tại
-$sql = "SELECT * FROM product ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$data->select($sql);
-?>
     <!-- Topbar End -->
 
     <!-- <script>
@@ -110,7 +114,7 @@ $data->select($sql);
             </div> -->
     <!-- Navbar End -->
     <!-- Page Header Start -->
-    <div class="container-fluid bg-secondary mb-5">
+     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Cửa Hàng</h1>
             <div class="d-inline-flex">
@@ -119,100 +123,20 @@ $data->select($sql);
         </div>
     </div>
     <!-- Page Header End -->
-<?php
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php");
-    exit();
-} 
-$limit = 6;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $limit;
-
-$search = isset($_GET['query']) ? trim($_GET['query']) : '';
-$price = $_GET['price'] ?? '';
-$brands = isset($_GET['brand']) ? (array)$_GET['brand'] : [];
-
-$where = "WHERE 1=1";
-$params = [];
-$types = "";
-
-// Tìm kiếm theo tên
-if (!empty($search)) {
-    $where .= " AND name LIKE ?";
-    $params[] = "%$search%";
-    $types .= "s";
-}
-
-// Lọc theo giá
-switch ($price) {
-    case '0500':
-        $where .= " AND price < ?";
-        $params[] = 500000;
-        $types .= "i";
-        break;
-    case '5001':
-        $where .= " AND price BETWEEN ? AND ?";
-        $params[] = 500000;
-        $params[] = 1000000;
-        $types .= "ii";
-        break;
-    case '12':
-        $where .= " AND price BETWEEN ? AND ?";
-        $params[] = 1000000;
-        $params[] = 2000000;
-        $types .= "ii";
-        break;
-    case '23':
-        $where .= " AND price BETWEEN ? AND ?";
-        $params[] = 2000000;
-        $params[] = 3000000;
-        $types .= "ii";
-        break;
-    case 'over3':
-        $where .= " AND price > ?";
-        $params[] = 3000000;
-        $types .= "i";
-        break;
-}
-
-// Lọc theo thương hiệu
-if (!empty($brands)) {
-    $placeholder = implode(',', array_fill(0, count($brands), '?'));
-    $where .= " AND category IN ($placeholder)";
-    foreach ($brands as $brand) {
-        $params[] = $brand;
-        $types .= "s";
-    }
-}
-// Đếm tổng sản phẩm sau lọc
-$count_sql = "SELECT COUNT(*) AS total FROM product $where";
-$data->select_prepare($count_sql, $types, ...$params);
-$total_row = $data->fetch();
-$total_products = $total_row['total'];
-$total_pages = ceil($total_products / $limit);
-// Truy vấn sản phẩm với LIMIT
-$sql = "SELECT * FROM product $where ORDER BY id DESC LIMIT ? OFFSET ?";
-$params[] = $limit;
-$params[] = $offset;
-$types .= "ii";
-$data->select_prepare($sql, $types, ...$params);
-?>
 <!-- Shop Start -->
     <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
+    <div class="row px-xl-5">
             <!-- Shop Sidebar Start -->
-            <div class="col-lg-3 col-md-12">
+    <div class="col-lg-3 col-md-12">
                 <!-- Price Start -->
-                <form id="filter-form" method="GET" >
+      <form id="filter-form" method="GET" >
 
     <div class="input-group">
-        <input type="text" id="search" name="query" class="input-group search-bar " placeholder="Nhập nội dung bạn muốn tìm kiếm">
-        <div class="input-group-icon">
-            <button type="submit" class="input-group-text bg-transparent text-primary">
-                <i class="fa fa-search"></i>
-            </button>
-        </div>
-    </div>
+    <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
+    <button type="submit" class="btn btn-primary">
+        <i class="fa fa-search"></i>
+    </button>
+</div>
 
     <!-- Sắp xếp -->
     <div class="mb-5">
@@ -226,6 +150,7 @@ $data->select_prepare($sql, $types, ...$params);
             <label class="custom-control-label" for="sort-price-desc">Giá giảm dần</label>
         </div>
     </div>
+
     <!-- Giá -->
     <div class="border-bottom mb-4 pb-4">
         <h5 class="font-weight-semi-bold mb-4">Chọn mức giá</h5>
@@ -254,7 +179,6 @@ $data->select_prepare($sql, $types, ...$params);
             <label class="custom-control-label" for="price-5">Trên 3 triệu</label>
         </div>
     </div>
-
     <!-- Thương hiệu -->
     <div class="mb-5">
         <h5 class="font-weight-semi-bold mb-4">Thương hiệu</h5>
@@ -277,39 +201,8 @@ $data->select_prepare($sql, $types, ...$params);
     </div>
     <button type="submit" class="btn btn-primary mt-3">Lọc</button>
 </form>
+</div>
 <style>
-/* Bo góc vuông radio */
-.custom-radio-square .custom-control-input ~ .custom-control-label::before {
-    border-radius: 0 !important;  /* ô vuông */
-}
-
-/* Tick dấu */
-.custom-radio-square .custom-control-input:checked ~ .custom-control-label::before {
-    background-color:rgb(0, 0, 0); /* màu tick nền xanh */
-    border-color:rgb(0, 0, 0);
-}
-
-/*  tick checkbox */
-.custom-radio-square .custom-control-input:checked ~ .custom-control-label::after {
-    content: "";
-    position: absolute;
-    left: -1.15rem;
-    top: 0.35rem;
-    width: 0.3rem;
-    height: 0.6rem;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-</style>
-                <!-- Size End -->
-  
-                
-
-               
-            </div>
-            <!-- Shop Sidebar End -->
-            <style>
                 #output {
                     font-weight: bold;
                     font-size: 30px;
@@ -322,7 +215,6 @@ $data->select_prepare($sql, $types, ...$params);
            <script>
 function searchProduct() {
     let keyword = document.getElementById("searchInput").value;
-
     $.ajax({
         url: "search.php",
         type: "GET",
@@ -338,126 +230,33 @@ function searchProduct() {
 </script>
             <!-- Shop Product Start -->
             <div class="col-lg-9 col-md-12">
-                <div class="row pb-3">
-                    <div class="col-12 pb-1">
-                    <div class="col-lg-6 col-6 text-left">
-            <!-- <form id="filter-form" method="GET">
-    <div class="input-group">
-        <input type="text" id="search" name="query" class="form-control" placeholder="Nhập nội dung bạn muốn tìm kiếm">
-        <div class="input-group-append">
-            <button type="submit" class="input-group-text bg-transparent text-primary">
-                <i class="fa fa-search"></i>
-            </button>
-        </div>
-    </div>
-</form> -->
- </div>
-                        <p id="output"></p>
-                    </div>
-                    
-                    <style>
-.container {
-    margin-top: 20px;
-}
-
-/* Giữ đúng lưới Bootstrap, chỉ cách đều bằng margin */
-.card {
-    height: 97%;
-    margin-bottom: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Ảnh sản phẩm */
-.card-img-top {
-    height: 450px;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-/* Zoom ảnh khi hover */
-.card-img-top:hover {
-    transform: scale(0.5);
-}
-
-/* Nội dung sản phẩm */
-.card-body {
-    text-align: center;
-}
-
-/* Tên sản phẩm */
-.card-title {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-/* Giá sản phẩm */
-.card-text {
-    font-weight: bold;
-    color:rgb(0, 0, 0);
-    font-size: 1.1rem;
-}
-</style>
-<?php
-if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
-    $search = trim($_GET['query']);
-    $sql = "SELECT * FROM product WHERE name LIKE '%$search%'";
-    $data->select($sql);
-    if ($data->numRows() > 0) {
-        echo '<div class="container">';
-        echo '<h2>Kết quả tìm kiếm:</h2>';
-        echo '<div class="row">';
-       while ($row = $data->fetch()) {
-    echo '<div class="col-md-4">';
-    echo '<div class="card mb-4">';
-    echo '<a href="detaillogin.php?id=' . $row['id'] . '">';
-    echo '<img src="img/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '">';
-    echo '</a>';
-    echo '<div class="card-body">';
-    echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
-    echo '<p class="card-text">Giá: ' . number_format($row['price'], 0, ',', '.') . ' VNĐ</p>';
-    echo '</div></div></div>';
-}
-        echo '</div></div>';
-    } else {
-        echo "<h2>Không tìm thấy sản phẩm phù hợp.</h2>";
-    }
-} else {
-    echo "<h2>Vui lòng nhập từ khóa tìm kiếm!</h2>";
-}
-?>
-      
-                    <div class="container">
     <div class="row">
-        <?php while ($row = $data->fetch()) { ?>
-            <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                    <a href="detaillogin.php?id=<?= $row['id'] ?>">
-                    <img class="img-fluid w-100" src="<?= str_replace('../', '', htmlspecialchars($row['image'])) ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-                    </a>                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3"><?= htmlspecialchars($row['name']) ?></h6>
-                        <div class="d-flex justify-content-center">
-                            <h6 class="font-weight-bold"><?= number_format($row['price'], 0, ',', '.') ?>đ</h6>
-                        </div>
+<?php if (!empty($products)): ?>
+    <?php foreach ($products as $product): ?>
+        <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+            <div class="card product-item border-0 mb-4">
+                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                    <a href="detaillogin.php?id=<?= $product['MASP'] ?>">
+                        <img class="img-fluid w-100"
+                             src="<?= htmlspecialchars($product['IMAGE']) ?>"
+                             alt="<?= htmlspecialchars($product['TENSP']) ?>"
+                             style="height:300px;object-fit:cover;">
+                    </a>
+                </div>
+                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                    <h6 class="text-truncate mb-3"><?= htmlspecialchars($product['TENSP']) ?></h6>
+                    <div class="d-flex justify-content-center">
+                        <h6><?= number_format($product['DONGIA'], 0, ',', '.') ?>đ</h6>
                     </div>
-                    
-                    <script>
-                function done() {
-                  alert("Đã thêm vào giỏ hàng!");
-                }
-              </script>
                 </div>
             </div>
-        <?php } ?>
-    </div>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div class="col-12 text-center"><h5>Không tìm thấy sản phẩm nào.</h5></div>
+<?php endif; ?>
+</div>
+
 
     <div class="col-12 pb-1">
     <nav aria-label="Page navigation">
@@ -487,74 +286,18 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
         </ul>
     </nav>
 </div>
-</div>
 <?php
 $data->close();
 ?>
+ </div>
+ </div>
+ </div>
 <!-- Shop Product End -->
-        </div>
-    </div>
+       
     <!-- Shop End -->
 
      <!-- Footer Start -->
-     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
-        <div class="row px-xl-5 pt-5">
-            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <a href="login.html" class="text-decoration-none">
-                    <div style="display: flex; align-items: center; position: relative; top: -10px;">
-                        <img src="img/logo.png" alt="a logo" width="85px" height="85px">
-                        <span class="custom-font" style="margin-left: 10px; position: top; top: 10px;">Shop</span>
-                    </div>
-                </a>
-                <p>Mọi thắc mắt xin liên hệ về.</p>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>273 An Dương Vương, Phường 3, Quận 5, Thành Phố Hồ Chí Minh</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>MMBShopper102@gmail.com</p>
-                <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>012345678</p>
-            </div>
-            <div class="col-lg-8 col-md-12">
-                <div class="row">
-                    <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Liên Hệ Nhanh</h5>
-                        <div class="d-flex flex-column justify-content-start">
-                            <a class="text-dark mb-2" href="login.php"><i class="fa fa-angle-right mr-2"></i>Trang Chủ</a>
-                            <a class="text-dark mb-2" href="shoplogin.php"><i class="fa fa-angle-right mr-2"></i>Cửa Hàng</a>
-                            <a class="text-dark mb-2" href="cart.php"><i class="fa fa-angle-right mr-2"></i>Giỏ Hàng</a>
-                            <a class="text-dark mb-2" href="checkout.php"><i class="fa fa-angle-right mr-2"></i>Kiểm Tra Thanh Toán</a>
-                            <a class="text-dark" href="contactlogin.php"><i class="fa fa-angle-right mr-2"></i>Liên Hệ</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-5">
-                    </div>
-                    <div class="col-md-4 mb-5">
-                        <h5 class="font-weight-bold text-dark mb-4">Nhận Thông Báo Mới Nhất</h5>
-                        <form action="">
-                            <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Tên Của Bạn" required="required" />
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Email Của Bạn"
-                                    required="required" />
-                            </div>
-                            <div>
-                                <button class="no-border-button-rec-c" type="submit">Đăng Kí Ngay</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row border-top border-light mx-xl-5 py-4">
-            <div class="col-md-6 px-xl-0">
-                <p class="mb-md-0 text-center text-md-left text-dark">
-                    &copy; <a class="text-dark font-weight-semi-bold" href="#">Trường Đại Học Sài Gòn</a>
-                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com"></a>
-                </p>
-            </div>
-            <div class="col-md-6 px-xl-0 text-center text-md-right">
-                <img class="img-fluid" src="img/payments.png" alt="">
-            </div>
-        </div>
-    </div>
+    <?php include 'src/footer.php'; ?>
     <!-- Footer End -->
 
 

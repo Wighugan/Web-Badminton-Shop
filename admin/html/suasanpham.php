@@ -6,7 +6,7 @@ session_start();
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
 // Lấy thông tin sản phẩm từ database
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$sql = "SELECT * FROM product WHERE id = ?";
+$sql = "SELECT * FROM san_pham WHERE MASP = ?";
 $data->select_prepare($sql, "i", $id);
 $product = $data->fetch();
 if (!$product) {
@@ -97,6 +97,35 @@ $data->close();
                     </a>
                 </li>
                 <li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
                             <ion-icon name="bar-chart-outline"></ion-icon>
@@ -122,90 +151,88 @@ $data->close();
             <div class="details">
             <div class="recentOrders">
             <div class="addproduct">
-                <h1>------------------------------ Sửa Thông Tin Sản Phẩm ----------------------------</h1>
-                <form action="updateproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
-                    <div class="form-group">
-                    <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+               <form action="updateproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+    <!-- Mã sản phẩm chính -->
+    <input type="hidden" name="MASP" value="<?= htmlspecialchars($product['MASP']) ?>">
 
-                        <label for="goi">Loại:</label>
-                        <select id="goi" name="category" required>
+    <!-- Loại sản phẩm -->
+    <div class="form-group">
+        <label for="goi">Loại:</label>
+        <select id="goi" name="MALOAI" required>
+            <?php
+            // Nếu bạn chưa có bảng loai_sp thì dùng danh sách tạm này
+            $categories = ["Không có", "yx", "mo", "lg", "vr"];
+            foreach ($categories as $cat) {
+                $selected = (trim($product['MALOAI']) == trim($cat)) ? "selected" : "";
+                echo "<option value='$cat' $selected>$cat</option>";
+            }
+            ?>
+        </select>
+    </div>
 
-                        <?php
-    $categories = ["Không có", "Yonex", "Mizuno", "Lining", "Victor"];
-    foreach ($categories as $cat) {
-        $selected = (trim($product['category']) == trim($cat)) ? "selected" : "";
-        echo "<option value='$cat' $selected>$cat</option>";
-    }
-    ?>
+    <!-- Ảnh sản phẩm -->
+    <div class="form-group">
+        <label for="IMAGE">Thay ảnh:</label>
+        <input type="file" id="IMAGE" name="IMAGE" accept="image/*" onchange="previewImage(event)">
+        <br>
+        <img src="<?= '../../' . htmlspecialchars($product['IMAGE']) ?>" width="80" id="preview" alt="Ảnh sản phẩm">
+        <input type="hidden" name="old_image" value="<?= htmlspecialchars($product['IMAGE']) ?>">
+    </div>
 
+    <!-- BARCODE -->
+    <div class="form-group">
+        <label for="BARCODE">Mã sản phẩm:</label>
+        <input type="text" id="BARCODE" name="BARCODE" value="<?= htmlspecialchars($product['BARCODE']) ?>" required>
+    </div>
 
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="weight">Thay ảnh:</label>
-                    </div>
+    <!-- Tên sản phẩm -->
+    <div class="form-group">
+        <label for="TENSP">Tên sản phẩm:</label>
+        <input type="text" id="TENSP" name="TENSP" value="<?= htmlspecialchars($product['TENSP']) ?>" required>
+    </div>
 
-                    <div class="form-group">
+    <!-- Giá -->
+    <div class="form-group">
+        <label for="DONGIA">Giá:</label>
+        <input type="text" id="DONGIA" name="DONGIA" value="<?= htmlspecialchars($product['DONGIA']) ?>" required>
+    </div>
 
-                        <label for="image1">Ảnh 1:</label>
-<div>
-                        <input class="form-group" type="file" id="image" name="image" accept="image/*"  onchange="previewImage(event)">
-</div>
-                        <img src="<?=  '../../'. $product['image'] ?>" width="50" id="preview"  height="80" padding="20">
+    <!-- Độ cứng -->
+    <div class="form-group">
+        <label for="FLEX">Độ cứng:</label>
+        <input type="text" id="FLEX" name="FLEX" value="<?= htmlspecialchars($product['FLEX']) ?>" required>
+    </div>
 
-                    </div>
-                 
-                   
-                  
+    <!-- Chiều dài -->
+    <div class="form-group">
+        <label for="LENGTH">Chiều dài vợt:</label>
+        <input type="text" id="LENGTH" name="LENGTH" value="<?= htmlspecialchars($product['LENGTH']) ?>" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="name">Mã sản phẩm:</label>
-        <input type="text" name="productcode" value="<?php echo $product['productcode']; ?>"required>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Tên sản phẩm:</label>
-                        <input type="text" name="name" value="<?php echo $product['name']; ?>"required>
-                        </div>
+    <!-- Trọng lượng -->
+    <div class="form-group">
+        <label for="WEIGHT">Trọng lượng:</label>
+        <input type="text" id="WEIGHT" name="WEIGHT" value="<?= htmlspecialchars($product['WEIGHT']) ?>" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="email">Giá:</label>
-                        <input type="text" name="price" value="<?php echo $product['price']; ?>"required>
-                        </div>
-                   
-                    <div class="form-group">
-                        <label for="email">Độ Cứng:</label>
-                        <input type="text" name="flex" value="<?php echo $product['flex']; ?>"required>
-                        </div>
+    <!-- Thương hiệu -->
+    <div class="form-group">
+        <label for="THUONGHIEU">Thương hiệu:</label>
+        <input type="text" id="THUONGHIEU" name="THUONGHIEU" value="<?= htmlspecialchars($product['THUONGHIEU'] ?? '') ?>" placeholder="Yonex" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="email">Chiều dài vợt:</label>
-                        <input type="text" name="length" value="<?php echo $product['length']; ?>"required>
-                        </div>
+    <!-- Mô tả -->
+    <div class="form-group">
+        <label for="MOTA">Mô tả:</label>
+        <textarea id="MOTA" name="MOTA" required><?= htmlspecialchars($product['MOTA']) ?></textarea>
+    </div>
 
-                    <div class="form-group">
-                        <label for="email">Trọng lượng:</label>
-                        <input type="text" name="weight" value="<?php echo $product['weight']; ?>"required>
-                        </div>
-
-
-                    <div class="form-group">
-                        <label for="email">Thương Hiệu:</label>
-                        <input type="text" id="email" placeholder="Yonex">
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="description">Mô tả:</label>
-                        <textarea name="description"><?php echo $product['description']; ?></textarea required>
-
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
-                        <button class="return"><a href="quanlysanpham.php">Quay lại</a></button>
-                    </div>
-                </form>
+    <!-- Nút -->
+    <div class="form-group">
+        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
+        <button type="button" class="return" onclick="window.location.href='quanlysanpham.php'">Quay lại</button>
+    </div>
+</form>
                 <script>
                     function myFunction() {
                         alert("Đã lưu thành công thông tin sản phẩm mới vào Database!");

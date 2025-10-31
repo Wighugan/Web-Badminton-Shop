@@ -1,45 +1,67 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
 
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $category = $_POST['category'];
-    $productcode = $_POST['productcode'];
-    $name = $_POST['name'];
-    $price = $_POST['price'];
-    $flex = $_POST['flex'];
-    $length = $_POST['length'];
-    $weight = $_POST['weight'];
-    $description = $_POST['description'];
-    // Xử lý upload ảnh
-    $image = "uploads/default.jpg"; // Nếu không có ảnh mới thì giữ nguyên ảnh cũ
+class SanPham extends database {
 
-if (!empty($_FILES["image"]["name"])) {
-    $relative_upload_path = "../../uploads/"; // Thư mục lưu thật (ra ngoài admin)
-    $public_upload_path = "uploads/";      // Đường dẫn ảnh để lưu vào DB/hiển thị web
+    // Hàm thêm sản phẩm mới
+    public function addProduct($data, $file) {
+        $maloai = $data['category'];          // Mã loại sản phẩm
+        $tensp = $data['name'];               // Tên sản phẩm
+        $dongia = $data['price'];             // Giá
+        $barcode = $data['productcode'];      // Mã sản phẩm (Barcode)
+        $flex = $data['flex'];                // Độ cứng
+        $length = $data['length'];            // Chiều dài
+        $weight = $data['weight'];            // Trọng lượng
+        $mota = $data['description'];         // Mô tả
 
-    if (!is_dir($relative_upload_path)) {
-        mkdir($relative_upload_path, 0777, true);
-    }
+        // ===== XỬ LÝ ẢNH UPLOAD =====
+        $image = "uploads/default.jpg"; // Ảnh mặc định
+        $relative_path = "../../uploads/";
+        $public_path = "uploads/";
 
-    $filename = basename($_FILES["image"]["name"]);
-    $target_file = $relative_upload_path . $filename;
+        if (!is_dir($relative_path)) {
+            mkdir($relative_path, 0777, true);
+        }
 
-    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-        $image = $public_upload_path . $filename;
-    } else {
-        echo "Lỗi tải ảnh lên!";
-        exit();
+        if (!empty($file["image"]["name"])) {
+            $filename = time() . "_" . basename($file["image"]["name"]);
+            $target_file = $relative_path . $filename;
+
+            if (move_uploaded_file($file["image"]["tmp_name"], $target_file)) {
+                $image = $public_path . $filename;
+            } else {
+                throw new Exception("❌ Lỗi khi tải ảnh lên máy chủ!");
+            }
+        }
+
+        // ===== CÂU LỆNH THÊM DỮ LIỆU =====
+        $sql = "INSERT INTO san_pham (MALOAI, TENSP, DONGIA,  updated_at, IMAGE, BARCODE, WEIGHT, MOTA, LENGTH, FLEX)
+                VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
+
+        $this->command_prepare($sql, 'ssdisssss',
+            $maloai, $tensp, $dongia, $image, $barcode, $weight, $mota, $length, $flex
+        );
+
+        return $this->execute();
     }
 }
-    // Thêm sản phẩm vào database
-    $sql = "INSERT INTO product (category, color, productcode, name, price, flex, length, weight, image, description,updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW());";
-    $data->command_prepare($sql, 'ssssssssss', $category, $color, $productcode, $name, $price, $flex, $length, $weight, $image, $description);
-    if ($data->execute()) {
-        echo "<script>alert('Sản phẩm đã được thêm thành công!'); window.location.href='quanlysanpham.php';</script>";
+
+// ===== XỬ LÝ GỬI FORM =====
+try {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $sp = new SanPham();
+
+        if ($sp->addProduct($_POST, $_FILES)) {
+            echo "<script>alert('✅ Thêm sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        } else {
+            echo "<script>alert('❌ Có lỗi khi thêm sản phẩm!');</script>";
+        }
+
+        $sp->close();
     } else {
-        echo "<script>alert('Có lỗi xảy ra, vui lòng thử lại!');</script>";
+        echo "❌ Không có dữ liệu POST!";
     }
-    $data->close();
+} catch (Exception $e) {
+    echo "<script>alert('".$e->getMessage()."');</script>";
 }
 ?>

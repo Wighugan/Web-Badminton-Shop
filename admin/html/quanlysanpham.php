@@ -2,53 +2,26 @@
 <html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-$data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Product.php';
 
+// Khởi tạo database và class Product
+$db = new database();
+$product = new Product($db);
 
-// Lấy dữ liệu tìm kiếm và ngày tháng
-$raw_search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$start = isset($_GET['start']) ? $_GET['start'] : '';
-$end = isset($_GET['end']) ? $_GET['end'] : '';
-
-$limit = 5;
+// Nhận tham số từ GET
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
-$offset = ($page - 1) * $limit;
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$category = isset($_GET['category']) ? trim($_GET['category']) : '';
 
-// Xây dựng điều kiện WHERE
-$where = "1"; // mặc định luôn đúng
+// Lấy danh sách và tổng
+$products = $product->getProducts($page, $search, $category);
+$total_products = $product->countProducts($search, $category);
+$total_pages = ceil($total_products / $product->getLimit());
+$stt = ($page - 1) * $product->getLimit() + 1;
 
-$params = []; // tham số bind
-$types = "";  // chuỗi loại dữ liệu cho bind_param
-
-if (!empty($raw_search)) {
-    $where .= " AND name LIKE ?";
-    $params[] = "%$raw_search%";
-    $types .= "s";
-}
-
-if (!empty($start) && !empty($end)) {
-    $where .= " AND updated_at BETWEEN ? AND ?";
-    $params[] = $start . " 00:00:00";
-    $params[] = $end . " 23:59:59";
-    $types .= "ss";
-}
-
-// Đếm tổng số sản phẩm
-$sql_count = "SELECT COUNT(*) AS total FROM product WHERE $where";
-$data->select_prepare($sql_count, $types, $params);
-$total_row = $data->fetch();
-$total_users = $total_row['total'];
-// Lấy dữ liệu sản phẩm
-$sql_data = "SELECT * FROM product WHERE $where LIMIT ? OFFSET ?";
-
-// Thêm limit và offset vào params
-$params_with_limit = $params;
-$params_with_limit[] = $limit;
-$params_with_limit[] = $offset;
-$types_with_limit = $types . "ii";
-$data->select_prepare($sql_data, $types_with_limit, ...$params_with_limit);
-$total_pages = ceil($total_users / $limit);
+// Lấy danh sách danh mục để hiển thị filter
+$categories = $product->getCategories();
 ?>
 
 <head>
@@ -69,12 +42,12 @@ $total_pages = ceil($total_users / $limit);
     align-items: center;
     margin: 30px 0;
     font-family: Arial, sans-serif;
-    font-size: 13px; /* giảm cỡ chữ */
+    font-size: 13px; 
 }
 
 .pagination a, .pagination .current {
     margin: 0 5px;
-    padding: 5px 10px; /* giảm padding cho gọn */
+    padding: 5px 10px; 
     text-decoration: none;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -170,6 +143,36 @@ $total_pages = ceil($total_users / $limit);
                         <span class="title">Quản lý khách hàng</span>
                     </a>
                 </li>
+                                         
+<li>
+                    <a href="quanlynhanvien.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhân viên</span>
+                    </a>
+                </li>
+</li>
+
+<li>
+                    <a href="quanlyncc.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+
+                </li>
+
+<li>
+                    <a href="quanlykho.php"style="color: black;">
+                        <span class="icon">
+                            <ion-icon name="cube-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quản lý kho</span>
+                    </a>
+                </li>
                 <li>
                     <a href="thongke.php"style="color: black;">
                         <span class="icon">
@@ -233,7 +236,6 @@ $total_pages = ceil($total_users / $limit);
                         <thead>
                             <tr>
                                 <td>STT</td>
-                                <td>Mã Sản Phẩm</td>
                                 <td>Ảnh</td>
                                 <td>Tên SP </td>
                                 <td>Danh mục</td>
@@ -248,25 +250,25 @@ $total_pages = ceil($total_users / $limit);
                         <?php
 // Duyệt qua từng sản phẩm và hiển thị
  // Biến đếm số thứ tự
- $stt = ($page - 1) * $limit + 1;
+ $stt = ($page - 1) * $product->getLimit() + 1;
 
-while ($row = $data->fetch()) {  
-    $formatted_price = number_format($row['price'], 0, ',', '.') . " VND"; // Định dạng giá
+if (!empty($products)) {
+    foreach ($products as $row) {
+    $formatted_price = number_format($row['DONGIA'], 0, ',', '.') . " VND"; // Định dạng giá
 ?>          
     <tr>
         <td><?= $stt ?></td> <!-- Số thứ tự tự tăng -->
-    <td><?= htmlspecialchars($row['productcode']) ?></td> <!-- Tên sản phẩm -->
-        <td><img src="<?= '../../' . htmlspecialchars($row['image']) ?>" width="80"></td> <!-- Ảnh -->
-        <td><?= htmlspecialchars($row['name']) ?></td> <!-- Tên sản phẩm -->
-        <td><?= htmlspecialchars($row['category']) ?></td> <!-- Danh mục (Cố định, bạn có thể sửa thành dynamic nếu cần) -->
+        <td><img src="<?= '../../' . htmlspecialchars($row['IMAGE']) ?>" width="80"></td> <!-- Ảnh -->
+        <td><?= htmlspecialchars($row['TENSP']) ?></td> <!-- Tên sản phẩm -->
+        <td><?= htmlspecialchars($row['TENLOAI']) ?></td> <!-- Danh mục (Cố định, bạn có thể sửa thành dynamic nếu cần) -->
         <td><?= $formatted_price ?></td> <!-- Giá -->
 
         <td><?= date("d/m/Y H:i", strtotime($row['updated_at'])) ?></td>
 <td>
-            <a href="suasanpham.php?id=<?= $row['id']?>" id="suanguoidung" style="display: block;">
+            <a href="suasanpham.php?id=<?= $row['MASP']?>" id="suanguoidung" style="display: block;">
                 <i class="fas fa-edit"></i> Sửa
             </a>  
-            <a href="#" onclick="return confirmDelete(<?= $row['id'] ?>)" id="xoanguoidung" style="display: block;">
+            <a href="#" onclick="return confirmDelete(<?= $row['MASP'] ?>)" id="xoanguoidung" style="display: block;">
     <i class="fas fa-trash-alt"></i> Xóa
 </a>  
 
@@ -277,6 +279,7 @@ while ($row = $data->fetch()) {
             window.location.href = 'deleteproduct.php?id=' + productId;
         }
     }
+
 </script>
 
 
@@ -286,20 +289,19 @@ while ($row = $data->fetch()) {
 <?php
     $stt++; // Tăng STT cho dòng tiếp theo
 }
-$data->close(); // Đóng kết nối sau khi hoàn thành truy vấn
+}
+$product->close(); // Đóng kết nối sau khi hoàn thành truy vấn
 ?>
                         </tbody>
    </table>                         
                    
                 
-   <div class="pagination">
-    <?php
-    // Build base URL giữ lại search, start, end
-    $base_url = "?search=" . urlencode($raw_search) . "&start=" . urlencode($start) . "&end=" . urlencode($end);
 
+                    <div class="pagination">
+    <?php
     // Nút Trước
     if ($page > 1) {
-        echo "<a href='{$base_url}&page=" . ($page - 1) . "'>Trước</a>";
+        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "'>Trước</a>";
     }
 
     // Các số trang
@@ -307,17 +309,16 @@ $data->close(); // Đóng kết nối sau khi hoàn thành truy vấn
         if ($i == $page) {
             echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
         } else {
-            echo "<a href='{$base_url}&page=$i'>$i</a>";  // Trang khác
+            echo "<a href='?page=$i&search=" . urlencode($search) . "'>$i</a>";  // Trang khác
         }
     }
 
     // Nút Sau
     if ($page < $total_pages) {
-        echo "<a href='{$base_url}&page=" . ($page + 1) . "'>Sau</a>";
+        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($search) . "'>Sau</a>";
     }
     ?>
 </div>
-   
             </div>
 
             </div>

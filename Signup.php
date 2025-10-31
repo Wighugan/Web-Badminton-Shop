@@ -1,3 +1,48 @@
+<?php
+include "src/systemManage.php";
+$sm = new QuanLyHeThong();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Lấy dữ liệu từ form
+    $TENKH    = trim($_POST['username'] ?? '');
+    $HOTEN    = trim($_POST['fullname'] ?? '');
+    $EMAIL    = trim($_POST['email'] ?? '');
+    $DIACHI   = trim($_POST['address'] ?? '');     // Quận
+    $DIACHI1  = trim($_POST['address1'] ?? '');    // Địa chỉ liên hệ
+    $DIACHI2  = trim($_POST['city'] ?? '');        // Thành phố
+    $MAKHAU   = $_POST['password'] ?? '';
+    $XACNHAN  = $_POST['confirm_password'] ?? '';
+    $SDT      = trim($_POST['phone'] ?? '');
+    $birthday = $_POST['birthday'] ?? '';
+    $AVATAR   = $_FILES['avatar'] ?? null;
+
+    // Danh sách lỗi
+    $errors = [];
+
+    // ✅ Kiểm tra dữ liệu hợp lệ
+    if (empty($TENKH)) {
+        $errors[] = "Tên đăng nhập không được để trống.";
+    }
+    if (empty($MAKHAU) || strlen($MAKHAU) < 6) {
+        $errors[] = "Mật khẩu phải có ít nhất 6 ký tự.";
+    }
+    if ($MAKHAU !== $XACNHAN) {
+        $errors[] = "Mật khẩu nhập lại không khớp.";
+    }
+    if (empty($SDT)) {
+        $errors[] = "Số điện thoại không được để trống.";
+    }
+
+    // ✅ Nếu có lỗi → quay lại form
+    if (!empty($errors)) {
+        $_SESSION['error'] = implode('<br>', $errors);
+        header("Location: Signup.php");
+        exit();
+    }
+
+    // ✅ Gọi hàm xử lý đăng ký trong class
+    $sm->dangky($TENKH, $HOTEN, $EMAIL, $DIACHI, $DIACHI1, $DIACHI2, $MAKHAU, $SDT, $birthday, $AVATAR);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -206,87 +251,71 @@ button:hover {
     <div class="login-container">
       
             <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
-            <form action="inssert.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                    <label for="name"></label>
-                    <input type="text" id="username" name="username" placeholder="Tên đăng nhập">
-                </div>
-                <div class="form-group">
-                    <label for="username"></label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Họ và tên">
-                </div>
+            <form action="Signup.php" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="name"></label>
-                    <input type="text" id="numberphone" name="numberphone" placeholder="Số di động ">
-                    
-                </div>
+    <div class="form-group">
+        <input type="text" id="fullname" name="fullname" placeholder="Họ và tên" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="password"></label>
-                    <input type="text" id="email" name="email" placeholder="email">
-                    
-                </div>
+    <div class="form-group">
+        <input type="text" id="phone" name="phone" placeholder="Số di động" required>
+    </div>
 
-                <div class="form-group">
-    <label for="name"></label>
-   
-    <input type="file" class="form-control" name="avatar" id="avatar" accept="image/*" onchange="previewImage(event)">
-     <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-circle" height="70" padding="20">
+    <div class="form-group">
+        <input type="email" id="email" name="email" placeholder="Email" required>
+    </div>
 
-      
-    
+    <div class="form-group">
+        <label>Ảnh đại diện</label><br>
+        <input type="file" class="form-control" name="avatar" id="avatar" accept="image/*" onchange="previewImage(event)">
+        <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="rounded-circle" height="70" style="margin-top:10px;">
+    </div>
 
-</div>
-<script>
-function previewImage(event) {
-    var preview = document.getElementById('preview'); // Lấy thẻ <img>
-    var file = event.target.files[0]; // Lấy file ảnh
-
-    if (file) {
-        var reader = new FileReader(); // Đọc file ảnh
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Gán đường dẫn ảnh
-            preview.style.display = "block"; // Hiển thị ảnh
-        };
-        reader.readAsDataURL(file); // Đọc file dưới dạng URL
+    <script>
+    function previewImage(event) {
+        var preview = document.getElementById('preview');
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
     }
-}
+    </script>
 
-</script>
-<div class="form-group">
-                    <label for="username"></label>
-                    <input type="text" id="birthday" name="birthday" placeholder="Ngày Sinh" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')"
-                    >
-                </div>
+    <div class="form-group">
+        <input type="text" id="birthday" name="birthday" placeholder="Ngày sinh"
+               onfocus="(this.type='date')" onblur="(this.type=this.value ? 'date' : 'text')" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="username"></label>
-                    <input type="text" id="address1" name="address1" placeholder="Địa chỉ liên hệ">
-                </div>
+    <div class="form-group">
+        <input type="text" id="address1" name="address1" placeholder="Địa chỉ liên hệ" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="text"></label>
-                    <input type="text" id="city" name="city" placeholder="Thành Phố">
-                </div>
+    <div class="form-group">
+        <input type="text" id="city" name="city" placeholder="Thành phố" required>
+    </div>
 
-                  <div class="form-group">
-                    <label for="text"></label>
-                    <input type="text" id="address" name="address" placeholder="Quận">
-                </div>
+    <div class="form-group">
+        <input type="text" id="address" name="address" placeholder="Quận" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="username"></label>
-                    <input type="password" id="password" name="password" placeholder="Mật khẩu">
-                </div>
-                <div class="form-group">
-                    <label for="username"></label>
-                    <input type="password" id="password" name="password" placeholder="Nhập lại mật khẩu của bạn">
-                </div>
-                
-                <button class="no-border-button" type="submit">Đăng ký</button>
-               
-            </form>
+    <div class="form-group">
+        <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+    </div>
+
+    <div class="form-group">
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+    </div>
+
+    <button class="no-border-button" type="submit">Đăng ký</button>
+</form>
         </div>
         <?php 
         include 'src/footer.php';
