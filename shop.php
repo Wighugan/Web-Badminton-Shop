@@ -1,4 +1,5 @@
 <?php
+include "src/header.php";
 include "src/products.php";
 include "database/connect.php";
 $data = new Database();

@@ -162,9 +162,6 @@ $(document).ready(function() {
                         <a href="shop.php" class="nav-item nav-link">
                             <i class="fas fa-shopping-bag"></i> Sản Phẩm
                         </a>
-                        <a href="contact.php" class="nav-item nav-link">
-                            <i class="fas fa-envelope"></i> Liên Hệ
-                        </a>
                     </div>
 
                     <!-- Tài khoản bên phải nhưng đẩy vào trái 20px -->
