@@ -1,5 +1,5 @@
 <?php
-include "class/systemManage.php";
+include "src/systemManage.php";
 $sm = new QuanLyHeThong();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Lấy dữ liệu từ form

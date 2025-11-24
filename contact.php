@@ -1,6 +1,10 @@
 <?php
 include 'database/connect.php';
-include 'src/header-login.php';
+if (isset($_SESSION['user_id'])) {
+    include 'src/header-login.php';
+} else {
+    include 'src/header.php';
+}
 $data = new Database();
 ?>
 

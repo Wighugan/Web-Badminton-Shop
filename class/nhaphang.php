@@ -85,14 +85,22 @@ class NhapHang extends QuanLyHeThong{
     $result = $this->data->fetch();
     return $result ? (int)$result['MaPN'] : 0;
 }   
-    public function getProuductbyCatgory($MALOAI){
-        $sql = 'SELECT MASP,TENSP,GIANHAP FROM san_pham WHERE MALOAI = ?';
-        $this->data->select_prepare($sql,'s',$MALOAI);
-        $this->data->fetch();
-    }
+   public function getProductByCategory($MALOAI) {
+        $sql = 'SELECT MASP, TENSP, GIANHAP FROM san_pham WHERE MALOAI = ? ORDER BY TENSP';
+        $this->data->select_prepare($sql, 's', $MALOAI);
+        $products = [];
+        while ($row = $this->data->fetch()) {
+            $products[] = [
+                'MASP' => $row['MASP'],
+                'TENSP' => $row['TENSP'],
+                'GIANHAP' => (float)$row['GIANHAP']
+            ];
+        }
+        return $products; 
+}
    public function __destruct()
        {
-           throw new \Exception('Not implemented');
+           
        }
 }
 ?>

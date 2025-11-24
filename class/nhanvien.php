@@ -28,17 +28,14 @@ class nhanvien extends QuanLyHeThong {
         $this->search;
         $this->district;
         $this->data =  new Database();
-
     }
     public function getNhanvienById($MANV) {
         $sql = "SELECT * FROM nhan_vien WHERE MANV = ?";
         $this->data->select_prepare($sql, "i", $MANV);
         return $this->data->fetch();
     }
-public function updateNhanvien($MANV, $TENNV,$HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS)
+public function updateNhanvien($MANV, $TENNV,$HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS,$MATKHAU)
 {
-    try {
-        // ✅ Kiểm tra nhân viên tồn tại ĐẦU TIÊN
         $check_sql = "SELECT MANV FROM nhan_vien WHERE MANV = ?";
         $this->data->select_prepare($check_sql, "i", $MANV);
         $exists = $this->data->fetch();
@@ -73,6 +70,11 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
             $params[] = $HOTEN;
             $types .= "s";
         }
+        if ($MATKHAU== null && $MATKHAU !== '') {
+            $set_clauses[] = "MATKHAU = ?";
+            $params[] = $MATKHAU;
+            $types .= "s";
+        }
         if ($SDT !== null && $SDT !== '') {
             $set_clauses[] = "SDT = ?";
             $params[] = $SDT;
@@ -83,7 +85,6 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
             $params[] = $EMAIL;
             $types .= "s";
         } 
-        // ✅ Kiểm tra upload file, không kiểm tra tham số $AVATAR
         if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
             $set_clauses[] = "AVATAR = ?";
             $params[] = $avatarPath;
@@ -106,14 +107,10 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         $result = $this->data->execute();
         
         if ($result) {
-            return ['success' => true, 'message' => '✅ Cập nhật thành công!'];
+            return ['success'];
         } else {
             return ['success' => false, 'message' => '❌ Cập nhật thất bại!'];
         }
-        
-    } catch (Exception $e) {
-        return ['success' => false, 'message' => '❌ Lỗi: ' . $e->getMessage()];
-    }
 }
     public function addNhanvien($TENNV,$HOTEN ,$SDT, $EMAIL, $AVATAR, $NGAYLAM,$NS) {
         $avatarPath = $AVATAR;
@@ -135,43 +132,41 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         return $this->data->execute();
     }
     public function xoaNhanVien($MANV) {
-    try {
         $sql = "DELETE FROM nhan_vien WHERE MANV = ?";
         $this->data->command_prepare($sql, 'i', $MANV);
 
         if ($this->data->execute()) {
-            return ['success' => true, 'message' => '✅ Đã xóa nhân viên thành công!'];
+            return ['success'];
         } else {
             return ['success' => false, 'message' => '❌ Lỗi khi xóa nhân viên hoặc nhân viên không tồn tại!'];
         }
-    } catch (Exception $e) {
-        return ['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()];
-    }
 }
-
-    public function getnhanvienList($page, $search) {
-        // Implement logic to get the list of employees
-        $sql = "SELECT * FROM nhan_vien WHERE 1=1";
-        $params = [];
-        if ($search) {
-            $sql .= " AND (TENNV LIKE ? OR SDT LIKE ? OR EMAIL LIKE ?)";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
-            $params[] = "%$search%";   
-        }
-        $sql .= " LIMIT ?, ?";
-        $params[] = ($page - 1) * 10;
-        $params[] = 10;
-        $this->data->select_prepare($sql, str_repeat("s", count($params) - 2) . "ii", ...$params);
-        return $this->data->fetchAll();
+  public function getnhanvienList($page, $search) {
+    $sql = "SELECT * FROM nhan_vien WHERE 1=1";
+    $params = [];
+    $types = "";
+    if (!empty($search)) {
+        $sql .= " AND (TENNV LIKE ? OR SDT LIKE ? OR EMAIL LIKE ? OR MANV LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+        $types .= "ssss";
+    }
+    // LIMIT ?, ?
+    $sql .= " LIMIT ?, ?";
+    $offset = ($page - 1) * 10;
+    $params[] = $offset;
+    $params[] = 10;
+    $types .= "ii";
+    $this->data->select_prepare($sql, $types, ...$params);
+    return $this->data->fetchAll();
 }
     public function countnhanvien($search, $district) {
         $sql = "SELECT COUNT(*) as total FROM nhan_vien WHERE 1=1";
         $params = [];
         if ($search) {
             $sql .= " AND (TENNV LIKE ? OR SDT LIKE ? OR EMAIL LIKE ?)";   
-            $params[] = "%$search%";
             $params[] = "%$search%";
             $params[] = "%$search%";
             $params[] = "%$search%";

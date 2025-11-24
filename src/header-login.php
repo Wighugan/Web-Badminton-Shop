@@ -4,8 +4,8 @@
 // ============================================
 
 // Kiểm tra session đã start chưa
-require_once 'class/systemManage.php';
-include_once 'class/products.php';
+require_once 'src/systemManage.php';
+include_once 'src/products.php';
 $isLoggedIn = isset($_SESSION['user_id']);
 
 // Xử lý logout

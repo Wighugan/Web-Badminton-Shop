@@ -1,10 +1,19 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
 
-// Khởi tạo kết nối và class
 $data = new database();
-$order = new order();
+$order = new order($data);
 
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
 // Nhận tham số lọc & tìm kiếm
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -30,159 +39,14 @@ $stt = ($page - 1) * $order->getLimit() + 1;
     <link href='../img/logo.png' rel='icon' type='image/x-icon' />
     <link rel="stylesheet" href="../css/indexadmin.css">
     <link rel="stylesheet" href="../css/quanlydonhang.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <style>
-        .success {
-            color: green;
-            font-weight: bold;
-        }
-        .pending {
-            color: red;
-            font-weight: bold;
-        }
-        .cancelled {
-            color: gray;
-            font-weight: bold;
-        }
-        .shipping {
-            color: blue;
-            font-weight: bold;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 30px 0;
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-        }
-
-        .pagination a, .pagination .current {
-            margin: 0 5px;
-            padding: 5px 10px;
-            text-decoration: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: #333;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .pagination a:hover {
-            background-color: rgb(103, 104, 106);
-            color: white;
-            border-color: rgb(117, 119, 121);
-        }
-
-        .pagination .current {
-            font-weight: bold;
-            background-color: rgb(0, 0, 0);
-            color: white;
-            border-color: rgb(0, 0, 0);
-            cursor: default;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
 </head>
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div style="display: flex; align-items: center; position: relative;">
-                        <img src="../img/logo.png" alt="logo" width="85px" height="85px">
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                    </div>
-                </li>
-
-                <div class="">
-                    <li>
-                        <a href="" style="color: black;">
-                            <span class="icon">
-                                <ion-icon name="person-outline"></ion-icon>
-                            </span>
-                            <span class="title">ADMIN</span>
-                        </a>
-                    </li>
-                </div>
-
-                <li>
-                    <a href="trangchuadmin.php" style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlynhanvien.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlyncc.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykho.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="thongke.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
+    <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
         <!-- ========================= Main ==================== -->
         <div class="main">
             <div class="topbar">

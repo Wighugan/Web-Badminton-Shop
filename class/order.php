@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/systemManage.php';
 class Order extends QuanLyHeThong{
     private $MADH;
@@ -9,25 +8,27 @@ class Order extends QuanLyHeThong{
     private $TONGTIEN;
     protected $data;
     protected $limit = 10;
-    public function __construct() {
-        $this->data = new Database();
+   public function __construct($data) {
+        $this->data = $data;
     }
     public function getLastInsertId() {
         $sql    = "SELECT MADH FROM don_hang ORDER BY MADH DESC LIMIT 1";
         $this->data->select_prepare($sql);
         return $this->data->fetch();
     }
-// Lập đơn hàng
    public function TaoDonHang($MAKH) {
+    // 1️⃣ Lấy sản phẩm trong giỏ hàng
     $sql = "SELECT sp.MASP, sp.TENSP, sp.DONGIA, g.SOLUONG 
             FROM gio_hang g 
             JOIN san_pham sp ON g.MASP = sp.MASP 
             WHERE g.MAKH = ?";
     $this->data->select_prepare($sql, "i", $MAKH);
     $cart_items = $this->data->fetchAll();
+
     if (empty($cart_items)) {
         return ['success' => false, 'message' => 'Giỏ hàng trống!'];
     }
+    // 2️⃣ Tính tổng tiền
     $total = 0;
     foreach ($cart_items as $row) {
         $total += $row['DONGIA'] * $row['SOLUONG'];
@@ -59,7 +60,8 @@ class Order extends QuanLyHeThong{
             $item['SOLUONG']
         );
     }
-// Xóa giỏ hàng sau khi tạo đơn
+
+    // Xóa giỏ hàng sau khi tạo đơn
     $sql3 = "DELETE FROM gio_hang WHERE MAKH = ?";
     $this->data->command_prepare($sql3, "i", $MAKH);
     //Trả kết quả
@@ -71,7 +73,6 @@ class Order extends QuanLyHeThong{
         'insurance_fee' => $insurance_fee
     ];
 }
-// đếm số đơn hàng
      public function DemSoDonHang($MAKH, $limit = 10) {
         // Xác định trang hiện tại
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -93,12 +94,11 @@ class Order extends QuanLyHeThong{
             'total_pages' => $total_pages
         ];
     }
-// liệt kê chi tiết đơn hàng
-    public function getOrderDetails($MADH) {
+    public function getOrderDetails($order_id) {
         $sql = "SELECT ct.*, sp.IMAGE FROM ctdh ct JOIN san_pham sp ON ct.MASP = sp.MASP WHERE ct.MADH = ?";
-        $this->data->select_prepare($sql, "i", $MADH);
+        $this->data->select_prepare($sql, "i", $order_id);
         return $this->data->fetchAll();
-    }
+    }    
 // tiềm kiếm dơn hàng ngày lập
     public function countOrders($search = '', $start_date = '', $end_date = '', $address = '', $status = '') {
         $where = [];
@@ -148,15 +148,20 @@ class Order extends QuanLyHeThong{
         return $this->limit;
     }
 // chi tiết đơn hàng
-    public function getOrderInfo($MADH) {
-        $sql = "SELECT don_hang.*, khach_hang.HOTEN, khach_hang.SDT, khach_hang.DIACHI1
-                FROM don_hang
-                JOIN khach_hang ON don_hang.MAKH = khach_hang.MAKH
-                WHERE don_hang.MADH = ?";
-        $this->data->select_prepare($sql, "i", $MADH);
-        $result = $this->data->fetchAll();
-        return $result ? $result[0] : null;
-    }
+    public function getOrderInfo($order_id)
+{
+    $sql = "SELECT don_hang.*, 
+                   khach_hang.HOTEN, 
+                   khach_hang.SDT, 
+                   khach_hang.DIACHI1
+            FROM don_hang
+            JOIN khach_hang ON don_hang.MAKH = khach_hang.MAKH
+            WHERE don_hang.MADH = ?
+            LIMIT 1";
+
+    $this->data->select_prepare($sql, "i", $order_id);
+    return $this->data->fetch(); // trả 1 dòng
+}
 public function updateStatus($MADH, $TRANGTHAI) {
         try {
             // Kiểm tra đơn hàng tồn tại
@@ -270,7 +275,6 @@ public function updateStatus($MADH, $TRANGTHAI) {
     $params = [];
     $types = "";
 
-    // Tìm kiếm theo mã đơn, mã khách, hoặc tên khách
     if (!empty($search)) {
         $where[] = "(don_hang.MADH LIKE ? OR don_hang.MAKH LIKE ? OR khach_hang.HOTEN LIKE ?)";
         $params[] = "%$search%";
@@ -279,7 +283,6 @@ public function updateStatus($MADH, $TRANGTHAI) {
         $types .= "sss";
     }
 
-    // Lọc theo khoảng thời gian
     if (!empty($start_date) && !empty($end_date)) {
         $where[] = "DATE(don_hang.NGAYLAP) BETWEEN ? AND ?";
         $params[] = $start_date;
@@ -287,36 +290,29 @@ public function updateStatus($MADH, $TRANGTHAI) {
         $types .= "ss";
     }
 
-    // Lọc theo địa chỉ
     if (!empty($address)) {
         $where[] = "khach_hang.DIACHI1 LIKE ?";
         $params[] = "%$address%";
         $types .= "s";
     }
 
-    // Lọc theo trạng thái đơn hàng
     if (!empty($status)) {
         $where[] = "don_hang.TRANGTHAI = ?";
         $params[] = $status;
         $types .= "s";
     }
 
-    // Tạo câu lệnh SQL chính
     $sql = "SELECT don_hang.*, khach_hang.HOTEN, khach_hang.DIACHI1, khach_hang.SDT 
             FROM don_hang 
             JOIN khach_hang ON don_hang.MAKH = khach_hang.MAKH";
 
-    // Gắn điều kiện WHERE nếu có
     if (!empty($where)) {
         $sql .= " WHERE " . implode(" AND ", $where);
     }
 
-    $sql .= " ORDER BY don_hang.NGAYLAP DESC LIMIT ? OFFSET ?";
-    $params[] = $this->limit;
-    $params[] = $offset;
-    $types .= "ii";
+    // Nối trực tiếp LIMIT/OFFSET
+    $sql .= " ORDER BY don_hang.NGAYLAP DESC LIMIT " . (int)$this->limit . " OFFSET " . (int)$offset;
 
-    // Chuẩn bị và thực thi
     $this->data->select_prepare($sql, $types, ...$params);
     return $this->data->fetchAll();
 }

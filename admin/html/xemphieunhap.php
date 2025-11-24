@@ -1,5 +1,15 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
 class ChiTietPhieuNhap extends Database
 {
     private $limit;

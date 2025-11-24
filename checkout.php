@@ -1,7 +1,7 @@
 <?php
 include 'src/header-login.php';
-include 'class/user.php';
-include 'class/cart.php';
+include 'src/user.php';
+include 'src/cart.php';
 // ✅ Khởi tạo database và các class
 $data = new Database();
 $qlkh = new QuanLyKhachHang($data);

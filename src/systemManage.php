@@ -1,6 +1,6 @@
 <?php
 session_start();
-include __DIR__ . '/../database/connect.php';
+require_once 'database/connect.php';
 class QuanLyHeThong {
     protected $data;
 
@@ -118,6 +118,5 @@ class QuanLyHeThong {
     exit();
 }
 public function dangxuat(): void { if (session_status() === PHP_SESSION_NONE) { session_start(); } $_SESSION = []; if (ini_get("session.use_cookies")) { $params = session_get_cookie_params(); setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'] ?? false, $params['httponly'] ?? false ); } session_destroy(); } // Kiểm tra trạng thái đăng nhập public function isLoggedIn() { return isset($_SESSION['user_id']); } public function __destruct() { $this->data->close(); } }
-
 }
 ?>

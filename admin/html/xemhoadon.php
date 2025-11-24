@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
-
 // Khởi tạo kết nối và class
-$db = new database();
-$order = new Order();
+$db = new Database();
+$order = new Order($db); // truyền đúng biến
+
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
 
 // Nhận tham số lọc & tìm kiếm
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -22,7 +24,8 @@ $total_pages = ceil($total_orders / $order->getLimit());
 $stt = ($page - 1) * $order->getLimit() + 1;
 ?>
 
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

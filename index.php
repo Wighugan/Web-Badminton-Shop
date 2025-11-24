@@ -1,9 +1,12 @@
 <?php
-// Lấy 8 sản phẩm mới nhất
+session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
+include "database/connect.php";
 include "src/header.php";
-include "class/products.php";
+include "src/products.php";
 $sp = new SanPham();
 $featured_products = $sp->lietketspnb();
+// Lấy 8 sản phẩm mới nhất
 $new_products = $sp->lietketspmoi();
 // Link chi tiết sản phẩm cho user đã đăng nhập
 $detailLink = 'detail.php';

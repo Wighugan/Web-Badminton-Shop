@@ -1,10 +1,5 @@
 <?php
-<<<<<<< HEAD
-include "class/products.php";
-=======
-include "src/header.php";
 include "src/products.php";
->>>>>>> 1521edf62964e67deead5a4265e0be43efa24521
 include "database/connect.php";
 $data = new Database();
 $sp = new SanPham();

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,6 +161,9 @@ $(document).ready(function() {
                         </a>
                         <a href="shop.php" class="nav-item nav-link">
                             <i class="fas fa-shopping-bag"></i> Sản Phẩm
+                        </a>
+                        <a href="contact.php" class="nav-item nav-link">
+                            <i class="fas fa-envelope"></i> Liên Hệ
                         </a>
                     </div>
 

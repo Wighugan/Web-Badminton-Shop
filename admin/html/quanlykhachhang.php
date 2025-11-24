@@ -1,10 +1,21 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/user.php';
-$user = new QuanLyKhachHang();
+$data = new Database();
+$user = new QuanLyKhachHang($data);
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     $makh = (int)$_POST['makh'];
-    
     if ($action === 'lock') {
         $result = $user->khoaTaiKhoan($makh);
         echo json_encode(['status' => $result ? 'success' : 'error', 'message' => $result ? 'Khóa thành công' : 'Lỗi khi khóa']);
@@ -78,106 +89,9 @@ $stt = ($page - 1) * $user->getLimit() + 1;
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <a href="#">
-                        <div style="display: flex; align-items: center; position: relative;">
-
-                            <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-    
-                            <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-    </div>
-    
-                        </a>
-                </li>
-                <div class="">
-                    <li>
-                        <a href="" style="color: black;" id="">
-                            <span class="icon">
-                                <ion-icon name="person-outline"></ion-icon>
-                            </span>
-                            <span class="title">ADMIN</span>
-                        </a>
-                    </li>
-                </div>
-        <li>
-                <li>
-                    <a href="trangchuadmin.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php" style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                                         
-<li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+     <?php
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -195,14 +109,7 @@ $stt = ($page - 1) * $user->getLimit() + 1;
                     <form method="GET" action="">
   <div class="search-container" style="display: flex; gap: 10px; align-items: center;">
     <!-- Tìm kiếm text -->
-    <input id="timnguoidung" 
-           type="text" 
-           name="search" 
-           value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
-           placeholder="Tên người dùng, email, số điện thoại ...">   
-    
-    <!-- Chọn quận/huyện -->
-    <select name="district" id="district">
+     <select name="district" id="district">
       <option value="">Chọn Quận/Huyện</option>
       <option value="Quận 1">Quận 1</option>
       <option value="Quận 2">Quận 2</option>
@@ -228,17 +135,24 @@ $stt = ($page - 1) * $user->getLimit() + 1;
       <option value="Huyện Củ Chi">Huyện Củ Chi</option>
       <option value="Huyện Cần Giờ">Huyện Cần Giờ</option>
     </select>
+
+    
+    <input id="timnguoidung" 
+           type="text" 
+           name="search" 
+           value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
+           placeholder="Tên người dùng, email, số điện thoại ...">   
+    
+    <!-- Chọn quận/huyện -->
+    
     
     <!-- Nút tìm kiếm -->
     <button type="submit" id="timnguoidung1" style="padding: 8px 15px;">
-      <i class="fa fa-search"></i> Tìm kiếm
-    </button>  
+      <i class="fa fa-search"></i> 
   </div>
 </form>
 <!-- Thêm JavaScript để giữ giá trị select khi submit -->
-<script>
-document.getElementById('district').value = "<?= isset($_GET['district']) ? htmlspecialchars($_GET['district']) : '' ?>";
-</script>              
+            
                 </div>
                 <div class="chartsBx">
                     <h2></h2>
@@ -312,23 +226,25 @@ document.getElementById('district').value = "<?= isset($_GET['district']) ? html
                     </table>
                     <div class="pagination">
                     <?php
-                            // Nút Trước
-                            if ($page > 1) {
-                                echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "&district=" . urlencode($district) . "'>Trước</a>";
-                            }
-                            // Các số trang
-                            for ($i = 1; $i <= $total_pages; $i++) {
-                                if ($i == $page) {
-                                    echo "<span class='hientai1'>$i</span>";
-                                } else {
-                                    echo "<a href='?page=$i&search=" . urlencode($search) . "&district=" . urlencode($district) . "'>$i</a>";
-                                }
-                            }
-                            // Nút Sau
-                            if ($page < $total_pages) {
-                                echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($search) . "&district=" . urlencode($district) . "'>Sau</a>";
-                            }
-                            ?>
+    // Nút Trước
+    if ($page > 1) {
+        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "'>Trước</a>";
+    }
+
+    // Các số trang
+    for ($i = 1; $i <= $total_pages; $i++) {
+        if ($i == $page) {
+            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
+        } else {
+            echo "<a href='?page=$i&search=" . urlencode($search) . "'>$i</a>";  // Trang khác
+        }
+    }
+
+    // Nút Sau
+    if ($page < $total_pages) {
+        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($search) . "'>Sau</a>";
+    }
+    ?>
 </div>
             </div>
         </div>

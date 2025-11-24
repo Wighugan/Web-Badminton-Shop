@@ -2,7 +2,17 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/user.php';
 $data = new database();
-$kh   = new QuanLyKhachHang();   
+$kh   = new QuanLyKhachHang($data); 
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
 $user = null;                    
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
@@ -27,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $TP      = $_POST['TP'];
     $NS      = $_POST['NS'];
     $AVATAR = $_FILES['AVATAR'];
-    $kh = new QuanLyKhachHang();
+    $kh = new QuanLyKhachHang($data);
     $kh->CapNhatThongTin(
         $MAKH, $TENKH, $HOTEN, $EMAIL,
         $DIACHI, $DIACHI1, $TP, $MATKHAU,
@@ -65,99 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div style="display: flex; align-items: center; position: relative;">
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                    </div>
-                 </li>
-                <div class="">
-                <li>
-                    <a href="" style="color: black;" id="">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">ADMIN</span>
-                    </a>
-                </li>
-            </div>
-                <li>
-                    <a href="trangchuadmin.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php"style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+     <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">

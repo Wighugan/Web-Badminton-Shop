@@ -11,19 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>alert('❌ Vui lòng nhập đầy đủ thông tin!'); history.back();</script>";
         exit;
     }
-
     try {
         $nhapHang = new NhapHang();
         $tongTien = $SoLuong * $GiaNhap;
-        
         $result = $nhapHang->themPhieuNhap($TenNCC, $tongTien);
-        
         if (is_numeric($result) && $result > 0) {
             $maPN = $result;
-        } else {
-            $maPN = $nhapHang->getLastMaPN();
         }
-        
         if ($maPN <= 0) {
             throw new Exception("Không thể tạo phiếu nhập. Vui lòng thử lại!");
         }
@@ -49,25 +43,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ✅ Lấy dữ liệu sản phẩm từ database
-$data = new Database();
+// ✅ Lấy dữ liệu sản phẩm từ database - Sử dụng hàm class
+$nhapHangObj = new NhapHang();
 $productsData = [];
 
 // Lấy sản phẩm theo từng category
-$categories = ['YX', 'MO', 'LG', 'VR'];
+$categories = ['yx', 'mo', 'lg', 'vr'];
 
 foreach ($categories as $cat) {
-    $sql = "SELECT MASP, TENSP, GIANHAP FROM san_pham WHERE MASP LIKE ? ORDER BY TENSP";
-    $searchPattern = $cat . '%';
-    $data->select_prepare($sql, "s", $searchPattern);
-    
-    $productsData[$cat] = [];
-    while ($row = $data->fetch()) {
-        $productsData[$cat][] = [
-            'MASP' => $row['MASP'],
-            'TENSP' => $row['TENSP'],
-            'GIANHAP' => (float)$row['GIANHAP']
-        ];
+    try {
+        // ✅ Gọi hàm getProductByCategory từ class NhapHang
+        $productsData[$cat] = $nhapHangObj->getProductByCategory($cat);
+    } catch (Exception $e) {
+        $productsData[$cat] = [];
     }
 }
 ?>
@@ -85,96 +73,9 @@ foreach ($categories as $cat) {
 
 <body>
     <!-- Navigation -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div style="display: flex; align-items: center; position: relative;">
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-                    </div>
-                </li>
-                <div class="">
-                    <li>
-                        <a href="" style="color: black;" id="">
-                            <span class="icon">
-                                <ion-icon name="person-outline"></ion-icon>
-                            </span>
-                            <span class="title">ADMIN</span>
-                        </a>
-                    </li>
-                </div>
-                <li>
-                    <a href="trangchuadmin.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlyncc.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykho.php" style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+     <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- Main -->
         <div class="main">
@@ -208,10 +109,10 @@ foreach ($categories as $cat) {
                                 <label for="category">Loại sản phẩm:</label>
                                 <select id="category" name="category" required onchange="loadProducts(this.value)">
                                     <option value="">-- Chọn loại sản phẩm --</option>
-                                    <option value="YX">Yonex</option>
-                                    <option value="MO">Mizuno</option>
-                                    <option value="LG">Lining</option>
-                                    <option value="VR">Victor</option>
+                                    <option value="yx">Yonex</option>
+                                    <option value="mo">Mizuno</option>
+                                    <option value="lg">Lining</option>
+                                    <option value="vr">Victor</option>
                                 </select>
                             </div>
 

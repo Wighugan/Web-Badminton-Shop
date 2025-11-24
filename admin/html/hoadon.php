@@ -1,11 +1,21 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
-$dh = new Order();
+
+$data = new Database();
+$dh = new Order($data);
+
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-// Lấy thông tin đơn hàng + khách hàng
+
+// Lấy thông tin đơn hàng
 $order_info = $dh->getOrderInfo($order_id);
-// Lấy danh sách sản phẩm trong đơn hàng
+
+if (!$order_info) {
+    die("❌ Không tìm thấy đơn hàng!");
+}
+
+// Lấy danh sách sản phẩm
 $order = $dh->getOrderDetails($order_id);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,107 +33,9 @@ $order = $dh->getOrderDetails($order_id);
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    
-                        <div style="display: flex; align-items: center; position: relative;">
-
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-</div>
-                </li>
-
-                <div class="">
-                <li>
-                    <a href="" style="color: black;" id="">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">ADMIN</span>
-                    </a>
-                </li>
-            </div>
-
-
-
-                <li>
-                    <a href="trangchuadmin.php" style="color: black;" >
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;" >
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-
-            </ul>
-        </div>
+    <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -151,19 +63,17 @@ $order = $dh->getOrderDetails($order_id);
                     </div>
                     <div class="card">
                     <div class="thongtinnguoimua">
-                        <p> <span style="font-weight: bold;">Mã đơn hàng:</span> <?= $order['CODE'] ?></span></p>
+                        <p> <span style="font-weight: bold;">Mã đơn hàng:</span> <?= htmlspecialchars($order_info['CODE']) ?></span></p>
 
-                        <p> <span style="font-weight: bold;">Tên Khách Hàng:</span> <?= $order['HOTEN'] ?></span></p>
-                        <p> <span style="font-weight: bold;">Số điện thoại:</span> <?= $order['SDT'] ?></p>
-
-                        
-                        <p> <span style="font-weight: bold;">Địa chỉ giao hàng:</span>  <?= $order['DIACHI1'] ?></p>
+                        <p> <span style="font-weight: bold;">Tên Khách Hàng:</span> <?= htmlspecialchars($order_info['HOTEN']) ?></span></p>
+                        <p> <span style="font-weight: bold;">Số điện thoại:</span> <?= htmlspecialchars($order_info['SDT']) ?></p>
+                        <p> <span style="font-weight: bold;">Địa chỉ giao hàng:</span>  <?= htmlspecialchars($order_info['DIACHI1']) ?></p>
                     </div>
                     <div class="thongtinnguoimua">
-                        <p> <span style="font-weight: bold;">Ngày đặt hàng:</span> <?= $order['NGAYLAP'] ?></span></p>
+                        <p> <span style="font-weight: bold;">Ngày đặt hàng:</span> <?= htmlspecialchars($order_info['NGAYLAP']) ?></span></p>
                         <p> <span style="font-weight: bold;">Thanh toán:</span> Thanh toán khi nhận hàng</span></p>
-                        <p> <span style="font-weight: bold;">Trạng thái đơn hàng:</span><span style="color: <?= $order['TRANGTHAI'] === 'Thành công' ? 'green' : 'red' ?>">
-                <?= $order['TRANGTHAI'] ?>
+                        <p> <span style="font-weight: bold;">Trạng thái đơn hàng:</span><span style="color: <?= $order_info['TRANGTHAI'] === 'Thành công' ? 'green' : 'red' ?>">
+                <?= $order_info['TRANGTHAI'] ?>
             </span></p>
 
                     </div>
@@ -177,28 +87,28 @@ $order = $dh->getOrderDetails($order_id);
                                 <td>Số lượng</td>
                                 <td>Đơn giá</td>
                                 <td>Thành tiền</td>
-                                
                                 <td></td>
                             </tr>
                         </thead>
-
+  
                         <tbody>
-                        <?php 
-        $i = 1;
-        $total = 0;
-        while($row = $data->fetch()) { 
-            $thanhtien = $row['SOLUONG'] * $row['DONGIA'];
-            $total += $thanhtien;
-        ?>
-        <tr>
-            <td><?= $i++ ?></td>
-            <td>SP00<?= $row['MADH'] ?></td>
-            <td><?= $row['TENSP'] ?></td>
-            <td><?= $row['SOLUONG'] ?></td>
-            <td><?= number_format($row['DONGIA'], 0, ',', '.') ?> VND</td>
-            <td><?= number_format($thanhtien, 0, ',', '.') ?> VND</td>
-        </tr>
-        <?php } ?>
+                       <?php 
+$i = 1;
+$total = 0;
+foreach($order as $row) { 
+    $thanhtien = $row['SOLUONG'] * $row['DONGIA'];
+    $total += $thanhtien;
+?>
+<tr>
+    <td><?= $i++ ?></td>
+    <td>SP00<?= $row['MASP'] ?></td>
+    <td><?= htmlspecialchars($row['TENSP']) ?></td>
+    <td><?= $row['SOLUONG'] ?></td>
+    <td><?= number_format($row['DONGIA'], 0, ',', '.') ?> VND</td>
+    <td><?= number_format($thanhtien, 0, ',', '.') ?> VND</td>
+</tr>
+<?php } ?>
+
         <tr>
             <td colspan="4"></td>
             <td><b>Tổng tiền:</b></td>

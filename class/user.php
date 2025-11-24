@@ -14,9 +14,10 @@ class QuanLyKhachHang extends QuanLyHeThong {
     private $DIACHI1;
     private $TRANGTHAI;
     private $limit = 3;
-    public function __construct() {
-        $this->data = new Database();
+    public function __construct(Database $data) {
+        parent::__construct();
     }
+
 // lấy danh sách người dùng
    public function getUsers($page, $search, $district)
 {
@@ -92,101 +93,84 @@ class QuanLyKhachHang extends QuanLyHeThong {
         return $this->limit;
     }
 //câp nhật thông tin khách hàng
-      public function CapNhatThongTin($MAKH, $TENKH, $HOTEN, $EMAIL, $DIACHI, $DIACHI1, $TP, $MATKHAU, $SDT, $NS, $AVATAR)
+     public function CapNhatThongTin($MAKH, $TENKH, $HOTEN, $EMAIL, $DIACHI, $DIACHI1, $TP, $MATKHAU, $SDT, $NS,$AVATAR)
 {
     try {
-        $check_sql = "SELECT MAKH FROM khach_hang WHERE MAKH = ?";
-        $this->data->select_prepare($check_sql, "i", $MAKH);
-        $exists = $this->data->fetch();
-        if (!$exists) {
+        // 1. Kiểm tra khách hàng có tồn tại
+        $this->data->select_prepare("SELECT * FROM khach_hang WHERE MAKH = ?", "i", $MAKH);
+        $old = $this->data->fetch();
+        if (!$old) {
             return ['success' => false, 'message' => '❌ Khách hàng không tồn tại!'];
-        }    
-        $avatarPath = $AVATAR;
-            if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
-            $fileName = time() . "_" . basename($_FILES['AVATAR']['name']);
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatar/";
-            
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            $fullPath = $uploadDir . $fileName;
-            if (move_uploaded_file($_FILES['AVATAR']['tmp_name'], $fullPath)) {
-                $avatarPath = "uploads/avatar/" . $fileName;
-            } else {
-                return ['success' => false, 'message' => '❌ Upload file thất bại!'];
-            }
-        }        
-        $set_clauses = [];
+        }
+        // 2. Chuẩn bị cập nhật
+        $set = [];
         $params = [];
         $types = "";
-        if ($TENKH !== null && $TENKH !== '') {
-            $set_clauses[] = "TENKH = ?";
-            $params[] = $TENKH;
-            $types .= "s";
+        $fields = [
+            "TENKH"  => $TENKH,
+            "HOTEN"  => $HOTEN,
+            "EMAIL"  => $EMAIL,
+            "DIACHI" => $DIACHI,
+            "DIACHI1" => $DIACHI1,
+            "TP" => $TP,
+            "SDT" => $SDT,
+            "NS" => $NS
+        ];
+        foreach ($fields as $column => $value) {
+            if ($value !== null && $value !== "") {
+                $set[] = "$column = ?";
+                $params[] = $value;
+                $types .= "s";
+            }
         }
-        if ($HOTEN !== null && $HOTEN !== '') {
-            $set_clauses[] = "HOTEN = ?";
-            $params[] = $HOTEN;
-            $types .= "s";
-        }
-        
-        if ($EMAIL !== null && $EMAIL !== '') {
-            $set_clauses[] = "EMAIL = ?";
-            $params[] = $EMAIL;
-            $types .= "s";
-        }
-        
-        if ($DIACHI !== null && $DIACHI !== '') {
-            $set_clauses[] = "DIACHI = ?";
-            $params[] = $DIACHI;
-            $types .= "s";
-        }
-        
-        if ($DIACHI1 !== null && $DIACHI1 !== '') {
-            $set_clauses[] = "DIACHI1 = ?";
-            $params[] = $DIACHI1;
-            $types .= "s";
-        }       
-        if ($TP !== null && $TP !== '') {
-            $set_clauses[] = "TP = ?";
-            $params[] = $TP;
-            $types .= "s";
-        }       
-        if ($SDT !== null && $SDT !== '') {
-            // Validate số điện thoại
-            $set_clauses[] = "SDT = ?";
-            $params[] = $SDT;
-            $types .= "s";
-        }       
-        if ($NS !== null && $NS !== '') {
-            $set_clauses[] = "NS = ?";
-            $params[] = $NS;
-            $types .= "s";
-        }      
-        if ($MATKHAU !== null && $MATKHAU !== '') {
-            // ✅ Hash password trước khi lưu
-            $set_clauses[] = "MATKHAU = ?";
+        if (!empty($MATKHAU)) {
+            $set[] = "MATKHAU = ?";
             $params[] = $MATKHAU;
             $types .= "s";
-        }       
-        // ✅ Xử lý upload avatar
-        if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
-            $set_clauses[] = "AVATAR = ?";
-            $params[] = $avatarPath;
-            $types .= "s";
-        }     
-        if (empty($set_clauses)) {
-            return ['success' => false, 'message' => '❌ Không có trường nào để cập nhật!'];
-        }  
+        }
+        // 4. Upload Avatar nếu có
+        if ($AVATAR && $AVATAR['error'] == 0) {
+    $allowExt = ['jpg','jpeg','png','webp'];
+    $ext = strtolower(pathinfo($AVATAR['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($ext, $allowExt)) {
+        return ['success' => false, 'message' => '❌ Chỉ cho phép ảnh JPG, PNG, WEBP'];
+    }
+    $fileName = time() . "_" . $MAKH . "." . $ext;
+    $uploadDir = __DIR__ . "/../uploads/avatar/";
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+    $fullPath = $uploadDir . $fileName;
+
+    if (!move_uploaded_file($AVATAR['tmp_name'], $fullPath)) {
+        return ['success' => false, 'message' => '❌ Upload avatar thất bại!'];
+    }
+
+    // Lưu link avatar vào DB
+    $avatarPath = "uploads/avatar/" . $fileName;
+    $set[] = "AVATAR = ?";
+    $params[] = $avatarPath;
+    $types .= "s";
+}
+        // 5. Không có gì để cập nhật
+        if (empty($set)) {
+            return ['success' => false, 'message' => '❌ Không có dữ liệu để cập nhật!'];
+        }
+        // 6. Thực thi UPDATE
         $params[] = $MAKH;
-        $types .= "i";  
-        $sql = "UPDATE khach_hang SET " . implode(", ", $set_clauses) . " WHERE MAKH = ?";     
-        $this->data->command_prepare($sql, $types, ...$params);
-        $result = $this->data->execute();      
+        $types .= "i";
+        $sql = "UPDATE khach_hang SET " . implode(", ", $set) . " WHERE MAKH = ?";
+        $ok = $this->data->command_prepare($sql, $types, ...$params);
+        if ($ok) {
+            return ['success' => true, 'message' => '✔ Cập nhật thông tin thành công!'];
+        } else {
+            return ['success' => false, 'message' => '❌ Không thể cập nhật thông tin!'];
+        }
     } catch (Exception $e) {
         return ['success' => false, 'message' => '❌ Lỗi: ' . $e->getMessage()];
     }
 }
+
 // xem lịch sử mua hàng
     public function XemLichSuMuaHang($MAKH, $limit, $offset) {
         $sql = "SELECT dh.*, kh.HOTEN, kh.SDT 
@@ -198,7 +182,6 @@ class QuanLyKhachHang extends QuanLyHeThong {
         $this->data->select_prepare($sql, "iii", $MAKH, $limit, $offset);
         return $this->data->fetchAll();
     }
-
     public function layThongTinUser($MAKH) {
         $sql = "SELECT * FROM khach_hang WHERE MAKH = ?";
         $this->data->select_prepare($sql, "i", $MAKH);
@@ -243,18 +226,14 @@ class QuanLyKhachHang extends QuanLyHeThong {
 }
 // xóa người dùng
       public function xoaNguoiDung($MAKH) {
-        try {
             $sql = "DELETE FROM khach_hang WHERE MAKH = ?";
             $this->data->command_prepare($sql, 'i', $MAKH);
 
             if ($this->data->execute()) {
-                echo "<script>alert('✅ Đã xóa khách hàng thành công!'); window.location.href='quanlykhachhang.php';</script>";
+                echo "<script>window.location.href='quanlykhachhang.php';</script>";
             } else {
-                echo "<script>alert('❌ Lỗi khi xóa khách hàng hoặc khách hàng không tồn tại!'); window.history.back();</script>";
+                echo "<script>window.history.back();</script>";
             }
-        } catch (Exception $e) {
-            echo "<script>alert('Lỗi: {$e->getMessage()}'); window.history.back();</script>";
-        }
     }
 // khóa tài khoản người dùng
    public function khoaTaiKhoan($MAKH) {
@@ -278,7 +257,7 @@ public function moKhoaTaiKhoan($MAKH) {
 }
 
     public function __destruct() {
-        $this->data->close();
+        
     }
 }
 ?>
