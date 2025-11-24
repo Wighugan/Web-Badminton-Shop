@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
 
 // Khởi tạo kết nối và class
 $db = new database();
-$order = new Order($db);
+$order = new Order();
 
 // Nhận tham số lọc & tìm kiếm
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

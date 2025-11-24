@@ -1,5 +1,5 @@
 <?php
-include "src/products.php";
+include "class/products.php";
 include "database/connect.php";
 $data = new Database();
 $sp = new SanPham();

@@ -1,29 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Product.php';
-
-// Khởi tạo database và class Product
-$db = new database();
-$product = new Product($db);
-
-// Nhận tham số từ GET
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-if ($page < 1) $page = 1;
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+include  $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
+$product = new SanPham();
+$page     = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$search   = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
-
-// Lấy danh sách và tổng
-$products = $product->getProducts($page, $search, $category);
-$total_products = $product->countProducts($search, $category);
+$products = $product->getProductsByPage($page, $search, $category); // ✔ exists
+// Đếm tổng theo cùng bộ lọc (tự xây dựng where/params/types giống bên trong getProductsByPage)
+$where  = "WHERE 1=1";
+$params = [];
+$types  = "";
+if (!empty($search)) {
+    $where  .= " AND sp.TENSP LIKE ?";
+    $params[] = "%$search%";
+    $types   .= "s";
+}
+if (!empty($category)) {
+    $where  .= " AND l.MALOAI = ?";
+    $params[] = $category;
+    $types   .= "s";
+}
+$total_products = $product->demSoSanPham($where, $types, $params);
 $total_pages = ceil($total_products / $product->getLimit());
 $stt = ($page - 1) * $product->getLimit() + 1;
-
-// Lấy danh sách danh mục để hiển thị filter
-$categories = $product->getCategories();
+if (isset($_GET['delete'])) {
+    $MASP = intval($_GET['delete']);
+    $result = $product->deleteProduct($MASP);
+    echo "<script>alert('{$result['message']}'); window.location='quanlysanpham.php';</script>";
+    exit;
+}
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -268,19 +275,18 @@ if (!empty($products)) {
             <a href="suasanpham.php?id=<?= $row['MASP']?>" id="suanguoidung" style="display: block;">
                 <i class="fas fa-edit"></i> Sửa
             </a>  
-            <a href="#" onclick="return confirmDelete(<?= $row['MASP'] ?>)" id="xoanguoidung" style="display: block;">
-    <i class="fas fa-trash-alt"></i> Xóa
-</a>  
+            <a href="#" onclick="return confirmDelete(<?= $row['MASP'] ?>)" id="" style="display: block;">
+    <i class="fas fa-trash-alt"></i> Xóa</a>  
 
 <script>
     function confirmDelete(productId) {
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
-            // Gửi yêu cầu xoá đến file deleteproduct.php
-            window.location.href = 'deleteproduct.php?id=' + productId;
+            window.location.href = '?delete=' + productId;
         }
+        return false;
     }
-
 </script>
+
 
 
         </td>
@@ -290,7 +296,6 @@ if (!empty($products)) {
     $stt++; // Tăng STT cho dòng tiếp theo
 }
 }
-$product->close(); // Đóng kết nối sau khi hoàn thành truy vấn
 ?>
                         </tbody>
    </table>                         

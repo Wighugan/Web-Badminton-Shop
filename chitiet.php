@@ -1,6 +1,6 @@
  <?php 
  include "src/header-login.php";
- include_once 'src/order.php';
+ include_once 'class/order.php';
 $data = new Database();
 $dh = new Order($data);
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;

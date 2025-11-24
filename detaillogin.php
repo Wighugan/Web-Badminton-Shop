@@ -1,7 +1,7 @@
 <?php
-require_once 'src/systemManage.php';
-include_once 'src/products.php';
-include 'src/cart.php';
+require_once 'class/systemManage.php';
+include_once 'class/products.php';
+include 'class/cart.php';
 $quanly = new QuanLyHeThong();
 $sp = new SanPham();
 $gh = new Cart($data);

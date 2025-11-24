@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/ThongKe.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/ThongKe.php';
 
 $data = new database();
-$thongke = new ThongKe($data); 
+$thongke = new ThongKe(); 
 
 // Nhận dữ liệu từ form (GET)
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -14,7 +13,6 @@ $end    = isset($_GET['end']) ? $_GET['end'] : '';
 $page   = isset($_GET['page']) ? intval($_GET['page']) : 1;
 
 // Gọi hàm trong class
-$result = $thongke->getCustomers($search, $start, $end, $page, 5);
 
 // Trích xuất dữ liệu
 $customers = $result['data'];

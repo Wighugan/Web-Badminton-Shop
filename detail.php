@@ -2,10 +2,8 @@
 <html lang="vi">
 <head>
     <?php
-    session_start();
-    require_once 'database/connect.php';
+    require_once 'class/products.php';
     $data = new Database();
-    
     // Lấy ID sản phẩm từ URL
     if (!isset($_GET['id'])) {
         echo "Không tìm thấy sản phẩm!";

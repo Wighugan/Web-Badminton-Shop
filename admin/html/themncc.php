@@ -1,9 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 // Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/ncc.php'; 
+$data = new database();
+$ncc = new Ncc();
+$error = null;
+if($_SERVER['REQUEST_METHOD']=== 'POST'){
+ $TENNCC = $_POST['TENNCC'] ?? '';
+ $SDT = $_POST['SDT'] ?? '';
+ $EMAIL = $_POST['EMAIL'] ?? '';
+ $DIACHI = $_POST['DIACHI'] ?? '';
+ $NGUOIDD = $_POST['NGUOIDD'] ?? '';
+ $AVATAR = $_FILES['AVATAR'];
+ $result = $ncc->addNcc($TENNCC,$DIACHI,$SDT,$EMAIL,$AVATAR,1,$NGUOIDD);
+ if (is_array($result) && $result['success']) {
+            echo "<script>alert('{$result['message']}'); location.href='quanlyncc.php';</script>";
+            exit;
+        } else {
+            $error = is_array($result) ? $result['message'] : '❌ Thêm nhà cung cấp thất bại!';
+        }
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,7 +40,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
         <div class="navigation">
             <ul>
                 <li>
-                    
                         <div style="display: flex; align-items: center; position: relative;">
 
                         <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
@@ -131,16 +148,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin nhà cung cấp ----------------</h1>
                 
-                <form action="insertuser.php?type=nhacungcap" method="POST" enctype="multipart/form-data" id="suaUserForm">
-                   
-                   
-                 
-
-                
+                <form method="POST" enctype="multipart/form-data">
                     <div class="form-group">
     <label for="name">Logo:</label>
-   
-    
     <div>
         <span class="input-group-text">
             <i class="fa fa-user"></i>
@@ -152,26 +162,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
     <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="preview" height="80" padding="20">
 
 </div>
-<script>
-function previewImage(event) {
-    var preview = document.getElementById('preview'); // Lấy thẻ <img>
-    var file = event.target.files[0]; // Lấy file ảnh
-
-    if (file) {
-        var reader = new FileReader(); // Đọc file ảnh
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Gán đường dẫn ảnh
-            preview.style.display = "block"; // Hiển thị ảnh
-        };
-        reader.readAsDataURL(file); // Đọc file dưới dạng URL
-    }
-}
-
-</script>
-
-
-
-
                     <div class="form-group">
                         <label for="name">Tên nhà cung cấp:</label>
                         <input type="text" id="fullname" name="TENNCC">
@@ -208,6 +198,19 @@ function previewImage(event) {
                     function myFunction() {
                         alert("Đã lưu thành công thông tin  mới vào Database!");
                     }
+                    function previewImage(event) {
+    var preview = document.getElementById('preview'); // Lấy thẻ <img>
+    var file = event.target.files[0]; // Lấy file ảnh
+
+    if (file) {
+        var reader = new FileReader(); // Đọc file ảnh
+        reader.onload = function(e) {
+            preview.src = e.target.result; // Gán đường dẫn ảnh
+            preview.style.display = "block"; // Hiển thị ảnh
+        };
+        reader.readAsDataURL(file); // Đọc file dưới dạng URL
+    }
+}
                 </script>
 
             </div>

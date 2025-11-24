@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Order.php';
-
+include  $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
 // Khởi tạo kết nối và class
-$db = new database();
-$order = new Order($db);
+$data = new database();
+$order = new order($data);
 
 // Nhận tham số lọc & tìm kiếm
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -15,14 +11,14 @@ $start_date = isset($_GET['start']) ? $_GET['start'] : '';
 $end_date = isset($_GET['end']) ? $_GET['end'] : '';
 $DIACHI1 = isset($_GET['DIACHI1']) ? trim($_GET['DIACHI1']) : '';
 $TRANGTHAI = isset($_GET['TRANGTHAI']) ? trim($_GET['TRANGTHAI']) : '';
-
 // Lấy danh sách đơn hàng và tổng số
 $orders = $order->getOrders($page, $search, $start_date, $end_date, $DIACHI1, $TRANGTHAI);
 $total_orders = $order->countOrders($search, $start_date, $end_date, $DIACHI1, $TRANGTHAI);
 $total_pages = ceil($total_orders / $order->getLimit());
 $stt = ($page - 1) * $order->getLimit() + 1;
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

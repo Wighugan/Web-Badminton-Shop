@@ -1,25 +1,35 @@
 <?php
-// Kết nối MySQL
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/nhanvien.php';
 $data = new database();
-
-// Kiểm tra nếu có ID hợp lệ
+$nv  = new nhanvien();
+$nhanvien = null;
+// Lấy ID nhân viên
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
     $sql = "SELECT * FROM nhan_vien WHERE MANV = ?";
     $data->select_prepare($sql, 'i', $id);
-    $nhanvien = $data->fetch(); // ✅ đổi từ $user -> $nhanvien
-
-    if (!$nhanvien) {
-        die("Không tìm thấy nhân viên!");
-    }
+    $nhanvien = $data->fetch();
+    if (!$nhanvien) die("Không tìm thấy nhân viên!");
 } else {
     die("ID không hợp lệ!");
 }
-
-$data->close();
+// Xử lý form submit
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $TENNV = $_POST['TENNV'];
+    $HOTEN = $_POST['HOTEN'];
+    $NGAYLAM = $_POST['NGAYLAM'];
+    $NS = $_POST['NS'];
+    $EMAIL = $_POST['EMAIL'];
+    $SDT = $_POST['SDT'];
+    $AVATAR = $_FILES['AVATAR'];
+    $result = $nv->updateNhanvien($id, $TENNV, $HOTEN,$SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS);
+    if ($result['success']) {
+        echo "<script>alert('{$result['message']}'); location.href='quanlynhanvien.php';</script>";
+    } else {
+        echo "<script>alert('{$result['message']}'); history.back();</script>";
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -160,7 +170,7 @@ $data->close();
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Sửa Thông Tin nhân viên ---------------------------</h1>
-                <form action="updateuser.php?type=nhan_vien" method="POST" enctype="multipart/form-data">                   
+                <form action="" method="POST" enctype="multipart/form-data">                   
                 <input type="hidden" name="MANV" value="<?= $nhanvien['MANV'] ?>">
 
 
@@ -179,6 +189,7 @@ $data->close();
                     <input class="form-group" type="file" id="avatar" name="AVATAR" accept="image/*"  onchange="previewImage(event)">
 </div>
                     <img src="<?= '../../' .$nhanvien['AVATAR'] ?>" width="30" id="preview"  height="50" padding="20">
+
                     
                  </div>
                     <div class="form-group">
@@ -211,16 +222,10 @@ $data->close();
                         </div>
 
                     <div class="form-group">
-                        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
+                        <input type="submit" value="Lưu vào Database">
                         <button class="return"><a href="quanlynhanvien.php">Quay lại</a></button>
                     </div>
                 </form>
-                <script>
-                    function myFunction() {
-                        alert("Đã lưu thành công thông tin khách hàng mới vào Database!");
-                    }
-                </script>
-
             </div>
         </div>
     </div>

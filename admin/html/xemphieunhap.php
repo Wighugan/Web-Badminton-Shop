@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-
 class ChiTietPhieuNhap extends Database
 {
     private $limit;
@@ -28,7 +25,6 @@ class ChiTietPhieuNhap extends Database
         $this->total_rows = $row['total'] ?? 0;
         $this->total_pages = ceil($this->total_rows / $this->limit);
     }
-
     public function getAll()
     {
         $this->countTotal();
@@ -65,7 +61,6 @@ class ChiTietPhieuNhap extends Database
             'offset'       => $this->offset
         ];
     }
-
     public function getStartIndex()
     {
         return ($this->page - 1) * $this->limit + 1;
@@ -78,9 +73,8 @@ $chitiet = $chitietObj->getAll();
 $pageInfo = $chitietObj->getPaginationInfo();
 $stt = $chitietObj->getStartIndex();
 ?>
-
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -263,10 +257,7 @@ $stt = $chitietObj->getStartIndex();
     <td><?php echo htmlspecialchars($chitiet['TENLOAI'] ?? ''); ?></td>
     <td><?php echo htmlspecialchars($chitiet['SOLUONG'] ?? ''); ?></td>
     <td><?php echo number_format($chitiet['GIANHAP'] ?? 0, 0, ',', '.'); ?> ₫</td>
-    <td><?php echo number_format(($chitiet['SOLUONG'] * $chitiet['GIANHAP']) ?? 0, 0, ',', '.'); ?> ₫</td>
-
-
-                            
+    <td><?php echo number_format(($chitiet['SOLUONG'] * $chitiet['GIANHAP']) ?? 0, 0, ',', '.'); ?> ₫</td>                          
                         </tr>
                         <?php
                     }
@@ -385,10 +376,6 @@ $stt = $chitietObj->getStartIndex();
     }
     ?>
 </div>
-
-
-
-
                 <!-- ================ Add Charts JS ================= -->
 
 

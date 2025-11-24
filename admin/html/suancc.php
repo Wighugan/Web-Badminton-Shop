@@ -1,20 +1,26 @@
-
 <?php
-// Kết nối MySQL
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
-// Kiểm tra nếu có ID hợp lệ
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = $_GET['id'];
-    $sql = "SELECT * FROM ncc WHERE MANCC = ?";
-    $data->select_prepare($sql,'i',$id);
-    $nhacungcap = $data->fetch();
-    if (!$nhacungcap) {
-        die("Không tìm thấy người dùng!");
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/ncc.php';
+$data = new database();
+$ncc = new Ncc();
+$nhacungcap = null;
+$error = null;
+$MANCC = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$nhacungcap = $ncc->getNccById($MANCC);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $TENNCC = $_POST['TENNCC'] ?? '';
+    $SDT = $_POST['SDT'] ?? '';
+    $EMAIL = $_POST['EMAIL'] ?? '';
+    $DIACHI = $_POST['DIACHI'] ?? '';
+    $NGUOIDD = $_POST['NGUOIDD'] ?? '';
+    $AVATAR = $_FILES['AVATAR'];
+    $result = $ncc->updateNcc($MANCC, $TENNCC, $DIACHI, $SDT, $EMAIL, $AVATAR, $NGUOIDD);        
+    if($result){
+            header('location: quanlyncc.php');
+            exit;
+        } else {
+            $error = is_array($result) ? $result['message'] : "❌ Cập nhật thất bại!";
+        }
     }
-} else {
-    die("ID không hợp lệ!");
-}
-$data->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,11 +31,8 @@ $data->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - MMB - Shop Bán Đồ Cầu Lông</title>
     <link href='../img/logo.png' rel='icon' type='image/x-icon' />
-    <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../css/indexadmin.css">
-
     <link rel="stylesheet" href="../css/themnguoidung.css">
-
     <script>
         function previewImage(event) {
             var reader = new FileReader();
@@ -41,7 +44,6 @@ $data->close();
         }
     </script>
 </head>
-
 <body>
     <!-- =============== Navigation ================ -->
     <div class="container">
@@ -147,16 +149,13 @@ $data->close();
                 <div class="hello">
                     <p>CHÀO MỪNG ADMIN CỦA MMB</p>
                 </div>
-                
             </div>
-
-
             <!-- ================ LÀM QUẢN LÝ SẢN PHẨM Ở ĐÂY ================= -->
             <div class="details">
             <div class="recentOrders">
             <div class="addproduct">
-                <h1>------------------------------ Sửa Thông Tin nhân viên ---------------------------</h1>
-                <form action="updateuser.php?type=ncc"method="POST" enctype="multipart/form-data">                   
+                <h1>------------------------- Sửa Thông Tin nhà cung cấp -----------------------</h1>
+                <form method="POST" enctype="multipart/form-data">                   
                 <input type="hidden" name="MANCC" value="<?= $nhacungcap['MANCC'] ?>">
 
 
@@ -170,7 +169,7 @@ $data->close();
                     <div>
                     <input class="form-group" type="file" id="avatar" name="AVATAR" accept="image/*"  onchange="previewImage(event)">
 </div>
-                    <img src="<?= '../../' .$nhacungcap['AVATAR'] ?>" width="30" id="preview"  height="50" padding="20">
+                    <img src="<?='../../'.$nhacungcap['AVATAR'] ?>" width="30" id="preview"  height="50" padding="20">
                     
                  </div>
                   <div class="form-group">

@@ -1,9 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 // Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/user.php'; 
+$data = new database();
+$user =  new QuanLyKhachHang();
+if( $_SERVER['REQUEST_METHOD']=== 'POST'){
+    $TENKH   = $_POST['TENKH'];
+    $HOTEN   = $_POST['HOTEN'];
+    $MATKHAU = $_POST['MATKHAU'];
+    $EMAIL   = $_POST['EMAIL'];
+    $SDT     = $_POST['SDT'];
+    $DIACHI1 = $_POST['DIACHI1'];
+    $DIACHI  = $_POST['DIACHI'];
+    $TP      = $_POST['TP'];
+    $NS      = $_POST['NS'];
+    $AVATAR = $_FILES['AVATAR'];
+    $result = $user->addAccount($HOTEN,$EMAIL,$DIACHI,$NS,$MATKHAU,$SDT,$DIACHI1,$TENKH,$AVATAR);
+    if ($result['success']) {
+        echo "<script>alert('{$result['message']}'); location.href='quanlykhachhang.php';</script>";
+    } else {
+        echo "<script>alert('{$result['message']}'); history.back();</script>";
+    }
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -131,7 +151,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin Khách Hàng ----------------</h1>
                 
-                <form action="insertuser.php?type=khachhang" method="POST" enctype="multipart/form-data" id="suaUserForm">
+                <form method="POST" enctype="multipart/form-data" id="suaUserForm">
                    
                    
                     <div class="form-group">
@@ -157,29 +177,14 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
     <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="preview" height="80" padding="20">
 
 </div>
-<script>
-function previewImage(event) {
-    var preview = document.getElementById('preview'); // Lấy thẻ <img>
-    var file = event.target.files[0]; // Lấy file ảnh
-
-    if (file) {
-        var reader = new FileReader(); // Đọc file ảnh
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Gán đường dẫn ảnh
-            preview.style.display = "block"; // Hiển thị ảnh
-        };
-        reader.readAsDataURL(file); // Đọc file dưới dạng URL
-    }
-}
-
-</script>
-
-
-
-
                     <div class="form-group">
                         <label for="name">Họ và tên:</label>
                         <input type="text" id="fullname" name="HOTEN">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Mật khẩu:</label>
+                        <input type="text" id="fullname" name="MATKHAU">
                     </div>
 
                     <div class="form-group">
@@ -204,25 +209,30 @@ function previewImage(event) {
                         <label for="email">Thành phố:</label>
                         <input type="text" id="city" name="TP">
                     </div>
-
-
-
-
                     <div class="form-group">
                         <label for="email">Ngày Sinh:</label>
                         <input type="text" id="birthday" name="NS" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >
                     </div>
-                   
-
                     <div class="form-group">
-                        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
+                        <input type="submit" value="Lưu vào Database" >
                         <button class="return"><a href="quanlykhachhang.php">Quay lại</a></button>
                     </div>
                 </form>
                 <script>
-                    function myFunction() {
-                        alert("Đã lưu thành công thông tin khách hàng mới vào Database!");
-                    }
+function previewImage(event) {
+    var preview = document.getElementById('preview'); // Lấy thẻ <img>
+    var file = event.target.files[0]; // Lấy file ảnh
+
+    if (file) {
+        var reader = new FileReader(); // Đọc file ảnh
+        reader.onload = function(e) {
+            preview.src = e.target.result; // Gán đường dẫn ảnh
+            preview.style.display = "block"; // Hiển thị ảnh
+        };
+        reader.readAsDataURL(file); // Đọc file dưới dạng URL
+    }
+}
+
                 </script>
 
             </div>

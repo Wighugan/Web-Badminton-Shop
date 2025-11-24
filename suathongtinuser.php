@@ -1,7 +1,7 @@
 <?php
 ob_start(); // bật bộ đệm để tránh lỗi header
 require_once "src/header-login.php";
-require_once "src/user.php";
+require_once "class/user.php";
 if (!isset($_SESSION['user_id'])) {
     die("Bạn chưa đăng nhập!");
 }

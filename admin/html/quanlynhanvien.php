@@ -1,26 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/User.php';
-
-// Khởi tạo với bảng 'nhanvien'
-$db = new database();
-$nhanvien = new User($db, 'nhan_vien'); 
-
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/nhanvien.php';
+// Khởi tạo
+$data = new database();
+$nhanvien = new Nhanvien();
+// ===== XỬ LÝ XÓA NHÂN VIÊN TRỰ TIẾP =====
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+    $manv = (int)$_POST['id'];
+    
+    if ($action === 'delete' && $manv > 0) {
+        $result = $nhanvien->xoaNhanVien($manv);
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+}
 // Nhận tham số từ GET
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $district = isset($_GET['district']) ? trim($_GET['district']) : '';
-
 // Lấy danh sách và tổng
-$users = $nhanvien->getUsers($page, $search, $district);
-$total_users = $nhanvien->countUsers($search, $district);
+$users = $nhanvien->getNhanvienList($page, $search);
+$total_users = $nhanvien->countNhanvien($search, $district);
 $total_pages = ceil($total_users / $nhanvien->getLimit());
 $stt = ($page - 1) * $nhanvien->getLimit() + 1;
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,11 +37,7 @@ $stt = ($page - 1) * $nhanvien->getLimit() + 1;
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../css/indexadmin.css">
     <link rel="stylesheet" href="../css/quanlykhachhang.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-
-   
-      
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">    
     <style>
 .pagination {
     display: flex;
@@ -190,19 +193,21 @@ $stt = ($page - 1) * $nhanvien->getLimit() + 1;
             <div class="user"  >         
                       <div class="banner">
                     <button id="adduser"><a href="themnhanvien.php">+ Thêm nhân viên</a></button>
-                    
-                   
-                    <form method="GET" action="" >
-
-</form>
-                   
-
-                    <form method="GET" action="">
-                    <input id="timnguoidung" type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Tên người dùng ...">   
-                    <button type="submit" id="timnguoidung1">
-        <i class="fa fa-search"></i> 
-    </button>  
-</form>
+                        <form method="GET" action="">
+        <div class="search-container" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            
+            <!-- Tìm kiếm text -->
+            <input id="timnhanvien" 
+                   type="text" 
+                   name="search" 
+                   value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
+                   placeholder="Tên nhân viên, email, số điện thoại ...">   
+                        <!-- Nút tìm kiếm -->
+            <button type="submit" id="timnhanvien1" style="padding: 8px 15px; cursor: pointer;">
+                <i class="fa fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </form>
 
 
                 
@@ -235,102 +240,63 @@ $stt = ($page - 1) * $nhanvien->getLimit() + 1;
                         <tbody>
                            
             
-   <?php
-  $stt = ($page - 1) * $nhanvien->getLimit() + 1; 
+              <?php
+                                $stt = ($page - 1) * $nhanvien->getLimit() + 1; 
 
-        
-        if (!empty($users)) {
-            foreach ($users as $row) {
-                // Escape output để tránh XSS
-                $username = htmlspecialchars($row['TENNV']);
-                $fullname = htmlspecialchars($row['HOTEN']);
-                $email = htmlspecialchars($row['EMAIL']);
-                $phone = htmlspecialchars($row['SDT']);
-                $daywork = date("d/m/Y", strtotime($row['NGAYLAM']));
-                $id = (int)$row['MANV'];
-                $avatar = htmlspecialchars($row['AVATAR']);
-                // $status = (int)$row['status'];
-                $birthday = date("d/m/Y", strtotime($row['NS']));
-                
-                echo "<tr>";
-                echo "<td>{$stt}</td>";
-                
-                // Ảnh đại diện
-                echo "<td>";
-                echo "<img src=\"../../{$avatar}\" width=\"50\" height=\"50\" alt=\"$fullname\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\">";
-                echo "</td>";
-                
-                echo "<td>{$username}</td>";
-                echo "<td>{$fullname}</td>";
-                echo "<td>{$email}</td>";
-                echo "<td>{$phone}</td>";
-                echo "<td>{$daywork}</td>";
-                echo "<td>{$birthday}</td>";
-                
-                // Thao tác
-              // Hiển thị trạng thái
-
-
-// Thao tác
-echo "<td>";
-
-// Nút sửa
-echo "<a href=\"suanhanvien.php?id={$id}&type=nhanvien\" class=\"btn btn-sm btn-warning\" title=\"Sửa\">";
-echo "<i class=\"fas fa-edit\"></i> Sửa";
-echo "</a> ";
-
-// Nút khóa / mở khóa
-echo "<a href='#' onclick='return confirmDelete({$row['MANV']}, \"nhan_vien\")' class='btn btn-sm btn-danger' style='color: red' title='Xóa nhân viên'>";
-echo "<i class='fa-solid fa-trash'></i> Xóa";
-echo "</a>";
-
-
-echo "</td>";
-echo "</tr>";
-                $stt++;
-            }
-        } else {
-            echo "<tr><td colspan=\"9\" class=\"text-center text-muted\">Không có người dùng nào!</td></tr>";
-        }
-        $nhanvien->close();
-        ?>
-
-<script>
-function confirmDelete(id, type) {
-    if (confirm("Bạn có chắc chắn muốn xóa mục này không?")) {
-        window.location.href = `deleteuser.php?id=${id}&type=${type}`;
-    }
-    return false; // Ngăn chặn hành động mặc định của <a>
-}
-</script>
-
-
-
+                                if (!empty($users)) {
+                                    foreach ($users as $row) {
+                                        $username = htmlspecialchars($row['TENNV']);
+                                        $fullname = htmlspecialchars($row['HOTEN']);
+                                        $email = htmlspecialchars($row['EMAIL']);
+                                        $phone = htmlspecialchars($row['SDT']);
+                                        $daywork = date("d/m/Y", strtotime($row['NGAYLAM']));
+                                        $id = (int)$row['MANV'];
+                                        $avatar = htmlspecialchars($row['AVATAR']);
+                                        $birthday = date("d/m/Y", strtotime($row['NS']));
+                                        
+                                        echo "<tr>";
+                                        echo "<td>{$stt}</td>";
+                                        echo "<td><img src=\"../../{$avatar}\" width=\"50\" height=\"50\" alt=\"$fullname\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\"></td>";
+                                        echo "<td>{$username}</td>";
+                                        echo "<td>{$fullname}</td>";
+                                        echo "<td>{$email}</td>";
+                                        echo "<td>{$phone}</td>";
+                                        echo "<td>{$daywork}</td>";
+                                        echo "<td>{$birthday}</td>";
+                                        
+                                        echo "<td>";
+                                        echo "<a href=\"suanhanvien.php?id={$id}\" class=\"btn btn-warning\" title=\"Sửa\"><i class=\"fas fa-edit\"></i> Sửa</a> ";
+                                        echo "<a onclick='deleteNhanVien({$id})' class=\"btn btn-danger\" title=\"Xóa nhân viên\"><i class=\"fa-solid fa-trash\"></i> Xóa<a>";
+                                        echo "</td>";
+                                        echo "</tr>";
+                                        $stt++;
+                                    }
+                                } else {
+                                    echo "<tr><td colspan=\"9\" class=\"text-center text-muted\">Không có nhân viên nào!</td></tr>";
+                                }
+                                ?>
                         </tbody>
                     </table>
 
                     <div class="pagination">
-    <?php
-    // Nút Trước
-    if ($page > 1) {
-        echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($raw_search) . "'>Trước</a>";
-    }
+                            <?php
+                            if ($page > 1) {
+                                echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "'>Trước</a>";
+                            }
 
-    // Các số trang
-    for ($i = 1; $i <= $total_pages; $i++) {
-        if ($i == $page) {
-            echo "<span class='hientai1'>$i</span>";  // Trang hiện tại
-        } else {
-            echo "<a href='?page=$i&search=" . urlencode($raw_search) . "'>$i</a>";  // Trang khác
-        }
-    }
+                            for ($i = 1; $i <= $total_pages; $i++) {
+                                if ($i == $page) {
+                                    echo "<span class='hientai1'>$i</span>";
+                                } else {
+                                    echo "<a href='?page=$i&search=" . urlencode($search) . "'>$i</a>";
+                                }
+                            }
 
-    // Nút Sau
-    if ($page < $total_pages) {
-        echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($raw_search) . "'>Sau</a>";
-    }
-    ?>
-</div>
+                            if ($page < $total_pages) {
+                                echo "<a href='?page=" . ($page + 1) . "&search=" . urlencode($search) . "'>Sau</a>";
+                            }
+                            ?>
+                        </div>
 
 
             <!-- ================ Add Charts JS ================= -->
@@ -338,13 +304,38 @@ function confirmDelete(id, type) {
         </div>
         </div>
     </div>
-    <!-- ======= Charts JS ====== -->
+    <script>
+    function deleteNhanVien(id) {
+        if (!confirm("Bạn có chắc chắn muốn XÓA nhân viên này?\n\nHành động này không thể hoàn tác!")) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('id', id);
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+            alert('❌ Lỗi khi xóa nhân viên!');
+        });
+    }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="../js/chartuser.js"></script>
-    <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-   
 </body>
-
 </html>

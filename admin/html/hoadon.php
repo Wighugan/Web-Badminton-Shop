@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/order.php';
+$dh = new Order();
 $order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 // Lấy thông tin đơn hàng + khách hàng
-$sql_order = "SELECT dh.*, kh.HOTEN, kh.SDT, kh.DIACHI1
-              FROM don_hang dh
-              JOIN khach_hang kh ON dh.MAKH = kh.MAKH
-              WHERE dh.MADH = ?";
-$data->select_prepare($sql_order, 'i', $order_id);
-$order = $data->fetch();
+$order_info = $dh->getOrderInfo($order_id);
 // Lấy danh sách sản phẩm trong đơn hàng
-$sql_detail = "SELECT * FROM ctdh WHERE MADH = ?";
-$data->select_prepare($sql_detail, 'i', $order_id);
+$order = $dh->getOrderDetails($order_id);
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -140,10 +135,10 @@ $data->select_prepare($sql_detail, 'i', $order_id);
                 
             </div>
           
-        <div class="chartsBx">
+         <div class="chartsBx">
             <h2>                                                   </h2>
            
-        </div>
+          </div>
             <div class="details">
                 <div class="recentOrders">
 

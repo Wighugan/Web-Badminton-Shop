@@ -1,12 +1,9 @@
 <?php
-session_start();
-$isLoggedIn = isset($_SESSION['user_id']);
-include "database/connect.php";
+// Lấy 8 sản phẩm mới nhất
 include "src/header.php";
-include "src/products.php";
+include "class/products.php";
 $sp = new SanPham();
 $featured_products = $sp->lietketspnb();
-// Lấy 8 sản phẩm mới nhất
 $new_products = $sp->lietketspmoi();
 // Link chi tiết sản phẩm cho user đã đăng nhập
 $detailLink = 'detail.php';

@@ -1,15 +1,33 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
+
+$data = new database();
+$sp = new SanPham();
+
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+    $TENSP = $_POST['name'];
+    $BARCODE = $_POST['productcode'];
+    $WEIGHT = $_POST['weight'];
+    $GIANHAP = $_POST['preprice'];
+    $DONGIA = $_POST['price'];
+    $LENGTH = $_POST['length'];
+    $MOTA = $_POST['description'];
+    $IMAGE = $_FILES['IMAGE'];
+    $MALOAI = $_POST['category'];
+    $FLEX = $_POST['flex'];
+    $result = $sp->addProduct(
+        $TENSP, $MALOAI, $DONGIA, $IMAGE, 
+        $WEIGHT, $MOTA, $LENGTH, $FLEX, 
+        $BARCODE, $GIANHAP
+    );
+}
+// Lấy danh sách loại sản phẩm
+$data->select("SELECT MALOAI, TENLOAI FROM loai_sp");
+$loaiList = $data->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="en">
-<?php
-// Thông tin kết nối database
-
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-$db = new database();
-
-// Lấy danh sách loại sản phẩm
-$db->select("SELECT MALOAI, TENLOAI FROM loai_sp");
-$loaiList = $db->fetchAll();
-?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -134,14 +152,12 @@ $loaiList = $db->fetchAll();
                 
             </div>
 
-
             <!-- ================ LÀM QUẢN LÝ SẢN PHẨM Ở ĐÂY ================= -->
             <div class="details">
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Thêm sản phẩm mới ------------------------------</h1>
-                <form action="insertproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
-
+            <form method="POST" enctype="multipart/form-data">
               <div class="form-group">
         <label for="category">Loại sản phẩm:</label>
         <select id="category" name="category" required>
@@ -174,7 +190,10 @@ $loaiList = $db->fetchAll();
         <label for="price">Đơn giá:</label>
         <input type="text" id="price" name="price" required>
     </div>
-
+    <div class="form-group">
+        <label for="price">Giá nhập:</label>
+        <input type="text" id="preprice" name="preprice" required>
+    </div>
     
 
     <div class="form-group">

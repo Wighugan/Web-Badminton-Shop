@@ -1,6 +1,6 @@
 <?php
-include 'src/user.php';
-include 'src/order.php';
+include 'class/user.php';
+include 'class/order.php';
 if (!isset($_SESSION['user_id'])) {
     die("Bạn chưa đăng nhập!");
 }

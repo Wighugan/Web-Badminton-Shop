@@ -3,7 +3,8 @@
 <?php
 session_start();
 // Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
+$data = new database();
 // Lấy thông tin sản phẩm từ database
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $sql = "SELECT * FROM san_pham WHERE MASP = ?";

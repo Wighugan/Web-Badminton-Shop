@@ -1,29 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/admin/classes/Product.php';
-
-// Khởi tạo database và class Product
-$db = new database();
-$product = new Product($db);
-
-// Nhận tham số từ GET
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
+$product = new SanPham();
+// ✅ Nhận tham số GET
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) $page = 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
-
-// Lấy danh sách và tổng
-$products = $product->getProducts($page, $search, $category);
-$total_products = $product->countProducts($search, $category);
+// ✅ Lấy danh sách sản phẩm theo trang
+$products = $product->getProductsByPage($page, $search, $category);
+// ✅ Đếm tổng sản phẩm để phân trang
+$total_products = $product->demSoSanPham($search, $category);
 $total_pages = ceil($total_products / $product->getLimit());
 $stt = ($page - 1) * $product->getLimit() + 1;
-
-// Lấy danh sách danh mục để hiển thị filter
+// ✅ Lấy danh mục để hiển thị bộ lọc
 $categories = $product->getCategories();
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

@@ -1,9 +1,28 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/nhanvien.php'; 
+$data = new database();
+$nv = new nhanvien();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $TENNV = $_POST['TENNV'];
+    $HOTEN = $_POST['HOTEN'];
+    $EMAIL = $_POST['EMAIL'];
+    $SDT = $_POST['SDT'];
+    $NGAYLAM = $_POST['NGAYLAM'];
+    $NS = $_POST['NS'];
+    $AVATAR = $_FILES['AVATAR'];
+    
+    $result = $nv->addNhanvien($TENNV, $HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS);
+    
+    if ($result) {
+        echo "<script>alert('Cập nhật thành công!'); location.href='quanlynhanvien.php';</script>";
+    } else {
+        echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-<?php
-// Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
-?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -131,7 +150,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin nhân viên ----------------</h1>
                 
-                <form action="insertuser.php?type=nhanvien" method="POST" enctype="multipart/form-data" id="suaUserForm">
+                <form method="POST" enctype="multipart/form-data" id="suaUserForm">
                    
                    
                     <div class="form-group">
@@ -144,39 +163,14 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
 
                     <div class="form-group">
     <label for="name">Ảnh đại diện:</label>
-   
-    
     <div>
         <span class="input-group-text">
             <i class="fa fa-user"></i>
         </span>
         <input type="file" class="form-control" name="AVATAR" id="AVATAR" accept="image/*" onchange="previewImage(event)">
-
     </div>      
-    
     <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="preview" height="80" padding="20">
-
 </div>
-<script>
-function previewImage(event) {
-    var preview = document.getElementById('preview'); // Lấy thẻ <img>
-    var file = event.target.files[0]; // Lấy file ảnh
-
-    if (file) {
-        var reader = new FileReader(); // Đọc file ảnh
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Gán đường dẫn ảnh
-            preview.style.display = "block"; // Hiển thị ảnh
-        };
-        reader.readAsDataURL(file); // Đọc file dưới dạng URL
-    }
-}
-
-</script>
-
-
-
-
                     <div class="form-group">
                         <label for="name">Họ và tên:</label>
                         <input type="text" id="fullname" name="HOTEN">
@@ -202,17 +196,24 @@ function previewImage(event) {
                         <label for="email">Ngày Sinh:</label>
                         <input type="date" id="birthday" name="NS" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >
                     </div>
-                   
-
                     <div class="form-group">
-                        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
+                        <input type="submit" value="Lưu vào Database">
                         <button class="return"><a href="quanlynhanvien.php">Quay lại</a></button>
                     </div>
                 </form>
                 <script>
-                    function myFunction() {
-                        alert("Đã lưu thành công thông tin khách hàng mới vào Database!");
-                    }
+function previewImage(event) {
+    var preview = document.getElementById('preview'); // Lấy thẻ <img>
+    var file = event.target.files[0]; // Lấy file ảnh
+    if (file) {
+        var reader = new FileReader(); // Đọc file ảnh
+        reader.onload = function(e) {
+            preview.src = e.target.result; // Gán đường dẫn ảnh
+            preview.style.display = "block"; // Hiển thị ảnh
+        };
+        reader.readAsDataURL(file); // Đọc file dưới dạng URL
+    }
+}
                 </script>
 
             </div>

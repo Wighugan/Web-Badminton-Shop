@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include "src/systemManage.php";
+include "class/systemManage.php";
 $sm = new QuanLyHeThong();
 $data = new database();
 $error = '';
