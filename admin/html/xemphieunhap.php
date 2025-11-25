@@ -1,8 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+session_start();
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
 
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
 class ChiTietPhieuNhap extends Database
 {
     private $limit;
@@ -22,31 +31,28 @@ class ChiTietPhieuNhap extends Database
 
     private function countTotal()
     {
-        $sql = "SELECT COUNT(*) AS total FROM ctpn";
+        // Count total number of receipts (phieu_nhap), not detail rows
+        $sql = "SELECT COUNT(*) AS total FROM phieu_nhap";
         $this->select($sql);
         $row = $this->fetch();
         $this->total_rows = $row['total'] ?? 0;
         $this->total_pages = ceil($this->total_rows / $this->limit);
     }
-
     public function getAll()
     {
         $this->countTotal();
 
-        $sql = "SELECT 
-                    ctpn.MaCTPN,
-                    ctpn.MaPN,
-                    ctpn.MaSP,
-                    sp.TENSP,
-                    sp.MALOAI,
-                    lsp.TENLOAI,
-                    ctpn.SoLuong AS SOLUONG,
-                    ctpn.GiaNhap AS GIANHAP,
-                    ctpn.ThanhTien AS THANHTIEN
-                FROM ctpn
-                LEFT JOIN san_pham sp ON ctpn.MaSP = sp.MASP
-                LEFT JOIN loai_sp lsp ON sp.MALOAI = lsp.MALOAI
-                ORDER BY ctpn.MaPN DESC
+        // Aggregate per receipt (phieu_nhap) and include totals from ctpn
+        $sql = "SELECT pn.MaPN,
+                       pn.TenNCC,
+                       pn.NgayNhap,
+                       pn.TongTien,
+                       COALESCE(SUM(ct.SoLuong),0) AS TotalQuantity,
+                       COALESCE(SUM(ct.ThanhTien),0) AS TotalAmount
+                FROM phieu_nhap pn
+                LEFT JOIN ctpn ct ON pn.MaPN = ct.MaPN
+                GROUP BY pn.MaPN, pn.TenNCC, pn.NgayNhap, pn.TongTien
+                ORDER BY pn.MaPN DESC
                 LIMIT ? OFFSET ?";
 
         $this->select_prepare($sql, 'ii', $this->limit, $this->offset);
@@ -65,7 +71,6 @@ class ChiTietPhieuNhap extends Database
             'offset'       => $this->offset
         ];
     }
-
     public function getStartIndex()
     {
         return ($this->page - 1) * $this->limit + 1;
@@ -78,9 +83,8 @@ $chitiet = $chitietObj->getAll();
 $pageInfo = $chitietObj->getPaginationInfo();
 $stt = $chitietObj->getStartIndex();
 ?>
-
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -242,45 +246,42 @@ $stt = $chitietObj->getStartIndex();
         <table>
             <thead>
                 <tr style="text-align: center;">
-                     <th>STT</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Loại hàng</th>
-                        <th>Số lượng </th>
-                        <th>Đơn giá</th>
-                        <th>Thành tiền</th>
-
+                    <th>STT</th>
+                    <th>Mã phiếu</th>
+                    <th>Nhà cung cấp</th>
+                    <th>Ngày nhập</th>
+                    <th>Tổng SL</th>
+                    <th>Tổng tiền (CTPN)</th>
+                    <th>Tổng hóa đơn</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 if (!empty($chitiet)) {
-                    foreach ($chitiet as $chitiet) {
-                      
+                    foreach ($chitiet as $row) {
                         ?>
                         <tr>
-                           <td><?php echo $stt++; ?></td>
-    <td><?php echo htmlspecialchars($chitiet['TENSP'] ?? ''); ?></td>
-    <td><?php echo htmlspecialchars($chitiet['TENLOAI'] ?? ''); ?></td>
-    <td><?php echo htmlspecialchars($chitiet['SOLUONG'] ?? ''); ?></td>
-    <td><?php echo number_format($chitiet['GIANHAP'] ?? 0, 0, ',', '.'); ?> ₫</td>
-    <td><?php echo number_format(($chitiet['SOLUONG'] * $chitiet['GIANHAP']) ?? 0, 0, ',', '.'); ?> ₫</td>
-
-
-                            
+                            <td><?php echo $stt++; ?></td>
+                            <td><?php echo htmlspecialchars($row['MaPN'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($row['TenNCC'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($row['NgayNhap'] ?? ''))); ?></td>
+                            <td><?php echo htmlspecialchars($row['TotalQuantity'] ?? 0); ?></td>
+                            <td><?php echo number_format($row['TotalAmount'] ?? 0, 0, ',', '.'); ?> ₫</td>
+                            <td><?php echo number_format($row['TongTien'] ?? 0, 0, ',', '.'); ?> ₫</td>
                         </tr>
                         <?php
                     }
                 } else {
                     ?>
                     <tr>
-                        <td colspan="8" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted">
                             Không có phiếu nào
                         </td>
                     </tr>
                     <?php
                 }
                 ?>
-                        </tbody>
+            </tbody>
                     </table>
                     <style>
 .table-wrapper {
@@ -385,10 +386,6 @@ $stt = $chitietObj->getStartIndex();
     }
     ?>
 </div>
-
-
-
-
                 <!-- ================ Add Charts JS ================= -->
 
 

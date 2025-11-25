@@ -1,15 +1,48 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$data = new Database();
+$sp = new SanPham();
+
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+    $TENSP = $_POST['name'];
+    $BARCODE = $_POST['productcode'];
+    $WEIGHT = $_POST['weight'];
+    $GIANHAP = $_POST['preprice'];
+    $DONGIA = $_POST['price'];
+    $LENGTH = $_POST['length'];
+    $MOTA = $_POST['description'];
+    $IMAGE = $_FILES['IMAGE'];
+    $MALOAI = $_POST['category'];
+    $FLEX = $_POST['flex'];
+    $result = $sp->addProduct(
+        $TENSP, $MALOAI, $DONGIA, $IMAGE, 
+        $WEIGHT, $MOTA, $LENGTH, $FLEX, 
+        $BARCODE, $GIANHAP
+    );
+    
+    // Debug
+    error_log("Debug addProduct: " . print_r($result, true));
+    
+    // Kiểm tra kết quả và redirect
+    if (is_array($result) && isset($result['success']) && $result['success']) {
+        echo "<script>alert('Thêm sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        exit();
+    } elseif ($result === true) {
+        echo "<script>alert('Thêm sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        exit();
+    } else {
+        $error = is_array($result) && isset($result['message']) ? $result['message'] : 'Thêm sản phẩm thất bại!';
+        echo "<script>alert('" . addslashes($error) . "');</script>";
+    }
+}
+// Lấy danh sách loại sản phẩm
+$data->select("SELECT MALOAI, TENLOAI FROM loai_sp");
+$loaiList = $data->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="en">
-<?php
-// Thông tin kết nối database
-
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
-$db = new database();
-
-// Lấy danh sách loại sản phẩm
-$db->select("SELECT MALOAI, TENLOAI FROM loai_sp");
-$loaiList = $db->fetchAll();
-?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,106 +57,9 @@ $loaiList = $db->fetchAll();
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    
-                        <div style="display: flex; align-items: center; position: relative;">
-
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-</div>
-                </li>
-                
-                <div class="">
-                <li>
-                    <a href="" style="color: black;" id="">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">ADMIN</span>
-                    </a>
-                </li>
-            </div>
-
-                <li>
-                   
-                    <a href="trangchuadmin.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php"style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-
-            </ul>
-        </div>
+     <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -134,14 +70,12 @@ $loaiList = $db->fetchAll();
                 
             </div>
 
-
             <!-- ================ LÀM QUẢN LÝ SẢN PHẨM Ở ĐÂY ================= -->
             <div class="details">
             <div class="recentOrders">
             <div class="addproduct">
                 <h1>------------------------------ Thêm sản phẩm mới ------------------------------</h1>
-                <form action="insertproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
-
+            <form method="POST" enctype="multipart/form-data">
               <div class="form-group">
         <label for="category">Loại sản phẩm:</label>
         <select id="category" name="category" required>
@@ -174,7 +108,10 @@ $loaiList = $db->fetchAll();
         <label for="price">Đơn giá:</label>
         <input type="text" id="price" name="price" required>
     </div>
-
+    <div class="form-group">
+        <label for="price">Giá nhập:</label>
+        <input type="text" id="preprice" name="preprice" required>
+    </div>
     
 
     <div class="form-group">

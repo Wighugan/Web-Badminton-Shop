@@ -1,12 +1,23 @@
 
 <?php
-// Kết nối MySQL
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
-// Kiểm tra nếu có ID hợp lệ
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/user.php';
+$data = new database();
+$kh   = new QuanLyKhachHang($data); 
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
+$user = null;                    
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
     $sql = "SELECT * FROM khach_hang WHERE MAKH = ?";
-    $data->select_prepare($sql,'i',$id);
+    $data->select_prepare($sql, 'i', $id);
     $user = $data->fetch();
     if (!$user) {
         die("Không tìm thấy người dùng!");
@@ -14,11 +25,32 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 } else {
     die("ID không hợp lệ!");
 }
-$data->close();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $MAKH    = $_POST['MAKH'];
+    $TENKH   = $_POST['TENKH'];
+    $HOTEN   = $_POST['HOTEN'];
+    $MATKHAU = $_POST['MATKHAU'];
+    $EMAIL   = $_POST['EMAIL'];
+    $SDT     = $_POST['SDT'];
+    $DIACHI1 = $_POST['DIACHI1'];
+    $DIACHI  = $_POST['DIACHI'];
+    $TP      = $_POST['TP'];
+    $NS      = $_POST['NS'];
+    $AVATAR = $_FILES['AVATAR'];
+    $kh = new QuanLyKhachHang($data);
+    $kh->CapNhatThongTin(
+        $MAKH, $TENKH, $HOTEN, $EMAIL,
+        $DIACHI, $DIACHI1, $TP, $MATKHAU,
+        $SDT, $NS, $avatarPath
+    );
+    // Reload lại chính trang
+    header("Location: quanlykhachhang.php");
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -41,105 +73,11 @@ $data->close();
         }
     </script>
 </head>
-
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    
-                        <div style="display: flex; align-items: center; position: relative;">
-
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-</div>
-                </li>
-                <div class="">
-                <li>
-                    <a href="" style="color: black;" id="">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">ADMIN</span>
-                    </a>
-                </li>
-            </div>
-                <li>
-                    <a href="trangchuadmin.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php"style="color: black;" id="active">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+     <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -154,20 +92,14 @@ $data->close();
             <!-- ================ LÀM QUẢN LÝ SẢN PHẨM Ở ĐÂY ================= -->
             <div class="details">
             <div class="recentOrders">
-            <div class="addproduct">
+            <class class="addproduct">
                 <h1>------------------------------ Sửa Thông Tin Khách Hàng ---------------------------</h1>
-                <form action="updateuser.php?type=khach_hang"method="POST" enctype="multipart/form-data">                   
+                <form method="POST" enctype="multipart/form-data">                   
                 <input type="hidden" name="MAKH" value="<?= $user['MAKH'] ?>">
-
-
-
-
                     <div class="form-group">
                         <label for="name">Tên đăng nhập:</label>
                         <input type="text" name="TENKH" value="<?= $user['TENKH'] ?>" required>
-                        </div>
-
-                        
+                        </div>                    
                 <div class="form-group">
                     
                     <label for="name">Ảnh đại diện:</label>
@@ -182,7 +114,11 @@ $data->close();
                         <input type="text" name="HOTEN" value="<?= $user['HOTEN'] ?>" required>
                        
                     </div>
-
+                    <div class="form-group">
+                        <label for="email">Mật khẩu:</label>
+                        <input type="text" id="email" name="MATKHAU" value="<?= $user['MATKHAU'] ?>" required>
+                        
+                    </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="text" id="email" name="EMAIL" value="<?= $user['EMAIL'] ?>" required>
@@ -196,28 +132,23 @@ $data->close();
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Địa chỉ:</label>
-                        <input type="text" id="address1" name="DIACHI1" value="<?= $user['DIACHI1'] ?>" required>
-                        </div>
-
-  <div class="form-group">
-                        <label for="email">Quận:</label>
-                        <input type="text" id="address" name="DIACHI" value="<?= $user['DIACHI'] ?>" required>
-                        </div>
-
-  <div class="form-group">
-                        <label for="email">Thành phố:</label>
-                        <input type="text" id="city" name="TP" value="<?= $user['TP'] ?>" required>
-                        </div>
-
-
-
+                    <label for="email">Địa chỉ:</label>
+                    <input type="text" id="address1" name="DIACHI1" value="<?= $user['DIACHI1'] ?>" required>
+                    </div>
 
                     <div class="form-group">
-                        <label for="email">Ngày Sinh:</label>
-                        <input type="date" id="birthday" name="NS" value="<?= $user['NS'] ?>" required>
-                        </div>
+                    <label for="email">Quận:</label>
+                    <input type="text" id="address" name="DIACHI" value="<?= $user['DIACHI'] ?>" required>
+                    </div>
 
+                    <div class="form-group">
+                    <label for="email">Thành phố:</label>
+                    <input type="text" id="city" name="TP" value="<?= $user['TP'] ?>" required>
+                    </div>
+                    <div class="form-group">
+                    <label for="email">Ngày Sinh:</label>
+                    <input type="date" id="birthday" name="NS" value="<?= $user['NS'] ?>" required>
+                    </div>
                     <div class="form-group">
                         <input type="submit" value="Lưu vào Database" onclick="myFunction()">
                         <button class="return"><a href="quanlykhachhang.php">Quay lại</a></button>
@@ -228,7 +159,8 @@ $data->close();
                         alert("Đã lưu thành công thông tin khách hàng mới vào Database!");
                     }
                 </script>
-
+<?php  $data->close(); ?>
+</class>
             </div>
         </div>
     </div>

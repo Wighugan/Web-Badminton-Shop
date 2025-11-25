@@ -1,9 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 // Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; $data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/ncc.php'; 
+$data = new database();
+$ncc = new Ncc();
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
+    header("Location: ../../Signin.php");
+    exit();
+}
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $quanly = new Database();
+    $quanly->dangxuat();
+    header('Location: ../../signin.php');
+    exit();
+}
+$error = null;
+if($_SERVER['REQUEST_METHOD']=== 'POST'){
+ $TENNCC = $_POST['TENNCC'] ?? '';
+ $SDT = $_POST['SDT'] ?? '';
+ $EMAIL = $_POST['EMAIL'] ?? '';
+ $DIACHI = $_POST['DIACHI'] ?? '';
+ $NGUOIDD = $_POST['NGUOIDD'] ?? '';
+ $AVATAR = $_FILES['AVATAR'];
+ $result = $ncc->addNcc($TENNCC,$DIACHI,$SDT,$EMAIL,$AVATAR,1,$NGUOIDD);
+ 
+ // Debug
+ error_log("Debug addNcc: " . print_r($result, true));
+ 
+ // Kiểm tra kết quả
+ if (is_array($result) && isset($result['success']) && $result['success']) {
+     echo "<script>alert('Thêm nhà cung cấp thành công!'); window.location.href='quanlyncc.php';</script>";
+     exit();
+ } elseif ($result === true) {
+     echo "<script>alert('Thêm nhà cung cấp thành công!'); window.location.href='quanlyncc.php';</script>";
+     exit();
+ } else {
+     $error = is_array($result) && isset($result['message']) ? $result['message'] : '❌ Thêm nhà cung cấp thất bại!';
+ }
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,102 +54,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    
-                        <div style="display: flex; align-items: center; position: relative;">
-
-                        <img src="../img/logo.png" alt="a logo" width="85px" height="85px">
-
-                        <span class="custom-font" style="margin-left: 10px; position: relative; top: 20px;">Shop</span>
-</div>
-                </li>
-                <div class="">
-                <li>
-                    <a href="" style="color: black;" id="">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">ADMIN</span>
-                    </a>
-                </li>
-            </div>
-                <li>
-                    <a href="trangchuadmin.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trang chủ</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlydonhang.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý đơn hàng</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlysanpham.php" style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý sản phẩm</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="quanlykhachhang.php"style="color: black;" >
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý khách hàng</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="quanlynhanvien.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhân viên</span>
-                    </a>
-                </li>
-</li>
-
-<li>
-                    <a href="quanlyncc.php"style="color: black;"id="active">
-                        <span class="icon">
-                            <ion-icon name="business-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý nhà cung cấp</span>
-                    </a>
-                </li>
-
-                </li>
-
-<li>
-                    <a href="quanlykho.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quản lý kho</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="thongke.php"style="color: black;">
-                        <span class="icon">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Thống kê</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+     <?php 
+     include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/header-admin.php';
+    ?>
 
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -131,16 +74,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
             <div class="addproduct">
                 <h1>------------------------ Thêm Thông Tin nhà cung cấp ----------------</h1>
                 
-                <form action="insertuser.php?type=nhacungcap" method="POST" enctype="multipart/form-data" id="suaUserForm">
-                   
-                   
-                 
-
-                
+                <form method="POST" enctype="multipart/form-data">
                     <div class="form-group">
     <label for="name">Logo:</label>
-   
-    
     <div>
         <span class="input-group-text">
             <i class="fa fa-user"></i>
@@ -152,26 +88,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
     <img id="preview" src="https://www.w3schools.com/w3images/avatar2.png" class="preview" height="80" padding="20">
 
 </div>
-<script>
-function previewImage(event) {
-    var preview = document.getElementById('preview'); // Lấy thẻ <img>
-    var file = event.target.files[0]; // Lấy file ảnh
-
-    if (file) {
-        var reader = new FileReader(); // Đọc file ảnh
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Gán đường dẫn ảnh
-            preview.style.display = "block"; // Hiển thị ảnh
-        };
-        reader.readAsDataURL(file); // Đọc file dưới dạng URL
-    }
-}
-
-</script>
-
-
-
-
                     <div class="form-group">
                         <label for="name">Tên nhà cung cấp:</label>
                         <input type="text" id="fullname" name="TENNCC">
@@ -208,6 +124,19 @@ function previewImage(event) {
                     function myFunction() {
                         alert("Đã lưu thành công thông tin  mới vào Database!");
                     }
+                    function previewImage(event) {
+    var preview = document.getElementById('preview'); // Lấy thẻ <img>
+    var file = event.target.files[0]; // Lấy file ảnh
+
+    if (file) {
+        var reader = new FileReader(); // Đọc file ảnh
+        reader.onload = function(e) {
+            preview.src = e.target.result; // Gán đường dẫn ảnh
+            preview.style.display = "block"; // Hiển thị ảnh
+        };
+        reader.readAsDataURL(file); // Đọc file dưới dạng URL
+    }
+}
                 </script>
 
             </div>

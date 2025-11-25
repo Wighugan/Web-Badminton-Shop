@@ -28,7 +28,8 @@ class QuanLyKhachHang extends QuanLyHeThong {
                 $params = array_merge($baseParams, [$MAKH]);
                 $types .= "i";
             }
-            return $this->data->command_prepare($sql, $types, ...$params);
+            $this->data->command_prepare($sql, $types, ...$params);
+            return $this->data->execute();
         } catch (Exception $e) {
             // Add error handling here
             throw $e;

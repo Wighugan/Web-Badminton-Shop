@@ -71,48 +71,52 @@ class QuanLyHeThong {
 
 
     // Đăng nhập
-   public function dangnhap($TENKH, $MAKHAU) {
-    $sql = "SELECT MAKH, TENKH, MATKHAU FROM khach_hang WHERE TENKH = ?";
-    $this->data->select_prepare($sql, "s", $TENKH);
-    $row = $this->data->fetch();
-    if ($row) {
-        if ($MAKHAU === $row['MATKHAU']) { // chưa mã hóa
-            $_SESSION['user_id'] = $row['MAKH'];
-            $_SESSION['username'] = $row['TENKH'];
+ public function dangnhap($TENKH, $MAKHAU) {
+    // --- 1️⃣ Kiểm tra khách hàng trước ---
+    $sqlKH = "SELECT MAKH, TENKH, MATKHAU FROM khach_hang WHERE TENKH = ?";
+    $this->data->select_prepare($sqlKH, "s", $TENKH);
+    $rowKH = $this->data->fetch();
 
-            // ✅ chuyển đúng đến trang chính
-            header("Location: login.php");
+    if ($rowKH) {
+        if ($MAKHAU === $rowKH['MATKHAU']) { // (chưa mã hóa)
+            $_SESSION['user_id'] = $rowKH['MAKH'];
+            $_SESSION['username'] = $rowKH['TENKH'];
+            $_SESSION['role'] = 'khachhang';
+
+            header("Location: login.php"); // 👉 Trang chính khách hàng
             exit();
         } else {
-            return "Mật khẩu không đúng!";
+            $_SESSION['error'] = "Mật khẩu không đúng!";
+            header("Location: Signin.php");
+            exit();
         }
-    } else {
-        return "Tên đăng nhập không tồn tại!";
     }
+
+    // --- 2️⃣ Nếu không có trong khach_hang, kiểm tra bảng nhan_vien ---
+    $sqlNV = "SELECT MANV, TENNV, MATKHAU FROM nhan_vien WHERE TENNV = ?";
+    $this->data->select_prepare($sqlNV, "s", $TENKH);
+    $rowNV = $this->data->fetch();
+
+    if ($rowNV) {
+        if ($MAKHAU === $rowNV['MATKHAU']) { // (chưa mã hóa)
+            $_SESSION['user_id'] = $rowNV['MANV'];
+            $_SESSION['username'] = $rowNV['TENNV'];
+            $_SESSION['role'] = 'admin';
+
+            header("Location: http://localhost/Web-Badminton-Shop/admin/html/trangchuadmin.php"); // 👉 Trang chủ admin
+            exit();
+        } else {
+            $_SESSION['error'] = "Mật khẩu không đúng!";
+            header("Location: Signin.php");
+            exit();
+        }
+    }
+
+    // --- 3️⃣ Không tìm thấy trong cả hai bảng ---
+    $_SESSION['error'] = "Tên đăng nhập không tồn tại!";
+    header("Location: Signin.php");
+    exit();
 }
-    // Đăng xuất
-    public function dangxuat(): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $_SESSION = [];
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params['path'], $params['domain'],
-                $params['secure'] ?? false, $params['httponly'] ?? false
-            );
-        }
-        session_destroy();
-    }
-
-    // Kiểm tra trạng thái đăng nhập
-    public function isLoggedIn() {
-        return isset($_SESSION['user_id']);
-    }
-
-    public function __destruct() {
-        $this->data->close();
-    }
+public function dangxuat(): void { if (session_status() === PHP_SESSION_NONE) { session_start(); } $_SESSION = []; if (ini_get("session.use_cookies")) { $params = session_get_cookie_params(); setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'] ?? false, $params['httponly'] ?? false ); } session_destroy(); } // Kiểm tra trạng thái đăng nhập public function isLoggedIn() { return isset($_SESSION['user_id']); } public function __destruct() { $this->data->close(); } }
 }
 ?>

@@ -12,9 +12,9 @@ class Order {
     }
    public function TaoDonHang($MAKH) {
     // 1️⃣ Lấy sản phẩm trong giỏ hàng
-    $sql = "SELECT sp.MASP, sp.TENSP, sp.DONGIA, g.SOLUONG 
-            FROM gio_hang g 
-            JOIN san_pham sp ON g.MASP = sp.MASP 
+    $sql = "SELECT sp.MASP, sp.TENSP, sp.DONGIA, sp.SOLUONG AS TONKHO, g.SOLUONG AS SOLUONG_MUA
+            FROM gio_hang g
+            JOIN san_pham sp ON g.MASP = sp.MASP
             WHERE g.MAKH = ?";
     $this->data->select_prepare($sql, "i", $MAKH);
     $cart_items = $this->data->fetchAll();
@@ -22,28 +22,41 @@ class Order {
     if (empty($cart_items)) {
         return ['success' => false, 'message' => 'Giỏ hàng trống!'];
     }
-    // 2️⃣ Tính tổng tiền
+
+    // 2️⃣ Kiểm tra tồn kho
+    foreach ($cart_items as $item) {
+        if ($item['SOLUONG_MUA'] > $item['TONKHO']) {
+            return [
+                'success' => false,
+                'message' => "Sản phẩm {$item['TENSP']} chỉ còn {$item['TONKHO']} trong kho!"
+            ];
+        }
+    }
+
+    // 3️⃣ Tính tổng tiền
     $total = 0;
     foreach ($cart_items as $row) {
-        $total += $row['DONGIA'] * $row['SOLUONG'];
+        $total += $row['DONGIA'] * $row['SOLUONG_MUA'];
     }
-    // Thêm phí vận chuyển + bảo hiểm
     $shipping_fee = 50000;
     $insurance_fee = 30000;
     $total += $shipping_fee + $insurance_fee;
-    // Tạo mã đơn hàng
+
+    // 4️⃣ Tạo mã đơn hàng và lưu vào don_hang
     $order_code = 'DH' . time() . rand(1000, 9999);
-    //Thêm vào bảng `don_hang`
     $sql1 = "INSERT INTO don_hang (CODE, MAKH, TONGTIEN, TRANGTHAI, NGAYLAP)
              VALUES (?, ?, ?, 'Thành công', NOW())";
     $this->data->command_prepare($sql1, "ssi", $order_code, $MAKH, $total);
-    //Lấy mã đơn hàng vừa thêm
+
+    // Lấy mã đơn hàng vừa thêm
     $sql_get_id = "SELECT MAX(MADH) AS MADH FROM don_hang WHERE MAKH = ?";
     $this->data->select_prepare($sql_get_id, "i", $MAKH);
     $order_row = $this->data->fetch();
     $order_id = $order_row ? $order_row['MADH'] : null;
-    //Thêm chi tiết đơn hàng
+
+    // 5️⃣ Thêm chi tiết đơn hàng và trừ tồn kho
     foreach ($cart_items as $item) {
+        // Thêm chi tiết đơn hàng
         $sql2 = "INSERT INTO CTDH (MADH, MASP, TENSP, DONGIA, SOLUONG)
                  VALUES (?, ?, ?, ?, ?)";
         $this->data->command_prepare($sql2, "iisii",
@@ -51,22 +64,34 @@ class Order {
             $item['MASP'],
             $item['TENSP'],
             $item['DONGIA'],
-            $item['SOLUONG']
+            $item['SOLUONG_MUA']
+        );
+
+        // Trừ tồn kho
+        $sql_update_stock = "UPDATE san_pham 
+                             SET SOLUONG = SOLUONG - ? 
+                             WHERE MASP = ?";
+        $this->data->command_prepare($sql_update_stock, "ii",
+            $item['SOLUONG_MUA'],
+            $item['MASP']
         );
     }
 
-    // Xóa giỏ hàng sau khi tạo đơn
+    // 6️⃣ Xóa giỏ hàng
     $sql3 = "DELETE FROM gio_hang WHERE MAKH = ?";
     $this->data->command_prepare($sql3, "i", $MAKH);
-    //Trả kết quả
+
+    // 7️⃣ Trả kết quả
     return [
         'success' => true,
         'order_code' => $order_code,
         'total' => $total,
         'shipping_fee' => $shipping_fee,
-        'insurance_fee' => $insurance_fee
+        'insurance_fee' => $insurance_fee,
+        'message' => 'Đặt hàng thành công!'
     ];
 }
+
      public function DemSoDonHang($MAKH, $limit = 10) {
         // Xác định trang hiện tại
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
