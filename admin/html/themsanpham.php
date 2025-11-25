@@ -1,17 +1,8 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
-$data = new database();
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+$data = new Database();
 $sp = new SanPham();
-if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
-    header("Location: ../../Signin.php");
-    exit();
-}
-if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    $quanly = new Database();
-    $quanly->dangxuat();
-    header('Location: ../../signin.php');
-    exit();
-}
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -30,6 +21,21 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $WEIGHT, $MOTA, $LENGTH, $FLEX, 
         $BARCODE, $GIANHAP
     );
+    
+    // Debug
+    error_log("Debug addProduct: " . print_r($result, true));
+    
+    // Kiểm tra kết quả và redirect
+    if (is_array($result) && isset($result['success']) && $result['success']) {
+        echo "<script>alert('Thêm sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        exit();
+    } elseif ($result === true) {
+        echo "<script>alert('Thêm sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        exit();
+    } else {
+        $error = is_array($result) && isset($result['message']) ? $result['message'] : 'Thêm sản phẩm thất bại!';
+        echo "<script>alert('" . addslashes($error) . "');</script>";
+    }
 }
 // Lấy danh sách loại sản phẩm
 $data->select("SELECT MALOAI, TENLOAI FROM loai_sp");

@@ -190,14 +190,26 @@ $stt = ($page - 1) * $user->getLimit() + 1;
                                         $phone = htmlspecialchars($row['SDT']);
                                         $address = htmlspecialchars($row['DIACHI1']);
                                         $id = (int)$row['MAKH'];
-                                        $avatar = htmlspecialchars($row['AVATAR']);
+                                        $avatar = trim($row['AVATAR']);
+                                        // If no avatar stored, use site default
+                                        if (empty($avatar)) {
+                                            $avatar = 'uploads/user.jpg';
+                                        }
+                                        // If file doesn't exist on disk, fallback to default
+                                        $fsPath = $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/' . ltrim($avatar, '/');
+                                        if (!file_exists($fsPath)) {
+                                            $avatar = 'uploads/user.jpg';
+                                        }
+                                        $avatar = htmlspecialchars($avatar);
                                         $birthday = date("d/m/Y", strtotime($row['NS']));
                                         $trangthai = (int)$row['TRANGTHAI'];
                                         $district = htmlspecialchars($row['DIACHI']);
 
                                         echo "<tr>";
                                         echo "<td>{$stt}</td>";
-                                        echo "<td><img src=\"../../{$avatar}\" width=\"50\" height=\"50\" alt=\"{$fullname}\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\"></td>";
+                                        // Use an absolute URL from the webroot to avoid relative path issues
+                                        $webUrl = '/Web-Badminton-Shop/' . ltrim($avatar, '/');
+                                        echo "<td><img src=\"{$webUrl}\" width=\"50\" height=\"50\" alt=\"{$fullname}\" style=\"border-radius: 50%; object-fit: cover;\" loading=\"lazy\"></td>";
                                         echo "<td>{$username}</td>";
                                         echo "<td>{$fullname}</td>";
                                         echo "<td>{$email}</td>";

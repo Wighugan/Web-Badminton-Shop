@@ -2,9 +2,11 @@
 <html lang="en">
 <?php
 session_start();
-// Thông tin kết nối database
-include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php'; 
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/database/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/products.php';
 $data = new database();
+$sp = new SanPham();
+
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
     header("Location: ../../Signin.php");
     exit();
@@ -15,6 +17,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     header('Location: ../../signin.php');
     exit();
 }
+
 // Lấy thông tin sản phẩm từ database
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $sql = "SELECT * FROM san_pham WHERE MASP = ?";
@@ -23,9 +26,41 @@ $product = $data->fetch();
 if (!$product) {
     die("Sản phẩm không tồn tại!");
 }
+
+// Xử lý form POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $MASP = intval($_POST['MASP']);
+    $TENSP = $_POST['TENSP'];
+    $MALOAI = $_POST['MALOAI'];
+    $DONGIA = floatval($_POST['DONGIA']);
+    $FLEX = $_POST['FLEX'];
+    $LENGTH = $_POST['LENGTH'];
+    $WEIGHT = $_POST['WEIGHT'];
+    $MOTA = $_POST['MOTA'];
+    $BARCODE = $_POST['BARCODE'];
+    $THUONGHIEU = $_POST['THUONGHIEU'];
+    $IMAGE = $_FILES['IMAGE'];
+    $old_image = $_POST['old_image'];
+    
+    $result = $sp->updateProduct($MASP, $TENSP, $MALOAI, $DONGIA, $IMAGE, $WEIGHT, $MOTA, $LENGTH, $FLEX, $BARCODE, $THUONGHIEU, $old_image);
+    
+    // Debug
+    error_log("Debug updateProduct: " . print_r($result, true));
+    
+    // Kiểm tra kết quả và redirect
+    if (is_array($result) && isset($result['success']) && $result['success']) {
+        echo "<script>alert('Sửa sản phẩm thành công!'); window.location.href='quanlysanpham.php';</script>";
+        exit();
+    } else {
+        $error = is_array($result) && isset($result['message']) ? $result['message'] : 'Sửa sản phẩm thất bại!';
+        echo "<script>alert('" . addslashes($error) . "');</script>";
+    }
+}
+
 $data->close();
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -69,7 +104,7 @@ $data->close();
             <div class="details">
             <div class="recentOrders">
             <div class="addproduct">
-               <form action="updateproduct.php" method="POST" enctype="multipart/form-data" id="suaUserForm">
+               <form  method="POST" enctype="multipart/form-data" id="suaUserForm">
     <!-- Mã sản phẩm chính -->
     <input type="hidden" name="MASP" value="<?= htmlspecialchars($product['MASP']) ?>">
 
@@ -147,15 +182,10 @@ $data->close();
 
     <!-- Nút -->
     <div class="form-group">
-        <input type="submit" value="Lưu vào Database" onclick="myFunction()">
+        <input type="submit" value="Lưu vào Database">
         <button type="button" class="return" onclick="window.location.href='quanlysanpham.php'">Quay lại</button>
     </div>
 </form>
-                <script>
-                    function myFunction() {
-                        alert("Đã lưu thành công thông tin sản phẩm mới vào Database!");
-                    }
-                </script>
 
             </div>
         </div>

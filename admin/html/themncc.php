@@ -22,12 +22,20 @@ if($_SERVER['REQUEST_METHOD']=== 'POST'){
  $NGUOIDD = $_POST['NGUOIDD'] ?? '';
  $AVATAR = $_FILES['AVATAR'];
  $result = $ncc->addNcc($TENNCC,$DIACHI,$SDT,$EMAIL,$AVATAR,1,$NGUOIDD);
- if (is_array($result) && $result['success']) {
-            echo "<script>alert('{$result['message']}'); location.href='quanlyncc.php';</script>";
-            exit;
-        } else {
-            $error = is_array($result) ? $result['message'] : '❌ Thêm nhà cung cấp thất bại!';
-        }
+ 
+ // Debug
+ error_log("Debug addNcc: " . print_r($result, true));
+ 
+ // Kiểm tra kết quả
+ if (is_array($result) && isset($result['success']) && $result['success']) {
+     echo "<script>alert('Thêm nhà cung cấp thành công!'); window.location.href='quanlyncc.php';</script>";
+     exit();
+ } elseif ($result === true) {
+     echo "<script>alert('Thêm nhà cung cấp thành công!'); window.location.href='quanlyncc.php';</script>";
+     exit();
+ } else {
+     $error = is_array($result) && isset($result['message']) ? $result['message'] : '❌ Thêm nhà cung cấp thất bại!';
+ }
 }
 ?>
 <!DOCTYPE html>

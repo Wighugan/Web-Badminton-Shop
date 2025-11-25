@@ -43,6 +43,7 @@ class Order extends QuanLyHeThong{
     $sql1 = "INSERT INTO don_hang (CODE, MAKH, TONGTIEN, TRANGTHAI, NGAYLAP)
              VALUES (?, ?, ?, 'Thành công', NOW())";
     $this->data->command_prepare($sql1, "ssi", $order_code, $MAKH, $total);
+    $this->data->execute();
     //Lấy mã đơn hàng vừa thêm
     $sql_get_id = "SELECT MAX(MADH) AS MADH FROM don_hang WHERE MAKH = ?";
     $this->data->select_prepare($sql_get_id, "i", $MAKH);
@@ -59,11 +60,13 @@ class Order extends QuanLyHeThong{
             $item['DONGIA'],
             $item['SOLUONG']
         );
+        $this->data->execute();
     }
 
     // Xóa giỏ hàng sau khi tạo đơn
     $sql3 = "DELETE FROM gio_hang WHERE MAKH = ?";
     $this->data->command_prepare($sql3, "i", $MAKH);
+    $this->data->execute();
     //Trả kết quả
     return [
         'success' => true,
@@ -182,11 +185,12 @@ public function updateStatus($MADH, $TRANGTHAI) {
             // Cập nhật trạng thái
             $sql = "UPDATE don_hang SET TRANGTHAI = ? WHERE MADH = ?";
             $this->data->command_prepare($sql, "si", $TRANGTHAI, $MADH);
-            
-            if ($this->data->execute()) {
+            $ok = $this->data->execute();
+
+            if ($ok) {
                 return ['success' => true, 'message' => '✅ Cập nhật trạng thái đơn hàng thành công!'];
             } else {
-                return ['success' => false, 'message' => '❌ Lỗi khi cập nhật trạng thái!'];
+                return ['success' => false, 'message' => '❌ Lỗi khi cập nhật trạng thái!', 'db_error' => $this->data->getLastError()];
             }
         } catch (Exception $e) {
             return ['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()];

@@ -304,7 +304,8 @@ public function addProduct($TENSP, $MALOAI, $DONGIA, $file, $WEIGHT, $MOTA, $LEN
         $sql = "INSERT INTO san_pham (MALOAI, TENSP, DONGIA, updated_at, IMAGE, BARCODE, WEIGHT, MOTA, LENGTH, FLEX, GIANHAP)
         VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)";    
         $this->data->command_prepare($sql,"ssdssssssd", $MALOAI, $TENSP,$DONGIA,$image,$BARCODE,$WEIGHT,$MOTA,$LENGTH,$FLEX,$GIANHAP);
-        $this->data->execute();
+        $ok = $this->data->execute();
+        return $ok;
     } catch (Exception $e) {
         error_log("Lỗi addProduct: " . $e->getMessage());
         return ['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()];
@@ -329,11 +330,19 @@ public function addProduct($TENSP, $MALOAI, $DONGIA, $file, $WEIGHT, $MOTA, $LEN
         // Xóa khỏi DB
         $sql_delete = "DELETE FROM san_pham WHERE MASP = ?";
         $this->data->command_prepare($sql_delete, "i", $MASP);
-        $this->data->execute();
-        return [
-            'success' => true,
-            'message' => "Đã xóa sản phẩm thành công!"
-        ];
+        $ok = $this->data->execute();
+        if ($ok) {
+            return [
+                'success' => true,
+                'message' => "Đã xóa sản phẩm thành công!"
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Lỗi khi xóa sản phẩm!',
+                'db_error' => $this->data->getLastError() ?? ''
+            ];
+        }
     } catch (Exception $e) {
         return [
             'success' => false,
@@ -341,6 +350,67 @@ public function addProduct($TENSP, $MALOAI, $DONGIA, $file, $WEIGHT, $MOTA, $LEN
         ];
     }
 }
+
+    public function updateProduct($MASP, $TENSP, $MALOAI, $DONGIA, $file, $WEIGHT, $MOTA, $LENGTH, $FLEX, $BARCODE, $THUONGHIEU, $old_image) {
+    try {   
+        $image = $old_image;
+        $relative_path = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/";
+        $public_path = "uploads/";
+        
+        // Kiểm tra file upload mới
+        if (!empty($file) && isset($file["name"]) && $file["error"] === UPLOAD_ERR_OK) {
+            // Xóa ảnh cũ nếu tồn tại
+            if (!empty($old_image)) {
+                $old_img_path = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/" . $old_image;
+                if (file_exists($old_img_path)) {
+                    unlink($old_img_path);
+                }
+            }
+            
+            // Sinh tên file an toàn
+            $filename = time() . "_" . preg_replace('/[^a-zA-Z0-9._-]/', '', basename($file["name"]));
+            $target_file = $relative_path . $filename;
+            
+            // Kiểm tra loại file
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $file_type = mime_content_type($file["tmp_name"]);
+            
+            if (!in_array($file_type, $allowed_types)) {
+                return ['success' => false, 'message' => '❌ Chỉ chấp nhận file ảnh (jpg, png, gif, webp)!'];
+            }
+            
+            // Kiểm tra kích thước (max 5MB)
+            if ($file["size"] > 5 * 1024 * 1024) {
+                return ['success' => false, 'message' => '❌ File ảnh không được vượt quá 5MB!'];
+            }
+
+            // Upload file
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                $image = $public_path . $filename;
+            } else {
+                return ['success' => false, 'message' => '❌ Lỗi khi tải ảnh lên máy chủ!'];
+            }
+        }
+        
+        // Cập nhật vào database - XÓA THUONGHIEU
+        $sql = "UPDATE san_pham 
+                SET TENSP=?, MALOAI=?, DONGIA=?, IMAGE=?, WEIGHT=?, MOTA=?, LENGTH=?, FLEX=?, BARCODE=?, updated_at=NOW() 
+                WHERE MASP=?";
+        
+        $this->data->command_prepare($sql, "ssdssssssi", $TENSP, $MALOAI, $DONGIA, $image, $WEIGHT, $MOTA, $LENGTH, $FLEX, $BARCODE, $MASP);
+        $ok = $this->data->execute();
+        
+        if ($ok) {
+            return ['success' => true, 'message' => 'Cập nhật sản phẩm thành công!'];
+        } else {
+            return ['success' => false, 'message' => 'Lỗi khi cập nhật sản phẩm!'];
+        }
+    } catch (Exception $e) {
+        error_log("Lỗi updateProduct: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()];
+    }
+}
+
     public function laySanPhamTheoLoai($category) {
     try {
         if (empty($category)) {

@@ -1,5 +1,5 @@
 <?php
-   class database {
+class Database {
     private $conn = null;
     private $host = 'localhost';
     private $user = 'root';
@@ -7,78 +7,120 @@
     private $database = 'mydb1';
     private $stmt = null;
     private $result = null;
-    public function __construct()
-    {
-    $this->connect();
-    }
-    private function connect(){
-        $this->conn = new mysqli($this->host,$this->user,$this->pass,$this->database)
-        or die('Kết nối database thất bại');
-        $this-> conn ->query('SET NAMES UTF8');
-    }
-    public function select($sql){
+
+    public function __construct() {
         $this->connect();
-        $this->result = $this->conn->query($sql);
     }
-   public function fetch() {
+
+    /** 🔗 Kết nối CSDL */
+    private function connect() {
+        if ($this->conn === null) {
+            $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->database);
+
+            if ($this->conn->connect_error) {
+                die("❌ Kết nối database thất bại: " . $this->conn->connect_error);
+            }
+
+            $this->conn->set_charset("utf8mb4");
+        }
+    }
+
+    public function select($sql) {
+        $this->result = $this->conn->query($sql);
+        if (!$this->result) {
+            echo "Lỗi truy vấn: " . $this->conn->error;
+        }
+        return $this;
+    }
+
+    public function fetch() {
         if ($this->result && $this->result->num_rows > 0) {
             return $this->result->fetch_assoc();
         }
         return null;
     }
-     public function fetchAll() {
+
+    public function fetchAll() {
         if ($this->result && $this->result->num_rows > 0) {
             return $this->result->fetch_all(MYSQLI_ASSOC);
         }
         return [];
     }
-     public function numRows() {
+
+    public function numRows() {
         return $this->result ? $this->result->num_rows : 0;
     }
-    public function command($sql){
-        $this->connect();
-        $this->conn->query($sql);
-    } 
-    public function execute(){
-        if($this->stmt){
-            return $this->stmt->execute();
+    public function command($sql) {
+        $success = $this->conn->query($sql);
+        if (!$success) {
+            echo "Lỗi truy vấn: " . $this->conn->error;
         }
-        else return false;
+        return $success;
     }
-
     public function select_prepare($sql, $types = '', ...$params) {
         $this->stmt = $this->conn->prepare($sql);
         if (!$this->stmt) {
             die('Lỗi prepare: ' . $this->conn->error);
         }
-        // Chỉ bind_param nếu có tham số
+
         if (!empty($types) && !empty($params)) {
             $this->stmt->bind_param($types, ...$params);
         }
+
         if ($this->stmt->execute()) {
             $this->result = $this->stmt->get_result();
             return $this;
+        } else {
+            echo "Lỗi execute: " . $this->stmt->error;
         }
         return false;
     }
+
+    /** ⚙️ Câu lệnh INSERT/UPDATE/DELETE có prepare */
     public function command_prepare($sql, $types = '', ...$params) {
-        $this->stmt = $this->conn->prepare($sql);  
+        $this->stmt = $this->conn->prepare($sql);
         if (!$this->stmt) {
             die('Lỗi prepare: ' . $this->conn->error);
-        }    
-        // Chỉ bind_param nếu có tham số
+        }
+
         if (!empty($types) && !empty($params)) {
             $this->stmt->bind_param($types, ...$params);
         }
-        return $this->stmt->execute();
+
+        return $this;
     }
-    public function affectedRows() {
-    return $this->conn->affected_rows; // Trả số row affected
-}
+   
+    /** ✅ Thực thi prepared statement */
+    public function execute() {
+        if ($this->stmt) {
+            $result = $this->stmt->execute();
+            if (!$result) {
+                echo "Lỗi execute: " . $this->stmt->error;
+            }
+            return $result;
+        }
+        return false;
+    }
+    /**
+     * Trả về lỗi cuối cùng từ statement hoặc kết nối
+     */
+    public function getLastError() {
+        if ($this->stmt && $this->stmt->error) return $this->stmt->error;
+        if ($this->conn && $this->conn->error) return $this->conn->error;
+        return '';
+    }
     public function dangxuat(): void { if (session_status() === PHP_SESSION_NONE) { session_start(); } $_SESSION = []; if (ini_get("session.use_cookies")) { $params = session_get_cookie_params(); setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'] ?? false, $params['httponly'] ?? false ); } session_destroy(); }
+
+    /** ❎ Đóng kết nối */
     public function close() {
-        if ($this->stmt) $this->stmt->close();
-        if ($this->conn) $this->conn->close();
+        if ($this->stmt) {
+            $this->stmt->close();
+            $this->stmt = null;
+        }
+        if ($this->conn) {
+            $this->conn->close();
+            $this->conn = null;
+        }
     }
-   }
+}
 ?>
