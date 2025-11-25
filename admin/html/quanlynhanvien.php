@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/class/nhanvien.php';
 // Khởi tạo
-$data = new database();
+$data = new Database();
 $nhanvien = new Nhanvien();
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'nhanvien'])) {
     header("Location: ../../Signin.php");
@@ -16,12 +16,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 // ===== XỬ LÝ XÓA NHÂN VIÊN TRỰ TIẾP =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
-    $manv = (int)$_POST['id'];
+    $manv = (int)($_POST['id'] ?? 0);
     if ($action === 'delete' && $manv > 0) {
         $result = $nhanvien->xoaNhanVien($manv);
-        header('Content-Type: application/json');
-        echo json_encode($result);
-        exit;
+        // If deletion failed, show an alert with DB error (if any), otherwise reload
+        if (is_array($result) && !$result['success']) {
+            $msg = isset($result['message']) ? $result['message'] : 'Xóa thất bại!';
+            $dbErr = isset($result['db_error']) ? '\nDB Error: ' . $result['db_error'] : '';
+            echo "<script>alert('" . addslashes($msg . $dbErr) . "'); window.location.href='" . strtok($_SERVER['REQUEST_URI'], '?') . "';</script>";
+            exit();
+        }
+        // Success or unknown non-array result: reload the page to refresh list
+        header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+        exit();
     }
 }
 // Nhận tham số từ GET
@@ -71,13 +78,13 @@ $stt = ($page - 1) * $nhanvien->getLimit() + 1;
         <div class="search-container" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
             
             <!-- Tìm kiếm text -->
-            <input id="timnhanvien" 
+            <input id="timnguoidung" 
                    type="text" 
                    name="search" 
                    value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
                    placeholder="Tên nhân viên, email, số điện thoại ...">   
                         <!-- Nút tìm kiếm -->
-            <button type="submit" id="timnhanvien1" style="padding: 8px 15px; cursor: pointer;">
+            <button type="submit" id="timnguoidung1" style="padding: 8px 15px; cursor: pointer;">
                 <i class="fa fa-search"></i> Tìm kiếm
             </button>
         </div>
@@ -184,27 +191,26 @@ $stt = ($page - 1) * $nhanvien->getLimit() + 1;
             return;
         }
 
-        const formData = new FormData();
-        formData.append('action', 'delete');
-        formData.append('id', id);
+        // Create and submit a hidden form to perform a normal POST (no AJAX)
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = window.location.pathname;
+        form.style.display = 'none';
 
-        fetch(window.location.href, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi:', error);
-            alert('❌ Lỗi khi xóa nhân viên!');
-        });
+        const a1 = document.createElement('input');
+        a1.type = 'hidden';
+        a1.name = 'action';
+        a1.value = 'delete';
+        form.appendChild(a1);
+
+        const a2 = document.createElement('input');
+        a2.type = 'hidden';
+        a2.name = 'id';
+        a2.value = id;
+        form.appendChild(a2);
+
+        document.body.appendChild(form);
+        form.submit();
     }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>

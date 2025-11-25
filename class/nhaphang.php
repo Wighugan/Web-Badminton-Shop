@@ -12,17 +12,17 @@ class NhapHang extends QuanLyHeThong{
     $result = $this->data->fetch();
     return $result ? $result['MaPN'] : 0;
     }
-   public function themPhieuNhap($tenNCC, $tongTien) {
+    public function themPhieuNhap($tenNCC, $tongTien) {
     $sql = "INSERT INTO phieu_nhap (TenNCC, NgayNhap, TongTien) VALUES (?, NOW(), ?)";
     $this->data->command_prepare($sql, "sd", $tenNCC, $tongTien);
-    $this->data->execute();
-    // ✅ Return mã phiếu nhập vừa tạo
-    return $this->getLastMaPN();
+    $ok = $this->data->execute();
+    // ✅ Return mã phiếu nhập vừa tạo (0 nếu thất bại)
+    return $ok ? $this->getLastMaPN() : 0;
 }    public function themChiTietPhieuNhap($maPN, $maSP, $soLuong, $giaNhap) {
         $thanhTien = $soLuong * $giaNhap;
         $sql = "INSERT INTO ctpn (MaPN, MaSP, SoLuong, GiaNhap, ThanhTien) VALUES (?, ?, ?, ?, ?)";
         $this->data->command_prepare($sql, "iiidd", $maPN, $maSP, $soLuong, $giaNhap, $thanhTien);
-        $this->data->execute();
+        return $this->data->execute();
     }
 
     public function capNhatKho($maSP, $soLuong, $giaNhap) {
@@ -36,8 +36,7 @@ class NhapHang extends QuanLyHeThong{
             // cập nhật lại cả số lượng và giá nhập (nếu muốn cập nhật giá nhập mới)
             $sqlUpdate = "UPDATE san_pham SET SOLUONG = ?, GIANHAP = ? WHERE MASP = ?";
             $this->data->command_prepare($sqlUpdate, "idi", $newSoLuong, $giaNhap, $maSP);
-            $this->data->execute();
-            return true;
+            return (bool)$this->data->execute();
         } else {
             return false;
         }
@@ -56,8 +55,7 @@ class NhapHang extends QuanLyHeThong{
             // cập nhật lại số lượng
             $sqlUpdate = "UPDATE san_pham SET SOLUONG = ? WHERE MASP = ?";
             $this->data->command_prepare($sqlUpdate, "ii", $newSoLuong, $maSP);
-            $this->data->execute();
-            return true;
+            return (bool)$this->data->execute();
         } else {
             return false;
         }
@@ -77,7 +75,7 @@ class NhapHang extends QuanLyHeThong{
     public function capNhatGiaNhap($maSP, $giaNhap) {
         $sqlUpdate = "UPDATE san_pham SET GIANHAP = ? WHERE MASP = ?";
         $this->data->command_prepare($sqlUpdate, "di", $giaNhap, $maSP);
-        $this->data->execute();
+        return $this->data->execute();
 }
    public function getLastMaPNByNCC($tenNCC) {
     $sql = "SELECT MaPN FROM phieu_nhap WHERE TenNCC = ? ORDER BY MaPN DESC LIMIT 1";

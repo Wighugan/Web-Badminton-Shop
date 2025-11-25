@@ -104,17 +104,19 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         $types .= "i";       
         $sql = "UPDATE nhan_vien SET " . implode(", ", $set_clauses) . " WHERE MANV = ?";        
         $this->data->command_prepare($sql, $types, ...$params);
-        $result = $this->data->execute();
-        
-        if ($result) {
+        $ok = $this->data->execute();
+
+        if ($ok) {
             return ['success'];
         } else {
             return ['success' => false, 'message' => '❌ Cập nhật thất bại!'];
         }
 }
     public function addNhanvien($TENNV,$HOTEN ,$SDT, $EMAIL, $AVATAR, $NGAYLAM,$NS) {
-        $avatarPath = $AVATAR;
-        if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
+
+    $avatarPath = ""; // ảnh mặc định
+    // Upload file
+    if ($AVATAR && $_FILES['AVATAR']['error'] === 0) {
         $fileName = time() . "_" . basename($_FILES['AVATAR']['name']);
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatar/";
         if (!is_dir($uploadDir)) {
@@ -123,56 +125,77 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         $fullPath = $uploadDir . $fileName;
         if (move_uploaded_file($_FILES['AVATAR']['tmp_name'], $fullPath)) {
             $avatarPath = "uploads/avatar/" . $fileName;
-        } else {
-            return false;
         }
     }
-        $sql = "INSERT INTO nhan_vien(TENNV,HOTEN,SDT,EMAIL,AVATAR,NGAYLAM,NS) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $this->data->command_prepare($sql, "sssssss", $TENNV,$HOTEN ,$SDT, $EMAIL, $avatarPath,$NGAYLAM,$NS);
-        return $this->data->execute();
+    $sql = "INSERT INTO nhan_vien(TENNV,HOTEN,SDT,EMAIL,AVATAR,NGAYLAM,NS) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $this->data->command_prepare($sql, "sssssss",
+        $TENNV,$HOTEN,$SDT,$EMAIL,$avatarPath,$NGAYLAM,$NS
+    );
+    $ok = $this->data->execute();
+    if ($ok) {
+        return ['success' => true, 'message' => '✅ Thêm nhân viên thành công!'];
+    } else {
+        return ['success' => false, 'message' => '❌ Thêm nhân viên thất bại!', 'db_error' => $this->data->getLastError()];
     }
+}
+
     public function xoaNhanVien($MANV) {
         $sql = "DELETE FROM nhan_vien WHERE MANV = ?";
         $this->data->command_prepare($sql, 'i', $MANV);
-
-        if ($this->data->execute()) {
-            return ['success'];
+        $ok = $this->data->execute();
+        if ($ok) {
+            return ['success' => true, 'message' => '✅ Xóa nhân viên thành công.'];
         } else {
-            return ['success' => false, 'message' => '❌ Lỗi khi xóa nhân viên hoặc nhân viên không tồn tại!'];
+            return ['success' => false, 'message' => '❌ Lỗi khi xóa nhân viên hoặc nhân viên không tồn tại!', 'db_error' => $this->data->getLastError()];
         }
 }
   public function getnhanvienList($page, $search) {
-    $sql = "SELECT * FROM nhan_vien WHERE 1=1";
-    $params = [];
-    $types = "";
-    if (!empty($search)) {
-        $sql .= " AND (TENNV LIKE ? OR SDT LIKE ? OR EMAIL LIKE ? OR MANV LIKE ?)";
-        $params[] = "%$search%";
-        $params[] = "%$search%";
-        $params[] = "%$search%";
-        $params[] = "%$search%";
-        $types .= "ssss";
+        $sql = "SELECT * FROM nhan_vien WHERE 1=1";
+        $params = [];
+        $types = "";
+        if (!empty($search)) {
+            // thêm HOTEN vào điều kiện tìm kiếm
+            $sql .= " AND (TENNV LIKE ? OR HOTEN LIKE ? OR SDT LIKE ? OR EMAIL LIKE ? OR MANV LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $types .= "sssss";
+        }
+        // LIMIT ?, ?
+        $sql .= " LIMIT ?, ?";
+        $offset = ($page - 1) * $this->limit;
+        $params[] = $offset;
+        $params[] = $this->limit;
+        $types .= "ii";
+        // nếu có params thì dùng select_prepare, ngược lại dùng select()
+        if (count($params) > 0) {
+            $this->data->select_prepare($sql, $types, ...$params);
+        } else {
+            $this->data->select($sql);
+        }
+        return $this->data->fetchAll();
     }
-    // LIMIT ?, ?
-    $sql .= " LIMIT ?, ?";
-    $offset = ($page - 1) * 10;
-    $params[] = $offset;
-    $params[] = 10;
-    $types .= "ii";
-    $this->data->select_prepare($sql, $types, ...$params);
-    return $this->data->fetchAll();
-}
     public function countnhanvien($search, $district) {
         $sql = "SELECT COUNT(*) as total FROM nhan_vien WHERE 1=1";
         $params = [];
-        if ($search) {
-            $sql .= " AND (TENNV LIKE ? OR SDT LIKE ? OR EMAIL LIKE ?)";   
+        $types = "";
+        if (!empty($search)) {
+            $sql .= " AND (TENNV LIKE ? OR HOTEN LIKE ? OR SDT LIKE ? OR EMAIL LIKE ?)";
             $params[] = "%$search%";
             $params[] = "%$search%";
             $params[] = "%$search%";
+            $params[] = "%$search%";
+            $types .= "ssss";
         }
-        $this->data->select_prepare($sql, str_repeat("s", count($params)), ...$params);
-        $row = $this->data->fetch();    
+        if (count($params) > 0) {
+            $this->data->select_prepare($sql, $types, ...$params);
+        } else {
+            $this->data->select($sql);
+        }
+        $row = $this->data->fetch();
         return $row['total'] ?? 0;
     }
     public function getLimit() {

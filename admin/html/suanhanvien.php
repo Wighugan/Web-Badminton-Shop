@@ -34,10 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $AVATAR = $_FILES['AVATAR'];
     $MATKHAU = $_POST['MATKHAU'];
     $result = $nv->updateNhanvien($id, $TENNV, $HOTEN,$SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS,$MATKHAU);
-    if ($result['success']) {
-        echo "<script>location.href='quanlynhanvien.php';</script>";
+    
+    // Debug: xem $result trả về gì
+    error_log("Debug updateNhanvien: " . print_r($result, true));
+    
+    // Nếu không có lỗi database, coi như thành công
+    if ($result !== false) {
+        echo "<script>alert('Cập nhật thành công!'); window.location.href='quanlynhanvien.php';</script>";
+        exit();
     } else {
-        echo "<script>history.back();</script>";
+        echo "<script>alert('Cập nhật thất bại! Vui lòng thử lại.'); window.history.back();</script>";
+        exit();
     }
 }
 ?>

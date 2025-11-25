@@ -130,12 +130,12 @@ class Ncc extends QuanLyHeThong {
         
         // ✅ Thực thi query
         $this->data->command_prepare($sql, $types, ...$params);
-        $result = $this->data->execute();
-        
-        if ($result) {
+        $ok = $this->data->execute();
+
+        if ($ok) {
             return ['success' => true, 'message' => '✅ Cập nhật thành công!'];
         } else {
-            return ['success' => false, 'message' => '❌ Cập nhật thất bại!'];
+            return ['success' => false, 'message' => '❌ Cập nhật thất bại!', 'db_error' => $this->data->getLastError()];
         }
         
     } catch (Exception $e) {
@@ -144,7 +144,6 @@ class Ncc extends QuanLyHeThong {
 }
 
     public function addNcc($TENNCC, $DIACHI, $SDT, $EMAIL, $AVATAR, $TRANGTHAI, $NGUOIDD) {
-    try {
         // ✅ Validate dữ liệu bắt buộc
         if (empty($TENNCC) || empty($DIACHI) || empty($SDT) || empty($EMAIL) || empty($NGUOIDD)) {
             return ['success' => false, 'message' => '❌ Vui lòng nhập đầy đủ thông tin!'];
@@ -168,14 +167,12 @@ class Ncc extends QuanLyHeThong {
         $sql = "INSERT INTO ncc (TENNCC, DIACHI, SDT, EMAIL, AVATAR, TRANGTHAI, NGAYHT, NGUOIDD) 
                 VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)";
                 $this->data->command_prepare($sql, "sssssss", $TENNCC, $DIACHI, $SDT, $EMAIL, $avatarPath, $TRANGTHAI, $NGUOIDD);
-        if ($this->data->execute()) {
-            return ['success' => true, 'message' => '✅ Thêm nhà cung cấp thành công!'];
-        } else {
-            return ['success' => false, 'message' => '❌ Thêm nhà cung cấp thất bại!'];
-        }
-    } catch (Exception $e) {
-        return ['success' => false, 'message' => '❌ Lỗi: ' . $e->getMessage()];
-    }
+                $ok = $this->data->execute();
+                if ($ok) {
+                    return ['success' => true, 'message' => '✅ Thêm nhà cung cấp thành công!'];
+                } else {
+                    return ['success' => false, 'message' => '❌ Thêm nhà cung cấp thất bại!', 'db_error' => $this->data->getLastError()];
+                }
 }
     public function deleteNcc($MANCC) {
         try {
@@ -187,10 +184,11 @@ class Ncc extends QuanLyHeThong {
             }
             $sql = "DELETE FROM ncc WHERE MANCC = ?";
             $this->data->command_prepare($sql, "i", $MANCC);
-            if ($this->data->execute()) {
+            $ok = $this->data->execute();
+            if ($ok) {
                 return ['success' => true, 'message' => '✅ Đã xóa nhà cung cấp thành công!'];
             } else {
-                return ['success' => false, 'message' => '❌ Lỗi khi xóa nhà cung cấp!'];
+                return ['success' => false, 'message' => '❌ Lỗi khi xóa nhà cung cấp!', 'db_error' => $this->data->getLastError()];
             }
         } catch (Exception $e) {
             return ['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()];

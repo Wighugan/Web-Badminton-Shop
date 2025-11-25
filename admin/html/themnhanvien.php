@@ -23,10 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $result = $nv->addNhanvien($TENNV, $HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS);
     
-    if ($result) {
-        echo "<script>alert('Cập nhật thành công!'); location.href='quanlynhanvien.php';</script>";
+    if (is_array($result)) {
+        if ($result['success']) {
+            echo "<script>alert('" . addslashes($result['message']) . "'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            $dbErr = isset($result['db_error']) ? addslashes($result['db_error']) : '';
+            $msg = addslashes($result['message']);
+            $full = $msg . ($dbErr ? "\nDB Error: " . $dbErr : "");
+            echo "<script>alert('" . $full . "'); window.history.back();</script>";
+        }
     } else {
-        echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
+        // Fallback for older return types
+        if ($result) {
+            echo "<script>alert('Cập nhật thành công!'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
+        }
     }
 }
 ?>
@@ -72,10 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="name">Tên đăng nhập:</label>
                         <input type="text" id="username" name="TENNV" >
                     </div>
-
-
-                    
-
                     <div class="form-group">
     <label for="name">Ảnh đại diện:</label>
     <div>

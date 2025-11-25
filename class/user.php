@@ -160,11 +160,12 @@ class QuanLyKhachHang extends QuanLyHeThong {
         $params[] = $MAKH;
         $types .= "i";
         $sql = "UPDATE khach_hang SET " . implode(", ", $set) . " WHERE MAKH = ?";
-        $ok = $this->data->command_prepare($sql, $types, ...$params);
+        $this->data->command_prepare($sql, $types, ...$params);
+        $ok = $this->data->execute();
         if ($ok) {
             return ['success' => true, 'message' => '✔ Cập nhật thông tin thành công!'];
         } else {
-            return ['success' => false, 'message' => '❌ Không thể cập nhật thông tin!'];
+            return ['success' => false, 'message' => '❌ Không thể cập nhật thông tin!', 'db_error' => $this->data->getLastError()];
         }
     } catch (Exception $e) {
         return ['success' => false, 'message' => '❌ Lỗi: ' . $e->getMessage()];
@@ -219,7 +220,12 @@ class QuanLyKhachHang extends QuanLyHeThong {
         $sql = "INSERT INTO khach_hang (HOTEN, EMAIL, DIACHI, NS, MATKHAU, SDT, DIACHI1, TENKH, AVATAR) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->data->command_prepare($sql, 'sssssssss', $HOTEN, $EMAIL, $DIACHI, $NS, $MATKHAU, $SDT, $DIACHI1, $TENKH, $avatarPath);
-        $this->data->execute();
+        $ok = $this->data->execute();
+        if ($ok) {
+            return ['success' => true, 'message' => '✅ Thêm người dùng thành công!'];
+        } else {
+            return ['success' => false, 'message' => '❌ Thêm người dùng thất bại!', 'db_error' => $this->data->getLastError() ?? ''];
+        }
     } catch (Exception $e) {
         return ['success' => false, 'message' => '❌ Lỗi: ' . $e->getMessage()];
     }
@@ -228,8 +234,9 @@ class QuanLyKhachHang extends QuanLyHeThong {
       public function xoaNguoiDung($MAKH) {
             $sql = "DELETE FROM khach_hang WHERE MAKH = ?";
             $this->data->command_prepare($sql, 'i', $MAKH);
+            $ok = $this->data->execute();
 
-            if ($this->data->execute()) {
+            if ($ok) {
                 echo "<script>window.location.href='quanlykhachhang.php';</script>";
             } else {
                 echo "<script>window.history.back();</script>";
