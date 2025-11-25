@@ -40,6 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
         }
+    if (is_array($result)) {
+        if ($result['success']) {
+            echo "<script>alert('" . addslashes($result['message']) . "'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            $dbErr = isset($result['db_error']) ? addslashes($result['db_error']) : '';
+            $msg = addslashes($result['message']);
+            $full = $msg . ($dbErr ? "\nDB Error: " . $dbErr : "");
+            echo "<script>alert('" . $full . "'); window.history.back();</script>";
+        }
+    } else {
+        // Fallback for older return types
+        if ($result) {
+            echo "<script>alert('Cập nhật thành công!'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
+        }
     }
 }
 ?>

@@ -4,7 +4,7 @@ class Database {
     private $host = 'localhost';
     private $user = 'root';
     private $pass = '';
-    private $database = 'mydb1';
+    private $database = 'mydb';
     private $stmt = null;
     private $result = null;
 
