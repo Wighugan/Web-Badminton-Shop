@@ -44,11 +44,11 @@
             // Nếu có rồi => Cập nhật số lượng
             $new_quantity = $item['SOLUONG'] + $SOLUONG;
             $sql_update = "UPDATE gio_hang SET SOLUONG = ? WHERE MAKH = ? AND MASP = ?";
-            $this->data->command_prepare($sql_update, "iii", $new_quantity, $MAKH, $MASP);
+            $this->data->command_prepare($sql_update, "iii", $new_quantity, $MAKH, $MASP)->execute();
         } else {
             // Nếu chưa có => Thêm mới
             $sql_insert = "INSERT INTO gio_hang (MAKH, MASP, SOLUONG) VALUES (?, ?, ?)";
-            $this->data->command_prepare($sql_insert, "iii", $MAKH, $MASP, $SOLUONG);
+            $this->data->command_prepare($sql_insert, "iii", $MAKH, $MASP, $SOLUONG)->execute();
         }
 
         return ['success' => true, 'message' => 'Đã thêm sản phẩm vào giỏ hàng!'];
@@ -63,13 +63,13 @@
         } else {
             // Ngược lại thì cập nhật
             $sql = "UPDATE gio_hang SET SOLUONG = ? WHERE MAKH = ? AND MASP = ?";
-            $this->data->command_prepare($sql, "iii", $SOLUONG, $MAKH, $MASP);
+            $this->data->command_prepare($sql, "iii", $SOLUONG, $MAKH, $MASP)->execute();
             return ['success' => true, 'message' => 'Cập nhật số lượng thành công!'];
         }
     }
      public function xoaSanPham($MAKH, $MASP) {
         $sql = "DELETE FROM gio_hang WHERE MAKH = ? AND MASP = ?";
-        $this->data->command_prepare($sql, "ii", $MAKH, $MASP);
+        $this->data->command_prepare($sql, "ii", $MAKH, $MASP)->execute();
         return ['success' => true, 'message' => 'Xoá sản phẩm thành công!'];
     }
 

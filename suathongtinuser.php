@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
         $_SESSION['username'] = $username; // cập nhật lại username cho dropdown
 
         // load lại thông tin mới
-        $data->select_prepare("SELECT * FROM san_pham WHERE MASP = ?", "i", $user_id);
+        $data->select_prepare("SELECT * FROM khach_hang WHERE MAKH = ?", "i", $user_id);
         $user = $data->fetch();
     } else {
         $_SESSION['error'] = "Cập nhật thông tin thất bại!";
@@ -145,8 +145,8 @@ ob_end_flush();
                         <input type="hidden" name="id" value="<?= (int)$user['MAKH'] ?>">
                         <div class="control-group mb-3">
                             <label>Ảnh đại diện hiện tại:</label><br>
-                            <img id="previewImage" 
-                                 src="<?= htmlspecialchars($user['AVATAR'] ?: 'uploads/avatars/default.png') ?>" 
+                               <img id="previewImage" 
+                                   src="<?= htmlspecialchars($user['AVATAR'] ?: 'uploads/user.jpg') ?>" 
                                  width="100" 
                                  height="100"
                                  alt="Ảnh đại diện">

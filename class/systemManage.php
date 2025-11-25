@@ -24,7 +24,7 @@ class QuanLyHeThong {
                 return $targetPath;
             }
         }
-        return 'uploads/avatars/default.png';
+        return 'uploads/user.jpg';
     }
 
     // Đăng ký

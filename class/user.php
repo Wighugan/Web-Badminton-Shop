@@ -128,30 +128,35 @@ class QuanLyKhachHang extends QuanLyHeThong {
             $params[] = $MATKHAU;
             $types .= "s";
         }
-        // 4. Upload Avatar nếu có
-        if ($AVATAR && $AVATAR['error'] == 0) {
-    $allowExt = ['jpg','jpeg','png','webp'];
-    $ext = strtolower(pathinfo($AVATAR['name'], PATHINFO_EXTENSION));
+        // 4. Upload Avatar nếu có (hỗ trợ cả mảng $_FILES hoặc đường dẫn chuỗi đã có)
+        if (is_array($AVATAR) && isset($AVATAR['error']) && $AVATAR['error'] == 0) {
+            $allowExt = ['jpg','jpeg','png','webp'];
+            $ext = strtolower(pathinfo($AVATAR['name'], PATHINFO_EXTENSION));
 
-    if (!in_array($ext, $allowExt)) {
-        return ['success' => false, 'message' => '❌ Chỉ cho phép ảnh JPG, PNG, WEBP'];
-    }
-    $fileName = time() . "_" . $MAKH . "." . $ext;
-    $uploadDir = __DIR__ . "/../uploads/avatar/";
-    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+            if (!in_array($ext, $allowExt)) {
+                return ['success' => false, 'message' => '❌ Chỉ cho phép ảnh JPG, PNG, WEBP'];
+            }
+            $fileName = time() . "_" . $MAKH . "." . $ext;
+            $uploadDir = __DIR__ . "/../uploads/avatars/";
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
-    $fullPath = $uploadDir . $fileName;
+            $fullPath = $uploadDir . $fileName;
 
-    if (!move_uploaded_file($AVATAR['tmp_name'], $fullPath)) {
-        return ['success' => false, 'message' => '❌ Upload avatar thất bại!'];
-    }
+            if (!move_uploaded_file($AVATAR['tmp_name'], $fullPath)) {
+                return ['success' => false, 'message' => '❌ Upload avatar thất bại!'];
+            }
 
-    // Lưu link avatar vào DB
-    $avatarPath = "uploads/avatar/" . $fileName;
-    $set[] = "AVATAR = ?";
-    $params[] = $avatarPath;
-    $types .= "s";
-}
+            // Lưu link avatar vào DB
+            $avatarPath = "uploads/avatars/" . $fileName;
+            $set[] = "AVATAR = ?";
+            $params[] = $avatarPath;
+            $types .= "s";
+        } elseif (is_string($AVATAR) && $AVATAR !== '') {
+            // Nếu đã truyền đường dẫn avatar (ví dụ: đã upload trước đó), lưu trực tiếp
+            $set[] = "AVATAR = ?";
+            $params[] = $AVATAR;
+            $types .= "s";
+        }
         // 5. Không có gì để cập nhật
         if (empty($set)) {
             return ['success' => false, 'message' => '❌ Không có dữ liệu để cập nhật!'];
@@ -205,13 +210,13 @@ class QuanLyKhachHang extends QuanLyHeThong {
         // ✅ Xử lý upload avatar nếu có file
         if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {     
             $fileName = time() . "_" . basename($_FILES['AVATAR']['name']);
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatar/";          
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatars/";          
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
             $fullPath = $uploadDir . $fileName;
             if (move_uploaded_file($_FILES['AVATAR']['tmp_name'], $fullPath)) {
-                $avatarPath = "uploads/avatar/" . $fileName;
+                $avatarPath = "uploads/avatars/" . $fileName;
             } else {
                 return ['success' => false, 'message' => '❌ Upload file thất bại!'];
             }

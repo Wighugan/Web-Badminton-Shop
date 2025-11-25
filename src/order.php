@@ -46,7 +46,8 @@ class Order {
     $order_code = 'DH' . time() . rand(1000, 9999);
     $sql1 = "INSERT INTO don_hang (CODE, MAKH, TONGTIEN, TRANGTHAI, NGAYLAP)
              VALUES (?, ?, ?, 'Thành công', NOW())";
-    $this->data->command_prepare($sql1, "ssi", $order_code, $MAKH, $total);
+    // order_code: string, MAKH: int, total: decimal -> use types "sid"
+    $this->data->command_prepare($sql1, "sid", $order_code, $MAKH, $total)->execute();
 
     // Lấy mã đơn hàng vừa thêm
     $sql_get_id = "SELECT MAX(MADH) AS MADH FROM don_hang WHERE MAKH = ?";
@@ -65,7 +66,7 @@ class Order {
             $item['TENSP'],
             $item['DONGIA'],
             $item['SOLUONG_MUA']
-        );
+        )->execute();
 
         // Trừ tồn kho
         $sql_update_stock = "UPDATE san_pham 
@@ -74,12 +75,12 @@ class Order {
         $this->data->command_prepare($sql_update_stock, "ii",
             $item['SOLUONG_MUA'],
             $item['MASP']
-        );
+        )->execute();
     }
 
     // 6️⃣ Xóa giỏ hàng
     $sql3 = "DELETE FROM gio_hang WHERE MAKH = ?";
-    $this->data->command_prepare($sql3, "i", $MAKH);
+    $this->data->command_prepare($sql3, "i", $MAKH)->execute();
 
     // 7️⃣ Trả kết quả
     return [

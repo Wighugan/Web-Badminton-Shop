@@ -45,14 +45,14 @@ public function updateNhanvien($MANV, $TENNV,$HOTEN, $SDT, $EMAIL, $AVATAR, $NGA
         $avatarPath = $AVATAR;
 if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
     $fileName = time() . "_" . basename($_FILES['AVATAR']['name']);
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatar/";
+    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatars/";
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
     $fullPath = $uploadDir . $fileName;
     // ✅ Thêm dòng này - di chuyển file từ temp lên server
     if (move_uploaded_file($_FILES['AVATAR']['tmp_name'], $fullPath)) {
-        $avatarPath = "uploads/avatar/" . $fileName;
+    $avatarPath = "uploads/avatars/" . $fileName;
     } else {
         return ['success' => false, 'message' => '❌ Upload file thất bại!'];
     }
@@ -70,7 +70,8 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
             $params[] = $HOTEN;
             $types .= "s";
         }
-        if ($MATKHAU== null && $MATKHAU !== '') {
+        // Nếu người dùng nhập mật khẩu mới (không rỗng), cập nhật
+        if ($MATKHAU !== null && $MATKHAU !== '') {
             $set_clauses[] = "MATKHAU = ?";
             $params[] = $MATKHAU;
             $types .= "s";
@@ -107,36 +108,29 @@ if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         $ok = $this->data->execute();
 
         if ($ok) {
-            return ['success'];
+            return ['success' => true, 'message' => '✔ Cập nhật thành công!'];
         } else {
-            return ['success' => false, 'message' => '❌ Cập nhật thất bại!'];
+            return ['success' => false, 'message' => '❌ Cập nhật thất bại!', 'db_error' => $this->data->getLastError()];
         }
 }
     public function addNhanvien($TENNV,$HOTEN ,$SDT, $EMAIL, $AVATAR, $NGAYLAM,$NS) {
-
-    $avatarPath = ""; // ảnh mặc định
-    // Upload file
-    if ($AVATAR && $_FILES['AVATAR']['error'] === 0) {
+        $avatarPath = $AVATAR;
+        if (isset($_FILES['AVATAR']) && $_FILES['AVATAR']['error'] === 0) {
         $fileName = time() . "_" . basename($_FILES['AVATAR']['name']);
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatar/";
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/Web-Badminton-Shop/uploads/avatars/";
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
         $fullPath = $uploadDir . $fileName;
         if (move_uploaded_file($_FILES['AVATAR']['tmp_name'], $fullPath)) {
             $avatarPath = "uploads/avatar/" . $fileName;
+        } else {
+            return false;
         }
     }
-    $sql = "INSERT INTO nhan_vien(TENNV,HOTEN,SDT,EMAIL,AVATAR,NGAYLAM,NS) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $this->data->command_prepare($sql, "sssssss",
-        $TENNV,$HOTEN,$SDT,$EMAIL,$avatarPath,$NGAYLAM,$NS
-    );
-    $ok = $this->data->execute();
-    if ($ok) {
-        return ['success' => true, 'message' => '✅ Thêm nhân viên thành công!'];
-    } else {
-        return ['success' => false, 'message' => '❌ Thêm nhân viên thất bại!', 'db_error' => $this->data->getLastError()];
+        $sql = "INSERT INTO nhan_vien(TENNV,HOTEN,SDT,EMAIL,AVATAR,NGAYLAM,NS) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $this->data->command_prepare($sql, "sssssss", $TENNV,$HOTEN ,$SDT, $EMAIL, $avatarPath,$NGAYLAM,$NS);
+        return $this->data->execute();
     }
 }
 

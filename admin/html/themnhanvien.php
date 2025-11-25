@@ -20,9 +20,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $NGAYLAM = $_POST['NGAYLAM'];
     $NS = $_POST['NS'];
     $AVATAR = $_FILES['AVATAR'];
+    $MATKHAU = $_POST['MATKHAU'] ?? '';
+
+    $result = $nv->addNhanvien($TENNV, $HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS, $MATKHAU);
     
-    $result = $nv->addNhanvien($TENNV, $HOTEN, $SDT, $EMAIL, $AVATAR, $NGAYLAM, $NS);
-    
+    if (is_array($result)) {
+        if ($result['success']) {
+            echo "<script>alert('" . addslashes($result['message']) . "'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            $dbErr = isset($result['db_error']) ? addslashes($result['db_error']) : '';
+            $msg = addslashes($result['message']);
+            $full = $msg . ($dbErr ? "\nDB Error: " . $dbErr : "");
+            echo "<script>alert('" . $full . "'); window.history.back();</script>";
+        }
+    } else {
+        // Fallback for older return types
+        if ($result) {
+            echo "<script>alert('Cập nhật thành công!'); window.location.href='quanlynhanvien.php';</script>";
+        } else {
+            echo "<script>alert('Cập nhật thất bại!'); history.back();</script>";
+        }
     if (is_array($result)) {
         if ($result['success']) {
             echo "<script>alert('" . addslashes($result['message']) . "'); window.location.href='quanlynhanvien.php';</script>";
@@ -110,6 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-group">
+                        <label for="email">Mật khẩu:</label>
+                        <input type="password" id="birthday" name="MATKHAU" required>
+                    </div>
+
+                    <div class="form-group">
                         <label for="email">Ngày vào làm:</label>
                         <input type="date" id="birthday" name="NGAYLAM" onfocus="(this.type='date')" onblur="(this.type= this.value ? 'date' : 'text')" >
                     </div>
@@ -149,5 +171,4 @@ function previewImage(event) {
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
-
 </html>

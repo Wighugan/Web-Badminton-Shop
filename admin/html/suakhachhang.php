@@ -37,6 +37,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $TP      = $_POST['TP'];
     $NS      = $_POST['NS'];
     $AVATAR = $_FILES['AVATAR'];
+    // Ensure $user is defined (loaded above) and keep existing avatar by default
+    $avatarPath = isset($user['AVATAR']) && !empty($user['AVATAR']) ? $user['AVATAR'] : 'uploads/user.jpg';
+
+    // Handle uploaded file (if any)
+    if (isset($_FILES['AVATAR']) && isset($_FILES['AVATAR']['error']) && $_FILES['AVATAR']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['AVATAR'];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (in_array($file['type'], $allowedTypes)) {
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $newName = uniqid('av_') . '.' . $ext;
+            $relativeDir = 'uploads/avatars';
+            $relativePath = $relativeDir . '/' . $newName;
+            $destination = $_SERVER['DOCUMENT_ROOT'] . '/Web-Badminton-Shop/' . $relativePath;
+            if (!is_dir(dirname($destination))) {
+                mkdir(dirname($destination), 0755, true);
+            }
+            if (move_uploaded_file($file['tmp_name'], $destination)) {
+                $avatarPath = $relativePath;
+            }
+        }
+    }
+
     $kh = new QuanLyKhachHang($data);
     $kh->CapNhatThongTin(
         $MAKH, $TENKH, $HOTEN, $EMAIL,
